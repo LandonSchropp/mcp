@@ -4,5 +4,8 @@
   "type": "module",
   "files": [
     "src"
-  ]
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5"
+  }
 }
