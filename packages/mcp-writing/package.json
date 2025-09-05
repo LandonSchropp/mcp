@@ -1,0 +1,8 @@
+{
+  "name": "@landonschropp/mcp-writing",
+  "description": "MCP server for writing assistance commands",
+  "type": "module",
+  "files": [
+    "src"
+  ]
+}

@@ -3,8 +3,12 @@
   "description": "My personal collection of MCP servers",
   "author": "Landon Schropp <schroppl@gmail.com>",
   "repository": "https://github.com/LandonSchropp/mcp",
+  "private": true,
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "preinstall": "bunx only-allow bun"
   },
