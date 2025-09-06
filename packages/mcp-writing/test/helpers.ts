@@ -1,6 +1,9 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { mock } from "bun:test";
+import { tmpdir } from "os";
+import { join } from "path";
 
 /** A registration function that registers handlers (tools, prompts, resources) on an MCP server. */
 export type RegisterFunction = (server: McpServer) => void;
@@ -29,10 +32,25 @@ export async function createTestClient(...registerFunctions: RegisterFunction[])
 
   const client = new Client({
     name: "test-client",
-    version: "1.0.0",
+    version: "0.0.0",
   });
 
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
 
   return client;
+}
+
+/**
+ * Mocks the env.ts module with a temporary style guide file.
+ *
+ * @param environmentVariable The environment variable name to mock
+ * @param content The content to write to the temporary style guide file
+ */
+export async function mockStyleGuide(environmentVariable: string, content: string): Promise<void> {
+  const styleGuidePath = join(tmpdir(), `env-var-name-${Date.now()}.md`);
+  await Bun.write(styleGuidePath, content);
+
+  mock.module("../src/env.ts", () => ({
+    [environmentVariable]: styleGuidePath,
+  }));
 }
