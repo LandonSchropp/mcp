@@ -8,6 +8,9 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
     "zod": "3.25.76"
