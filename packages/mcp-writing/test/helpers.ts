@@ -1,33 +1,20 @@
+import { server } from "../src/server.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { mock } from "bun:test";
 import { tmpdir } from "os";
 import { join } from "path";
 
-/** A registration function that registers handlers (tools, prompts, resources) on an MCP server. */
-export type RegisterFunction = (server: McpServer) => void;
-
 /**
- * Creates a fully connected MCP client for integration testing.
+ * Creates a fully connected MCP client for integration testing. This helper sets up:
  *
- * This helper sets up:
- *
- * - An MCP server with full capabilities (prompts, tools, resources)
+ * - The MCP server with all handlers registered
  * - In-memory transport for fast, isolated testing
  * - A connected client ready for testing
  *
- * @param registerFunctions Registration functions that register handlers on the server
  * @returns A connected MCP client for testing
  */
-export async function createTestClient(...registerFunctions: RegisterFunction[]): Promise<Client> {
-  const server = new McpServer({
-    name: "test-writing-server",
-    version: "0.0.0",
-  });
-
-  registerFunctions.forEach((registerFunction) => registerFunction(server));
-
+export async function createTestClient(): Promise<Client> {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
 
   const client = new Client({
