@@ -13,8 +13,12 @@
     },
     "packages/mcp-writing": {
       "name": "@landonschropp/mcp-writing",
+      "bin": {
+        "mcp-writing": "src/index.ts",
+      },
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.17.5",
+        "zod": "3.25.76",
       },
     },
   },

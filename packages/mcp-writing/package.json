@@ -2,10 +2,14 @@
   "name": "@landonschropp/mcp-writing",
   "description": "MCP server for writing assistance commands",
   "type": "module",
+  "bin": {
+    "mcp-writing": "src/index.ts"
+  },
   "files": [
     "src"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.5"
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "zod": "3.25.76"
   }
 }
