@@ -8,5 +8,7 @@ const server = new McpServer({
   version: "0.0.0",
 });
 
+registerFormat(server);
+
 const transport = new StdioServerTransport();
 await server.connect(transport);
