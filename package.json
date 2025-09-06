@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "preinstall": "bunx only-allow bun",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "bun test"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
