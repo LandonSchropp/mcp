@@ -9,7 +9,8 @@
     "src"
   ],
   "scripts": {
-    "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts"
+    "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts",
+    "start": "bun src/index.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
