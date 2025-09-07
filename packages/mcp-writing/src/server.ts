@@ -7,3 +7,4 @@ export const server = new McpServer({
 });
 
 await import("./prompts/format.ts");
+await import("./prompts/format-headers.ts");
