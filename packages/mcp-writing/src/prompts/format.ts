@@ -1,5 +1,6 @@
 import { FORMATTING_STYLE_GUIDE } from "../env.ts";
 import { server } from "../server.ts";
+import { removeFrontmatter } from "../template.ts";
 import { z } from "zod";
 
 server.registerPrompt(
@@ -10,7 +11,7 @@ server.registerPrompt(
     argsSchema: { filePath: z.string() },
   },
   async ({ filePath }) => {
-    let styleGuide = await Bun.file(FORMATTING_STYLE_GUIDE).text();
+    let styleGuide = removeFrontmatter(await Bun.file(FORMATTING_STYLE_GUIDE).text());
 
     return {
       messages: [
