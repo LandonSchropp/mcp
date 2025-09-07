@@ -12,7 +12,7 @@ describe("prompts/format", () => {
 
   beforeEach(async () => {
     return await mockStyleGuide(
-      "FORMATTING_STYLE_GUIDE",
+      "FORMAT_STYLE_GUIDE",
       dedent`
         ---
         title: Writing Style Guide

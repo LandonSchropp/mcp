@@ -8,5 +8,5 @@ export function requireEnvironmentVariable(name: string): string {
   return value;
 }
 
-export const FORMATTING_STYLE_GUIDE = requireEnvironmentVariable("FORMATTING_STYLE_GUIDE");
-export const LANGUAGE_STYLE_GUIDE = requireEnvironmentVariable("LANGUAGE_STYLE_GUIDE");
+export const FORMAT_STYLE_GUIDE = requireEnvironmentVariable("FORMAT_STYLE_GUIDE");
+export const VOICE_STYLE_GUIDE = requireEnvironmentVariable("VOICE_STYLE_GUIDE");

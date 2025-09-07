@@ -1,4 +1,4 @@
-import { FORMATTING_STYLE_GUIDE } from "../env.ts";
+import { FORMAT_STYLE_GUIDE } from "../env.ts";
 import { removeFrontmatter } from "../markdown.ts";
 import { createFormatPromptMessage } from "../message.ts";
 import { server } from "../server.ts";
@@ -11,7 +11,7 @@ server.registerPrompt(
     argsSchema: { filePath: z.string().optional() },
   },
   async ({ filePath }) => {
-    let styleGuide = removeFrontmatter(await Bun.file(FORMATTING_STYLE_GUIDE).text());
+    let styleGuide = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
 
     return {
       messages: [createFormatPromptMessage(filePath, styleGuide)],

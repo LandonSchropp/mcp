@@ -47,7 +47,7 @@ describe("requireEnvironmentVariable", () => {
   });
 });
 
-describe("FORMATTING_STYLE_GUIDE", () => {
+describe("FORMAT_STYLE_GUIDE", () => {
   beforeEach(() => {
     process.env = { ...ORIGINAL_ENV };
   });
@@ -56,20 +56,20 @@ describe("FORMATTING_STYLE_GUIDE", () => {
     process.env = ORIGINAL_ENV;
   });
 
-  describe("when FORMATTING_STYLE_GUIDE is set", () => {
+  describe("when FORMAT_STYLE_GUIDE is set", () => {
     it("exports the value", () => {
-      process.env.FORMATTING_STYLE_GUIDE = "formatting-guide";
+      process.env.FORMAT_STYLE_GUIDE = "format-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { FORMATTING_STYLE_GUIDE } = require("../src/env");
+      const { FORMAT_STYLE_GUIDE } = require("../src/env");
 
-      expect(FORMATTING_STYLE_GUIDE).toBe("formatting-guide");
+      expect(FORMAT_STYLE_GUIDE).toBe("format-guide");
     });
   });
 });
 
-describe("LANGUAGE_STYLE_GUIDE", () => {
+describe("VOICE_STYLE_GUIDE", () => {
   beforeEach(() => {
     process.env = { ...ORIGINAL_ENV };
   });
@@ -78,15 +78,15 @@ describe("LANGUAGE_STYLE_GUIDE", () => {
     process.env = ORIGINAL_ENV;
   });
 
-  describe("when LANGUAGE_STYLE_GUIDE is set", () => {
+  describe("when VOICE_STYLE_GUIDE is set", () => {
     it("exports the value", () => {
-      process.env.LANGUAGE_STYLE_GUIDE = "language-guide";
+      process.env.VOICE_STYLE_GUIDE = "voice-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { LANGUAGE_STYLE_GUIDE } = require("../src/env");
+      const { VOICE_STYLE_GUIDE } = require("../src/env");
 
-      expect(LANGUAGE_STYLE_GUIDE).toBe("language-guide");
+      expect(VOICE_STYLE_GUIDE).toBe("voice-guide");
     });
   });
 });
