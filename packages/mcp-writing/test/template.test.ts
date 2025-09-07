@@ -1,0 +1,89 @@
+import { renderTemplate, renderTemplateFile } from "../src/template.ts";
+import { describe, it, expect, beforeEach } from "bun:test";
+
+describe("renderTemplate", () => {
+  describe("when the template is empty", () => {
+    it("returns empty string", () => {
+      const template = "";
+      const replacements = {};
+      const result = renderTemplate(template, replacements);
+
+      expect(result).toBe("");
+    });
+  });
+
+  describe("when the template has placeholders with no whitespace", () => {
+    it("replaces the placeholders", () => {
+      const template = "Hello {{name}}, welcome to {{place}}!";
+      const replacements = { name: "John", place: "the party" };
+      const result = renderTemplate(template, replacements);
+
+      expect(result).toBe("Hello John, welcome to the party!");
+    });
+  });
+
+  describe("when the template has placeholders with spaces", () => {
+    it("replaces the placeholders", () => {
+      const template = "Hello {{ name }}, welcome to {{ place }}!";
+      const replacements = { name: "John", place: "the party" };
+      const result = renderTemplate(template, replacements);
+
+      expect(result).toBe("Hello John, welcome to the party!");
+    });
+  });
+
+  describe("when the template has multiple occurrences of the same variable", () => {
+    it("replaces the placeholders", () => {
+      const template = "{{name}} likes {{name}}'s own {{item}}";
+      const replacements = { name: "Alice", item: "book" };
+      const result = renderTemplate(template, replacements);
+
+      expect(result).toBe("Alice likes Alice's own book");
+    });
+  });
+
+  describe("when template has no placeholders", () => {
+    it("returns the original text", () => {
+      const template = "No placeholders here";
+      const replacements = {};
+      const result = renderTemplate(template, replacements);
+
+      expect(result).toBe("No placeholders here");
+    });
+  });
+
+  describe("when the provided replacements contain keys not in the template", () => {
+    it("throws an error", () => {
+      const template = "Hello {{name}}!";
+      const replacements = { name: "John", extra: "unused" };
+
+      expect(() => renderTemplate(template, replacements)).toThrow(
+        "The provided replacements contain a key not found in the template: extra",
+      );
+    });
+  });
+
+  describe("when the template contains placeholders not provided in the replacements", () => {
+    it("throws an error", () => {
+      const template = "Hello {{name}}, welcome to {{place}} at {{time}}!";
+      const replacements = { name: "John" };
+
+      expect(() => renderTemplate(template, replacements)).toThrow(
+        "The template contains placeholders not present in the provided replacements: place, time",
+      );
+    });
+  });
+});
+
+const TEMPLATE_PATH = "/tmp/test-template.md";
+
+describe("renderTemplateFile", () => {
+  it("reads and renders a template file", async () => {
+    await Bun.write(TEMPLATE_PATH, "Hello {{name}}!");
+
+    const replacements = { name: "World" };
+    const result = await renderTemplateFile(TEMPLATE_PATH, replacements);
+
+    expect(result).toBe("Hello World!");
+  });
+});
