@@ -1,5 +1,6 @@
 import { FORMATTING_STYLE_GUIDE } from "../env.ts";
 import { removeFrontmatter } from "../markdown.ts";
+import { createFormatPromptMessage } from "../message.ts";
 import { server } from "../server.ts";
 import { z } from "zod";
 
@@ -14,15 +15,7 @@ server.registerPrompt(
     let styleGuide = removeFrontmatter(await Bun.file(FORMATTING_STYLE_GUIDE).text());
 
     return {
-      messages: [
-        {
-          role: "user",
-          content: {
-            type: "text",
-            text: `Apply the following formatting rules to ${filePath}\n\n${styleGuide}`,
-          },
-        },
-      ],
+      messages: [createFormatPromptMessage(filePath, styleGuide)],
     };
   },
 );
