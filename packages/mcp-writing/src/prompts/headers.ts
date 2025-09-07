@@ -8,9 +8,14 @@ server.registerPrompt(
   "headers",
   {
     description: "Apply header formatting conventions to writing",
-    argsSchema: { filePath: z.string().optional() },
+    argsSchema: {
+      target: z
+        .string()
+        .optional()
+        .describe("Target to format (file path, description, or reference)"),
+    },
   },
-  async ({ filePath }) => {
+  async ({ target }) => {
     let styleGuide = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
     let headersSection = extractSection(styleGuide, "Headers");
 
@@ -19,7 +24,7 @@ server.registerPrompt(
     }
 
     return {
-      messages: [createFormatPromptMessage(filePath, headersSection)],
+      messages: [createFormatPromptMessage(target, headersSection)],
     };
   },
 );

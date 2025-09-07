@@ -6,7 +6,7 @@ describe("prompts/format", () => {
   const PROMPT_OPTIONS = {
     name: "format",
     arguments: {
-      filePath: "/tmp/document.md",
+      target: "/tmp/document.md",
     },
   } as const;
 

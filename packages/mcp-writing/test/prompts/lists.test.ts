@@ -6,7 +6,7 @@ describe("prompts/lists", () => {
   const PROMPT_OPTIONS = {
     name: "lists",
     arguments: {
-      filePath: "/tmp/document.md",
+      target: "/tmp/document.md",
     },
   } as const;
 

@@ -6,7 +6,7 @@ describe("prompts/headers", () => {
   const PROMPT_OPTIONS = {
     name: "headers",
     arguments: {
-      filePath: "/tmp/document.md",
+      target: "/tmp/document.md",
     },
   } as const;
 

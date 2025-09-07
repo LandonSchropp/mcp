@@ -8,9 +8,14 @@ server.registerPrompt(
   "lists",
   {
     description: "Apply list formatting conventions to writing",
-    argsSchema: { filePath: z.string().optional() },
+    argsSchema: {
+      target: z
+        .string()
+        .optional()
+        .describe("Target to format (file path, description, or reference)"),
+    },
   },
-  async ({ filePath }) => {
+  async ({ target }) => {
     let styleGuide = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
     let listsSection = extractSection(styleGuide, "Lists");
 
@@ -19,7 +24,7 @@ server.registerPrompt(
     }
 
     return {
-      messages: [createFormatPromptMessage(filePath, listsSection)],
+      messages: [createFormatPromptMessage(target, listsSection)],
     };
   },
 );
