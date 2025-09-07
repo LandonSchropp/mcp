@@ -7,7 +7,6 @@ import { z } from "zod";
 server.registerPrompt(
   "format",
   {
-    title: "Format",
     description: "Apply structure and formatting conventions to writing",
     argsSchema: { filePath: z.string().optional() },
   },

@@ -5,9 +5,8 @@ import { server } from "../server.ts";
 import { z } from "zod";
 
 server.registerPrompt(
-  "format-headers",
+  "headers",
   {
-    title: "Format Headers",
     description: "Apply header formatting conventions to writing",
     argsSchema: { filePath: z.string().optional() },
   },

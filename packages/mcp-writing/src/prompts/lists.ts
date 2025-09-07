@@ -5,9 +5,8 @@ import { server } from "../server.ts";
 import { z } from "zod";
 
 server.registerPrompt(
-  "format-lists",
+  "lists",
   {
-    title: "Format Lists",
     description: "Apply list formatting conventions to writing",
     argsSchema: { filePath: z.string().optional() },
   },

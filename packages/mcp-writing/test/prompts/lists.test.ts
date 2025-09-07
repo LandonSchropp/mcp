@@ -2,9 +2,9 @@ import { createTestClient, mockStyleGuide } from "../helpers.ts";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
 
-describe("prompts/format-lists", () => {
+describe("prompts/lists", () => {
   const PROMPT_OPTIONS = {
-    name: "format-lists",
+    name: "lists",
     arguments: {
       filePath: "/tmp/document.md",
     },
@@ -39,7 +39,7 @@ describe("prompts/format-lists", () => {
     const client = await createTestClient();
     const result = await client.listPrompts();
 
-    expect(result.prompts).toContainEqual(expect.objectContaining({ name: "format-lists" }));
+    expect(result.prompts).toContainEqual(expect.objectContaining({ name: "lists" }));
   });
 
   it("includes the file path", async () => {

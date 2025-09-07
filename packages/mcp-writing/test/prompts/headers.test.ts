@@ -2,9 +2,9 @@ import { createTestClient, mockStyleGuide } from "../helpers.ts";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
 
-describe("prompts/format-headers", () => {
+describe("prompts/headers", () => {
   const PROMPT_OPTIONS = {
-    name: "format-headers",
+    name: "headers",
     arguments: {
       filePath: "/tmp/document.md",
     },
@@ -35,7 +35,7 @@ describe("prompts/format-headers", () => {
     const client = await createTestClient();
     const result = await client.listPrompts();
 
-    expect(result.prompts).toContainEqual(expect.objectContaining({ name: "format-headers" }));
+    expect(result.prompts).toContainEqual(expect.objectContaining({ name: "headers" }));
   });
 
   it("includes the file path", async () => {
