@@ -1,4 +1,4 @@
-import { removeFrontmatter, extractSection } from "../src/template";
+import { removeFrontmatter, extractSection } from "../src/markdown";
 import { describe, it, expect } from "bun:test";
 import { dedent } from "ts-dedent";
 

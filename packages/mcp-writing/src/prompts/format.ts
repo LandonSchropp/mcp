@@ -1,6 +1,6 @@
 import { FORMATTING_STYLE_GUIDE } from "../env.ts";
+import { removeFrontmatter } from "../markdown.ts";
 import { server } from "../server.ts";
-import { removeFrontmatter } from "../template.ts";
 import { z } from "zod";
 
 server.registerPrompt(
