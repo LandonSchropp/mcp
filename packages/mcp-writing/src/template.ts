@@ -1,12 +1,11 @@
 /**
- * Removes everything before the first h2 (##) in a markdown string. This includes the frontmatter
- * if it's present.
+ * Removes frontmatter from a markdown string.
  *
- * @param markdown The markdown string to remove the content from.
- * @returns The markdown string without the frontmatter and introduction section.
+ * @param markdown The markdown string to remove frontmatter from.
+ * @returns The markdown string without the frontmatter.
  */
-export function removeFrontmatterAndIntroduction(markdown: string): string {
-  return markdown.replace(/^[\s\S]*?\n(?=## )/, "");
+export function removeFrontmatter(markdown: string): string {
+  return markdown.replace(/^---[\s\S]*?---\n+/, "");
 }
 
 /**
