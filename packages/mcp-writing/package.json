@@ -9,6 +9,7 @@
     "src"
   ],
   "scripts": {
+    "check-types": "bun --cwd ../.. check-types --project packages/mcp-writing",
     "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts",
     "start": "bun src/index.ts"
   },

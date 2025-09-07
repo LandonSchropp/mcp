@@ -16,8 +16,9 @@ Type checking is handled by a single shared `tsconfig.json` that validates types
 
 The servers all come with a few standard commands:
 
-- `bun start`: Start the server locally.
+- `bun check-types`: Run TypeScript type checking.
 - `bun inspector`: Run the MCP inspector for the server.
+- `bun start`: Start the server locally.
 - `bun test`: Run the tests for the server.
 
 You can connect any server to Claude directly during local development. For example, to connect the writing server:
