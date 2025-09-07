@@ -69,8 +69,82 @@ describe("renderTemplate", () => {
       const replacements = { name: "John" };
 
       expect(() => renderTemplate(template, replacements)).toThrow(
-        "The template contains placeholders not present in the provided replacements: place, time",
+        "The template contains placeholders not present in the replacements: place, time",
       );
+    });
+  });
+
+  describe("when template contains a target placeholder", () => {
+    describe("when the target value is present", () => {
+      it("replaces target with the target value", () => {
+        const template = "Apply the following rules to {{target}}:";
+        const replacements = { target: "/path/to/file.txt" };
+        const result = renderTemplate(template, replacements);
+
+        expect(result).toBe("Apply the following rules to /path/to/file.txt:");
+      });
+
+      it("works with other placeholders", () => {
+        const template = "Apply {{action}} to {{target}} with {{content}}.";
+        const replacements = { action: "formatting", target: "main.ts", content: "these rules" };
+        const result = renderTemplate(template, replacements);
+
+        expect(result).toBe("Apply formatting to main.ts with these rules.");
+      });
+    });
+
+    describe("when the target value is an empty string", () => {
+      it("uses 'the current context'", () => {
+        const template = "Apply the following rules to {{target}}:";
+        const replacements = { target: "" };
+        const result = renderTemplate(template, replacements);
+
+        expect(result).toBe("Apply the following rules to the current context:");
+      });
+    });
+
+    describe("when the target value is not provided", () => {
+      it("uses 'the current context'", () => {
+        const template = "Apply the following rules to {{target}}:";
+        const replacements = {};
+        const result = renderTemplate(template, replacements);
+
+        expect(result).toBe("Apply the following rules to the current context:");
+      });
+    });
+  });
+
+  describe("when template does not contain a target placeholder", () => {
+    describe("when the target value is present", () => {
+      it("throws error for unused target key", () => {
+        const template = "Hello {{name}}!";
+        const replacements = { name: "World", target: "file.txt" };
+
+        expect(() => renderTemplate(template, replacements)).toThrow(
+          "The provided replacements contain a key not found in the template: target",
+        );
+      });
+    });
+
+    describe("when the target value is an empty string", () => {
+      it("throws error for unused target key", () => {
+        const template = "Hello {{name}}!";
+        const replacements = { name: "World", target: "" };
+
+        expect(() => renderTemplate(template, replacements)).toThrow(
+          "The provided replacements contain a key not found in the template: target",
+        );
+      });
+    });
+
+    describe("when the target value is not provided", () => {
+      it("works normally with other placeholders", () => {
+        const template = "Hello {{name}}!";
+        const replacements = { name: "World" };
+        const result = renderTemplate(template, replacements);
+
+        expect(result).toBe("Hello World!");
+      });
     });
   });
 });

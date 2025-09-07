@@ -43,14 +43,18 @@ function replacePlaceholder(template: string, placeholder: string, value: string
  */
 function renderTemplateTarget(template: string, target: string | undefined): string {
   if (!templateContainsPlaceholder(template, "target")) {
+    if (target !== undefined) {
+      throw new Error("The provided replacements contain a key not found in the template: target");
+    }
+
     return template;
   }
 
   if (!target) {
-    return replacePlaceholder(template, "target", "");
+    return replacePlaceholder(template, "target", "the current context");
   }
 
-  return replacePlaceholder(template, "target", ` to ${target}`);
+  return replacePlaceholder(template, "target", target);
 }
 
 /**
