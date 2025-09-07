@@ -9,7 +9,7 @@ server.registerPrompt(
   {
     title: "Format",
     description: "Apply structure and formatting conventions to writing",
-    argsSchema: { filePath: z.string() },
+    argsSchema: { filePath: z.string().optional() },
   },
   async ({ filePath }) => {
     let styleGuide = removeFrontmatter(await Bun.file(FORMATTING_STYLE_GUIDE).text());
