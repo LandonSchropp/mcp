@@ -61,17 +61,21 @@ function renderTemplateTarget(template: string, target: string | undefined): str
  * Renders a template string by replacing Handlebars-style placeholders with the provided values.
  *
  * @param template The template string containing `{{variable}}` placeholders
+ * @param target The target value for the `{{target}}` placeholder (optional)
  * @param replacements Object containing key-value pairs for replacement
  * @returns The rendered template with placeholders replaced
  * @throws Error if template contains undefined variables or replacements contain unused keys
  */
-export function renderTemplate(template: string, replacements: Record<string, string>): string {
+export function renderTemplate(
+  template: string,
+  target: string | undefined,
+  replacements: Record<string, string>,
+): string {
   // Handle target specially (if the template contains it)
-  const { target, ...otherReplacements } = replacements;
   let result = renderTemplateTarget(template, target);
 
   // Replace each placeholder with its provided value.
-  for (const [placeholder, value] of Object.entries(otherReplacements)) {
+  for (const [placeholder, value] of Object.entries(replacements)) {
     if (!templateContainsPlaceholder(template, placeholder)) {
       throw new Error(
         `The provided replacements contain a key not found in the template: ${placeholder}`,
@@ -101,13 +105,15 @@ export function renderTemplate(template: string, replacements: Record<string, st
  * Reads a template file and renders it with the provided replacements.
  *
  * @param templatePath Absolute path to the template file
+ * @param target The target value for the `{{target}}` placeholder (optional)
  * @param replacements Object containing key-value pairs for replacement
  * @returns The rendered template content
  */
 export async function renderTemplateFile(
   templatePath: string,
+  target: string | undefined,
   replacements: Record<string, string>,
 ): Promise<string> {
   const templateContent = await Bun.file(templatePath).text();
-  return renderTemplate(templateContent, replacements);
+  return renderTemplate(templateContent, target, replacements);
 }

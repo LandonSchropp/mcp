@@ -6,7 +6,7 @@ describe("renderTemplate", () => {
     it("returns empty string", () => {
       const template = "";
       const replacements = {};
-      const result = renderTemplate(template, replacements);
+      const result = renderTemplate(template, undefined, replacements);
 
       expect(result).toBe("");
     });
@@ -16,7 +16,7 @@ describe("renderTemplate", () => {
     it("replaces the placeholders", () => {
       const template = "Hello {{name}}, welcome to {{place}}!";
       const replacements = { name: "John", place: "the party" };
-      const result = renderTemplate(template, replacements);
+      const result = renderTemplate(template, undefined, replacements);
 
       expect(result).toBe("Hello John, welcome to the party!");
     });
@@ -26,7 +26,7 @@ describe("renderTemplate", () => {
     it("replaces the placeholders", () => {
       const template = "Hello {{ name }}, welcome to {{ place }}!";
       const replacements = { name: "John", place: "the party" };
-      const result = renderTemplate(template, replacements);
+      const result = renderTemplate(template, undefined, replacements);
 
       expect(result).toBe("Hello John, welcome to the party!");
     });
@@ -36,7 +36,7 @@ describe("renderTemplate", () => {
     it("replaces the placeholders", () => {
       const template = "{{name}} likes {{name}}'s own {{item}}";
       const replacements = { name: "Alice", item: "book" };
-      const result = renderTemplate(template, replacements);
+      const result = renderTemplate(template, undefined, replacements);
 
       expect(result).toBe("Alice likes Alice's own book");
     });
@@ -46,7 +46,7 @@ describe("renderTemplate", () => {
     it("returns the original text", () => {
       const template = "No placeholders here";
       const replacements = {};
-      const result = renderTemplate(template, replacements);
+      const result = renderTemplate(template, undefined, replacements);
 
       expect(result).toBe("No placeholders here");
     });
@@ -57,7 +57,7 @@ describe("renderTemplate", () => {
       const template = "Hello {{name}}!";
       const replacements = { name: "John", extra: "unused" };
 
-      expect(() => renderTemplate(template, replacements)).toThrow(
+      expect(() => renderTemplate(template, undefined, replacements)).toThrow(
         "The provided replacements contain a key not found in the template: extra",
       );
     });
@@ -68,7 +68,7 @@ describe("renderTemplate", () => {
       const template = "Hello {{name}}, welcome to {{place}} at {{time}}!";
       const replacements = { name: "John" };
 
-      expect(() => renderTemplate(template, replacements)).toThrow(
+      expect(() => renderTemplate(template, undefined, replacements)).toThrow(
         "The template contains placeholders not present in the replacements: place, time",
       );
     });
@@ -78,16 +78,16 @@ describe("renderTemplate", () => {
     describe("when the target value is present", () => {
       it("replaces target with the target value", () => {
         const template = "Apply the following rules to {{target}}:";
-        const replacements = { target: "/path/to/file.txt" };
-        const result = renderTemplate(template, replacements);
+        const replacements = {};
+        const result = renderTemplate(template, "/path/to/file.txt", replacements);
 
         expect(result).toBe("Apply the following rules to /path/to/file.txt:");
       });
 
       it("works with other placeholders", () => {
         const template = "Apply {{action}} to {{target}} with {{content}}.";
-        const replacements = { action: "formatting", target: "main.ts", content: "these rules" };
-        const result = renderTemplate(template, replacements);
+        const replacements = { action: "formatting", content: "these rules" };
+        const result = renderTemplate(template, "main.ts", replacements);
 
         expect(result).toBe("Apply formatting to main.ts with these rules.");
       });
@@ -96,8 +96,8 @@ describe("renderTemplate", () => {
     describe("when the target value is an empty string", () => {
       it("uses 'the current context'", () => {
         const template = "Apply the following rules to {{target}}:";
-        const replacements = { target: "" };
-        const result = renderTemplate(template, replacements);
+        const replacements = {};
+        const result = renderTemplate(template, "", replacements);
 
         expect(result).toBe("Apply the following rules to the current context:");
       });
@@ -107,7 +107,7 @@ describe("renderTemplate", () => {
       it("uses 'the current context'", () => {
         const template = "Apply the following rules to {{target}}:";
         const replacements = {};
-        const result = renderTemplate(template, replacements);
+        const result = renderTemplate(template, undefined, replacements);
 
         expect(result).toBe("Apply the following rules to the current context:");
       });
@@ -118,9 +118,9 @@ describe("renderTemplate", () => {
     describe("when the target value is present", () => {
       it("throws error for unused target key", () => {
         const template = "Hello {{name}}!";
-        const replacements = { name: "World", target: "file.txt" };
+        const replacements = { name: "World" };
 
-        expect(() => renderTemplate(template, replacements)).toThrow(
+        expect(() => renderTemplate(template, "file.txt", replacements)).toThrow(
           "The provided replacements contain a key not found in the template: target",
         );
       });
@@ -129,9 +129,9 @@ describe("renderTemplate", () => {
     describe("when the target value is an empty string", () => {
       it("throws error for unused target key", () => {
         const template = "Hello {{name}}!";
-        const replacements = { name: "World", target: "" };
+        const replacements = { name: "World" };
 
-        expect(() => renderTemplate(template, replacements)).toThrow(
+        expect(() => renderTemplate(template, "", replacements)).toThrow(
           "The provided replacements contain a key not found in the template: target",
         );
       });
@@ -141,7 +141,7 @@ describe("renderTemplate", () => {
       it("works normally with other placeholders", () => {
         const template = "Hello {{name}}!";
         const replacements = { name: "World" };
-        const result = renderTemplate(template, replacements);
+        const result = renderTemplate(template, undefined, replacements);
 
         expect(result).toBe("Hello World!");
       });
@@ -156,7 +156,7 @@ describe("renderTemplateFile", () => {
     await Bun.write(TEMPLATE_PATH, "Hello {{name}}!");
 
     const replacements = { name: "World" };
-    const result = await renderTemplateFile(TEMPLATE_PATH, replacements);
+    const result = await renderTemplateFile(TEMPLATE_PATH, undefined, replacements);
 
     expect(result).toBe("Hello World!");
   });
