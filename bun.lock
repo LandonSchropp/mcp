@@ -12,6 +12,12 @@
         "typescript": "^5.9.2",
       },
     },
+    "packages/mcp-shared": {
+      "name": "@landonschropp/mcp-shared",
+      "devDependencies": {
+        "@modelcontextprotocol/sdk": "^1.2.2",
+      },
+    },
     "packages/mcp-writing": {
       "name": "@landonschropp/mcp-writing",
       "bin": {
@@ -49,6 +55,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.30", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q=="],
+
+    "@landonschropp/mcp-shared": ["@landonschropp/mcp-shared@workspace:packages/mcp-shared"],
 
     "@landonschropp/mcp-writing": ["@landonschropp/mcp-writing@workspace:packages/mcp-writing"],
 
