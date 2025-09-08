@@ -10,3 +10,4 @@ await import("./prompts/format.ts");
 await import("./prompts/headers.ts");
 await import("./prompts/lists.ts");
 await import("./prompts/title.ts");
+await import("./prompts/voice.ts");

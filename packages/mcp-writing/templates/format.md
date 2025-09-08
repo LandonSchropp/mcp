@@ -1,3 +1,3 @@
-Apply the following rules to {{target}}:
+Apply the following guidelines to {{target}}:
 
 {{content}}
