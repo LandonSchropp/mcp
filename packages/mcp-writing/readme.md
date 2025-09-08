@@ -8,4 +8,4 @@ The server requires three environment variables:
 
 - `FORMAT_STYLE_GUIDE`: The path to a markdown file containing formatting conventions.
 - `VOICE_STYLE_GUIDE`: The path to a markdown file containing language and voice guidelines.
-- `WEAKNESSES_STYLE_GUIDE`: The path to a markdown file containing writing weaknesses to coach on.
+- `IMPROVEMENT_STYLE_GUIDE`: The path to a markdown file containing writing improvement areas to coach on.

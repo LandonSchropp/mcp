@@ -10,4 +10,4 @@ export function requireEnvironmentVariable(name: string): string {
 
 export const FORMAT_STYLE_GUIDE = requireEnvironmentVariable("FORMAT_STYLE_GUIDE");
 export const VOICE_STYLE_GUIDE = requireEnvironmentVariable("VOICE_STYLE_GUIDE");
-export const WEAKNESSES_STYLE_GUIDE = requireEnvironmentVariable("WEAKNESSES_STYLE_GUIDE");
+export const IMPROVEMENT_STYLE_GUIDE = requireEnvironmentVariable("IMPROVEMENT_STYLE_GUIDE");

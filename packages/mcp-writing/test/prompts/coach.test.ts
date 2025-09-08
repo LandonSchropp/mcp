@@ -12,13 +12,13 @@ describe("prompts/coach", () => {
 
   beforeEach(async () => {
     return await mockStyleGuide(
-      "WEAKNESSES_STYLE_GUIDE",
+      "IMPROVEMENT_STYLE_GUIDE",
       dedent`
         ---
-        title: Writing Weaknesses
+        title: Writing Improvements
         ---
 
-        Common Writing Weaknesses to Address
+        Common Writing Improvement Areas
       `,
     );
   });
@@ -47,11 +47,11 @@ describe("prompts/coach", () => {
     expect(result.messages[0].content.text).toContain("actionable feedback");
   });
 
-  it("includes the weaknesses style guide", async () => {
+  it("includes the improvement style guide", async () => {
     const client = await createTestClient();
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
-    expect(result.messages[0].content.text).toContain("Common Writing Weaknesses to Address");
+    expect(result.messages[0].content.text).toContain("Common Writing Improvement Areas");
   });
 
   it("removes the frontmatter from the style guide", async () => {
@@ -59,6 +59,6 @@ describe("prompts/coach", () => {
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");
-    expect(result.messages[0].content.text).not.toContain("title: Writing Weaknesses");
+    expect(result.messages[0].content.text).not.toContain("title: Writing Improvements");
   });
 });

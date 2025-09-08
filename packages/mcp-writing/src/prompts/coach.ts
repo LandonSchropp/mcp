@@ -1,4 +1,4 @@
-import { WEAKNESSES_STYLE_GUIDE } from "../env.ts";
+import { IMPROVEMENT_STYLE_GUIDE } from "../env.ts";
 import { server } from "../server.ts";
 import { removeFrontmatter } from "@landonschropp/mcp-shared/markdown";
 import { createPromptMessageFromTemplate } from "@landonschropp/mcp-shared/message";
@@ -18,14 +18,14 @@ server.registerPrompt(
     },
   },
   async ({ target }) => {
-    let weaknessesGuide = removeFrontmatter(await Bun.file(WEAKNESSES_STYLE_GUIDE).text());
+    let improvementGuide = removeFrontmatter(await Bun.file(IMPROVEMENT_STYLE_GUIDE).text());
 
     return {
       messages: [
         await createPromptMessageFromTemplate(
           join(import.meta.dir, "../../templates/coach.md"),
           target,
-          { content: weaknessesGuide },
+          { content: improvementGuide },
         ),
       ],
     };

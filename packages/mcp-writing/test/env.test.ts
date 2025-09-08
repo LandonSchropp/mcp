@@ -70,16 +70,16 @@ describe("VOICE_STYLE_GUIDE", () => {
   });
 });
 
-describe("WEAKNESSES_STYLE_GUIDE", () => {
-  describe("when WEAKNESSES_STYLE_GUIDE is set", () => {
+describe("IMPROVEMENT_STYLE_GUIDE", () => {
+  describe("when IMPROVEMENT_STYLE_GUIDE is set", () => {
     it("exports the value", () => {
-      process.env.WEAKNESSES_STYLE_GUIDE = "weaknesses-guide";
+      process.env.IMPROVEMENT_STYLE_GUIDE = "weaknesses-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { WEAKNESSES_STYLE_GUIDE } = require("../src/env");
+      const { IMPROVEMENT_STYLE_GUIDE } = require("../src/env");
 
-      expect(WEAKNESSES_STYLE_GUIDE).toBe("weaknesses-guide");
+      expect(IMPROVEMENT_STYLE_GUIDE).toBe("weaknesses-guide");
     });
   });
 });

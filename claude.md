@@ -48,7 +48,7 @@ Configured in `mise.toml`:
 
 - `FORMAT_STYLE_GUIDE`: Path to formatting guidelines document
 - `VOICE_STYLE_GUIDE`: Path to voice/language guidelines document
-- `WEAKNESSES_STYLE_GUIDE`: Path to writing weaknesses coaching guide
+- `IMPROVEMENT_STYLE_GUIDE`: Path to writing weaknesses coaching guide
 
 These link to external documents in `/Users/landon/Notes/Areas/AI/Writing/`
 
