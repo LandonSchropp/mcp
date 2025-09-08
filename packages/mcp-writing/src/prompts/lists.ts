@@ -1,7 +1,7 @@
 import { FORMAT_STYLE_GUIDE } from "../env.ts";
-import { removeFrontmatter, extractSection } from "../markdown.ts";
-import { createPromptMessageFromTemplate } from "../message.ts";
 import { server } from "../server.ts";
+import { removeFrontmatter, extractSection } from "@landonschropp/mcp-shared/markdown";
+import { createPromptMessageFromTemplate } from "@landonschropp/mcp-shared/message";
 import { join } from "path";
 import { z } from "zod";
 

@@ -24,6 +24,7 @@
         "mcp-writing": "src/index.ts",
       },
       "dependencies": {
+        "@landonschropp/mcp-shared": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.17.5",
         "zod": "3.25.76",
       },

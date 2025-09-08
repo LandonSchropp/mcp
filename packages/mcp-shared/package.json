@@ -6,7 +6,11 @@
   "private": true,
   "license": "MIT",
   "type": "module",
-  "exports": "./src/index.ts",
+  "exports": {
+    "./markdown": "./src/markdown.ts",
+    "./message": "./src/message.ts",
+    "./template": "./src/template.ts"
+  },
   "scripts": {
     "check-types": "bun --cwd ../.. check-types --project packages/mcp-shared"
   },

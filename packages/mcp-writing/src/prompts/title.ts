@@ -1,5 +1,5 @@
-import { createPromptMessageFromTemplate } from "../message.ts";
 import { server } from "../server.ts";
+import { createPromptMessageFromTemplate } from "@landonschropp/mcp-shared/message";
 import { join } from "path";
 import { z } from "zod";
 
