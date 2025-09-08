@@ -1,7 +1,8 @@
 import { FORMAT_STYLE_GUIDE } from "../env.ts";
 import { removeFrontmatter, extractSection } from "../markdown.ts";
-import { createFormatPromptMessage } from "../message.ts";
+import { createPromptMessageFromTemplate } from "../message.ts";
 import { server } from "../server.ts";
+import { join } from "path";
 import { z } from "zod";
 
 server.registerPrompt(
@@ -24,7 +25,13 @@ server.registerPrompt(
     }
 
     return {
-      messages: [createFormatPromptMessage(target, listsSection)],
+      messages: [
+        await createPromptMessageFromTemplate(
+          join(import.meta.dir, "../../templates/format.md"),
+          target,
+          { content: listsSection },
+        ),
+      ],
     };
   },
 );
