@@ -6,6 +6,7 @@ export const server = new McpServer({
   version: "0.0.0",
 });
 
+await import("./prompts/draft.ts");
 await import("./prompts/format.ts");
 await import("./prompts/headers.ts");
 await import("./prompts/lists.ts");
