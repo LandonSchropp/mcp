@@ -12,6 +12,17 @@
         "typescript": "^5.9.2",
       },
     },
+    "packages/mcp-code": {
+      "name": "@landonschropp/mcp-code",
+      "bin": {
+        "mcp-code": "src/index.ts",
+      },
+      "dependencies": {
+        "@landonschropp/mcp-shared": "workspace:*",
+        "@modelcontextprotocol/sdk": "^1.17.5",
+        "zod": "3.25.76",
+      },
+    },
     "packages/mcp-shared": {
       "name": "@landonschropp/mcp-shared",
       "dependencies": {
@@ -56,6 +67,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.30", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q=="],
+
+    "@landonschropp/mcp-code": ["@landonschropp/mcp-code@workspace:packages/mcp-code"],
 
     "@landonschropp/mcp-shared": ["@landonschropp/mcp-shared@workspace:packages/mcp-shared"],
 
