@@ -31,7 +31,7 @@ describe("prompts/headers", () => {
     );
   });
 
-  it("exists", async () => {
+  it("is registered", async () => {
     const client = await createTestClient();
     const result = await client.listPrompts();
 

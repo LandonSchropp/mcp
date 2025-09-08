@@ -23,7 +23,7 @@ describe("prompts/unscramble", () => {
     );
   });
 
-  it("exists", async () => {
+  it("is registered", async () => {
     const client = await createTestClient();
     const result = await client.listPrompts();
 
