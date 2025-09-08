@@ -1,3 +1,4 @@
+import { renderTemplateFile } from "./template.ts";
 import { PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 
 /**
@@ -16,11 +17,11 @@ export function createTextMessage(text: string): PromptMessage {
   };
 }
 
-export function createFormatPromptMessage(
-  filePath: string | undefined,
-  styleGuide: string,
-): PromptMessage {
-  let target = filePath ? ` to ${filePath}` : "";
-
-  return createTextMessage(`Apply the following rules${target}:\n\n${styleGuide}`);
+export async function createPromptMessageFromTemplate(
+  templatePath: string,
+  target: string | undefined,
+  replacements: Record<string, string>,
+): Promise<PromptMessage> {
+  const renderedText = await renderTemplateFile(templatePath, target, replacements);
+  return createTextMessage(renderedText);
 }
