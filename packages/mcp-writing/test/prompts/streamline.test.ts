@@ -1,4 +1,5 @@
-import { createTestClient } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
+import { server } from "../../src/server.ts";
 import { describe, it, expect } from "bun:test";
 
 describe("prompts/streamline", () => {
@@ -10,14 +11,14 @@ describe("prompts/streamline", () => {
   } as const;
 
   it("is registered", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "streamline" }));
   });
 
   it("includes the target in the message", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -25,7 +26,7 @@ describe("prompts/streamline", () => {
   });
 
   it("includes streamlining instructions", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("identify and remove redundant");

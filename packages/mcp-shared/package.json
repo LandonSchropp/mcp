@@ -9,7 +9,8 @@
   "exports": {
     "./markdown": "./src/markdown.ts",
     "./message": "./src/message.ts",
-    "./template": "./src/template.ts"
+    "./template": "./src/template.ts",
+    "./test": "./src/test.ts"
   },
   "scripts": {
     "check-types": "bun --cwd ../.. check-types --project packages/mcp-shared"

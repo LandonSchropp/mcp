@@ -1,4 +1,5 @@
-import { createTestClient } from "../helpers.ts";
+import { server } from "../../src/server.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { describe, it, expect } from "bun:test";
 
 describe("prompts/draft", () => {
@@ -10,14 +11,14 @@ describe("prompts/draft", () => {
   } as const;
 
   it("is registered", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "draft" }));
   });
 
   it("includes the target in the message", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -25,7 +26,7 @@ describe("prompts/draft", () => {
   });
 
   it("includes draft development instructions", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Transform the outline");

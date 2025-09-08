@@ -1,4 +1,6 @@
-import { createTestClient, mockStyleGuide } from "../helpers.ts";
+import { server } from "../../src/server.ts";
+import { mockStyleGuide } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
 
@@ -24,14 +26,14 @@ describe("prompts/coach", () => {
   });
 
   it("is registered", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "coach" }));
   });
 
   it("includes the target in the message", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -39,7 +41,7 @@ describe("prompts/coach", () => {
   });
 
   it("includes coaching instructions", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("transform competent writing into memorable");
@@ -48,14 +50,14 @@ describe("prompts/coach", () => {
   });
 
   it("includes the improvement style guide", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Common Writing Improvement Areas");
   });
 
   it("removes the frontmatter from the style guide", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");

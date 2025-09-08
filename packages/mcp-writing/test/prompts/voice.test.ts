@@ -1,4 +1,6 @@
-import { createTestClient, mockStyleGuide } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
+import { mockStyleGuide } from "../helpers.ts";
+import { server } from "../../src/server.ts";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
 
@@ -24,14 +26,14 @@ describe("prompts/voice", () => {
   });
 
   it("is registered", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "voice" }));
   });
 
   it("includes the file path and style guide", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -39,14 +41,14 @@ describe("prompts/voice", () => {
   });
 
   it("includes the style guide", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Voice and Tone Guidelines");
   });
 
   it("removes the frontmatter from the style guide", async () => {
-    const client = await createTestClient();
+    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");
