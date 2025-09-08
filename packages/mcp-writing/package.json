@@ -5,9 +5,6 @@
   "bin": {
     "mcp-writing": "src/index.ts"
   },
-  "files": [
-    "src"
-  ],
   "scripts": {
     "check-types": "bun --cwd ../.. check-types --project packages/mcp-writing",
     "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts",

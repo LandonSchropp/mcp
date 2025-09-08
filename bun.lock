@@ -14,8 +14,8 @@
     },
     "packages/mcp-shared": {
       "name": "@landonschropp/mcp-shared",
-      "devDependencies": {
-        "@modelcontextprotocol/sdk": "^1.2.2",
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.17.5",
       },
     },
     "packages/mcp-writing": {

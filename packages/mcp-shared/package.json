@@ -1,0 +1,16 @@
+{
+  "name": "@landonschropp/mcp-shared",
+  "description": "Shared utilities for MCP servers",
+  "author": "Landon Schropp <schroppl@gmail.com>",
+  "repository": "https://github.com/LandonSchropp/mcp",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "check-types": "bun --cwd ../.. check-types --project packages/mcp-shared"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5"
+  }
+}
