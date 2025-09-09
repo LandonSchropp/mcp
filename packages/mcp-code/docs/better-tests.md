@@ -135,12 +135,17 @@ url: https://www.betterspecs.org/
   expect(response.headers["content-type"]).toContain("application/json");
   ```
 
-- Use mocks sparingly, typically only when simulating external APIs. Test real behavior when possible.
+- Use mocks sparingly, typically only when simulating external APIs or when calling something would have a side effect that can't be easily reverted in a test context. Test real behavior when possible.
 
   ```typescript
-  // Good - mocking external API
+  // Good (mocking external API)
   beforeEach(() => {
     jest.spyOn(weatherService, "getCurrentTemperature").mockResolvedValue(72);
+  });
+
+  // Good (mocking side effects)
+  beforeEach(() => {
+    jest.spyOn(fs, "unlinkSync").mockImplementation(() => {});
   });
   ```
 

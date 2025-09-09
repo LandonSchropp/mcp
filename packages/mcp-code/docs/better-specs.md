@@ -145,11 +145,14 @@ url: https://www.betterspecs.org/
   let!(:admin) { create(:admin) }
   ```
 
-- Use mocks sparingly, typically only when simulating external APIs. Test real behavior when possible.
+- Use mocks sparingly, typically only when simulating external APIs or when calling something would have a side effect that can't be easily reverted in a test context. Test real behavior when possible.
 
   ```ruby
-  # Good - mocking external API
+  # Good (mocking external API)
   before { allow(WeatherService).to receive(:current_temperature).and_return(72) }
+
+  # Good (mocking side effects)
+  before { allow(File).to receive(:delete).and_return(true) }
   ```
 
 - Create only the test data you need. When creating lists of undifferentiated records, 3 is usually the right number.
