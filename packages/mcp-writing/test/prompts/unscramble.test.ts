@@ -1,8 +1,10 @@
-import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { mockStyleGuide } from "../helpers.ts";
 import { server } from "../../src/server.ts";
+import { mockStyleGuide } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
+
+let client: Awaited<ReturnType<typeof createTestClient>>;
 
 describe("prompts/unscramble", () => {
   const PROMPT_OPTIONS = {
@@ -13,7 +15,7 @@ describe("prompts/unscramble", () => {
   } as const;
 
   beforeEach(async () => {
-    return await mockStyleGuide(
+    await mockStyleGuide(
       "FORMAT_STYLE_GUIDE",
       dedent`
         ---
@@ -23,17 +25,17 @@ describe("prompts/unscramble", () => {
         Structure and Formatting Guidelines
       `,
     );
+
+    client = await createTestClient(server);
   });
 
   it("is registered", async () => {
-    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "unscramble" }));
   });
 
   it("includes the target in the message", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -41,7 +43,6 @@ describe("prompts/unscramble", () => {
   });
 
   it("includes reorganization instructions", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Reorganize and clarify");
@@ -50,14 +51,12 @@ describe("prompts/unscramble", () => {
   });
 
   it("includes the format style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Structure and Formatting Guidelines");
   });
 
   it("removes the frontmatter from the style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");

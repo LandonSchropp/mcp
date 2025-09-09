@@ -1,6 +1,8 @@
-import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { server } from "../../src/server.ts";
-import { describe, it, expect } from "bun:test";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
+import { describe, it, expect, beforeEach } from "bun:test";
+
+let client: Awaited<ReturnType<typeof createTestClient>>;
 
 describe("prompts/title", () => {
   const PROMPT_OPTIONS = {
@@ -10,15 +12,15 @@ describe("prompts/title", () => {
     },
   } as const;
 
+  beforeEach(async () => (client = await createTestClient(server)));
+
   it("is registered", async () => {
-    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "title" }));
   });
 
   it("includes the target in the message", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -26,7 +28,6 @@ describe("prompts/title", () => {
   });
 
   it("includes title generation instructions", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Generate 5-10 compelling title options");

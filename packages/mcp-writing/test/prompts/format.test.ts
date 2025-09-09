@@ -1,8 +1,10 @@
-import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { mockStyleGuide } from "../helpers.ts";
 import { server } from "../../src/server.ts";
+import { mockStyleGuide } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
+
+let client: Awaited<ReturnType<typeof createTestClient>>;
 
 describe("prompts/format", () => {
   const PROMPT_OPTIONS = {
@@ -13,7 +15,7 @@ describe("prompts/format", () => {
   } as const;
 
   beforeEach(async () => {
-    return await mockStyleGuide(
+    await mockStyleGuide(
       "FORMAT_STYLE_GUIDE",
       dedent`
         ---
@@ -23,17 +25,17 @@ describe("prompts/format", () => {
         Formatting Style Guide
       `,
     );
+
+    client = await createTestClient(server);
   });
 
   it("is registered", async () => {
-    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "format" }));
   });
 
   it("includes the file path and style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -42,14 +44,12 @@ describe("prompts/format", () => {
   });
 
   it("includes the style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Formatting Style Guide");
   });
 
   it("removes the frontmatter from the style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");

@@ -1,8 +1,10 @@
-import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { mockStyleGuide } from "../helpers.ts";
 import { server } from "../../src/server.ts";
+import { mockStyleGuide } from "../helpers.ts";
+import { createTestClient } from "@landonschropp/mcp-shared/test";
 import { describe, it, expect, beforeEach } from "bun:test";
 import { dedent } from "ts-dedent";
+
+let client: Awaited<ReturnType<typeof createTestClient>>;
 
 describe("prompts/lists", () => {
   const PROMPT_OPTIONS = {
@@ -13,7 +15,7 @@ describe("prompts/lists", () => {
   } as const;
 
   beforeEach(async () => {
-    return await mockStyleGuide(
+    await mockStyleGuide(
       "FORMAT_STYLE_GUIDE",
       dedent`
         ---
@@ -35,17 +37,17 @@ describe("prompts/lists", () => {
         Use hyphens with a bold term and colon at the beginning for definitions and key concepts.
       `,
     );
+
+    client = await createTestClient(server);
   });
 
   it("is registered", async () => {
-    const client = await createTestClient(server);
     const result = await client.listPrompts();
 
     expect(result.prompts).toContainEqual(expect.objectContaining({ name: "lists" }));
   });
 
   it("includes the file path", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages).toHaveLength(1);
@@ -53,7 +55,6 @@ describe("prompts/lists", () => {
   });
 
   it("includes only the lists section", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).toContain("Use lists heavily for organization");
@@ -62,7 +63,6 @@ describe("prompts/lists", () => {
   });
 
   it("removes the frontmatter from the style guide", async () => {
-    const client = await createTestClient(server);
     const result = await client.getPrompt(PROMPT_OPTIONS);
 
     expect(result.messages[0].content.text).not.toContain("---");
