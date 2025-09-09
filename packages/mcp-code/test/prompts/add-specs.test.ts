@@ -1,5 +1,6 @@
 import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { describe, it, expect, beforeEach, spyOn } from "bun:test";
 
 let isRubyProjectSpy: ReturnType<typeof spyOn>;
 let client: Awaited<ReturnType<typeof createTestClient>>;
@@ -55,6 +56,32 @@ describe("prompts/add-specs", () => {
 
       expect(result.messages[0].content.text).not.toContain("---");
       expect(result.messages[0].content.text).not.toContain("title: Better Specs");
+    });
+  });
+
+  describe("when not in a Ruby project", () => {
+    let server: McpServer;
+
+    beforeEach(async () => {
+      // Mock isRubyProject to return false
+      const projectModule = await import("../../src/project.ts");
+      isRubyProjectSpy = spyOn(projectModule, "isRubyProject").mockReturnValue(false);
+
+      // Re-import server to pick up the conditional registration
+      delete require.cache[require.resolve("../../src/server.ts")];
+      delete require.cache[require.resolve("../../src/prompts/add-specs.ts")];
+
+      // Create client after mocks are set up
+      server = (await import("../../src/server.ts")).server;
+      client = await createTestClient(server);
+    });
+
+    it("is not registered", async () => {
+      // TODO: I _should_ be able to use listPrompts like I do above. However, there's a but in
+      // @modelcontextprotocol/sdk that throws an error when `registerPrompt` has not been called.
+      // This is a temporary workaround to ensure the prompt is not registered.
+      // https://github.com/modelcontextprotocol/typescript-sdk/issues/929
+      expect((server as any)._registeredPrompts["add-specs"]).toBeFalsy();
     });
   });
 });
