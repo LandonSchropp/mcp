@@ -6,7 +6,5 @@ export const server = new McpServer({
   version: "0.0.0",
 });
 
-// Prompt imports will be added here as they are implemented
-// Example:
-// await import("./prompts/jest.ts");
-// await import("./prompts/rspec.ts");
+// Prompt imports
+await import("./prompts/better-specs.ts");
