@@ -9,4 +9,5 @@ export const server = new McpServer({
 // Prompt imports
 await import("./prompts/better-specs.ts");
 await import("./prompts/better-tests.ts");
-await import("./prompts/specs.ts");
+await import("./prompts/add-specs.ts");
+await import("./prompts/add-tests.ts");
