@@ -17,14 +17,14 @@ server.registerPrompt(
     },
   },
   async ({ target }) => {
-    let styleGuide = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
+    let content = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
 
     return {
       messages: [
         await createPromptMessageFromTemplate(
           join(import.meta.dir, "../../templates/format.md"),
           target,
-          { content: styleGuide },
+          { content },
         ),
       ],
     };

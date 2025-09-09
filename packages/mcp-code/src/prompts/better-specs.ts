@@ -16,7 +16,7 @@ server.registerPrompt(
     },
   },
   async ({ target }) => {
-    let specsGuide = removeFrontmatter(
+    let content = removeFrontmatter(
       await Bun.file(join(import.meta.dir, "../../docs/better-specs.md")).text(),
     );
 
@@ -25,7 +25,7 @@ server.registerPrompt(
         await createPromptMessageFromTemplate(
           join(import.meta.dir, "../../templates/better-specs.md"),
           target,
-          { content: specsGuide },
+          { content },
         ),
       ],
     };

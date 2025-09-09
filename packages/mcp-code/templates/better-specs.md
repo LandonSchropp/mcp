@@ -1,3 +1,3 @@
-Apply the following Better Specs guidelines to {{target}}:
+Apply the following guidelines to {{target}}:
 
 {{content}}

@@ -18,9 +18,9 @@ server.registerPrompt(
   },
   async ({ target }) => {
     let styleGuide = removeFrontmatter(await Bun.file(FORMAT_STYLE_GUIDE).text());
-    let listsSection = extractSection(styleGuide, "Lists");
+    let content = extractSection(styleGuide, "Lists");
 
-    if (!listsSection) {
+    if (!content) {
       throw new Error("Lists section not found in style guide");
     }
 
@@ -29,7 +29,7 @@ server.registerPrompt(
         await createPromptMessageFromTemplate(
           join(import.meta.dir, "../../templates/format.md"),
           target,
-          { content: listsSection },
+          { content },
         ),
       ],
     };

@@ -18,14 +18,14 @@ server.registerPrompt(
     },
   },
   async ({ target }) => {
-    let improvementGuide = removeFrontmatter(await Bun.file(IMPROVEMENT_STYLE_GUIDE).text());
+    let content = removeFrontmatter(await Bun.file(IMPROVEMENT_STYLE_GUIDE).text());
 
     return {
       messages: [
         await createPromptMessageFromTemplate(
           join(import.meta.dir, "../../templates/coach.md"),
           target,
-          { content: improvementGuide },
+          { content },
         ),
       ],
     };
