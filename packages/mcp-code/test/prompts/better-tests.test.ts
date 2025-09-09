@@ -1,6 +1,8 @@
-import { server } from "../../src/server.ts";
 import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+
+let isJavaScriptProjectSpy: ReturnType<typeof spyOn>;
+let client: Awaited<ReturnType<typeof createTestClient>>;
 
 describe("prompts/better-tests", () => {
   const PROMPT_OPTIONS = {
@@ -10,37 +12,49 @@ describe("prompts/better-tests", () => {
     },
   } as const;
 
-  it("is registered", async () => {
-    const client = await createTestClient(server);
-    const result = await client.listPrompts();
+  describe("when in a JavaScript project", () => {
+    beforeEach(async () => {
+      // Mock isJavaScriptProject to return true
+      const projectModule = await import("../../src/project.ts");
+      isJavaScriptProjectSpy = spyOn(projectModule, "isJavaScriptProject").mockReturnValue(true);
 
-    expect(result.prompts).toContainEqual(expect.objectContaining({ name: "better-tests" }));
-  });
+      // Re-import server to pick up the conditional registration
+      delete require.cache[require.resolve("../../src/server.ts")];
+      delete require.cache[require.resolve("../../src/prompts/better-tests.ts")];
 
-  it("includes the file path and better tests guide", async () => {
-    const client = await createTestClient(server);
-    const result = await client.getPrompt(PROMPT_OPTIONS);
+      // Create client after mocks are set up
+      const { server } = await import("../../src/server.ts");
+      client = await createTestClient(server);
+    });
 
-    expect(result.messages).toHaveLength(1);
-    expect(result.messages[0].content.text).toContain("test/user.test.ts");
-  });
+    it("is registered", async () => {
+      const result = await client.listPrompts();
 
-  it("includes the better tests conventions", async () => {
-    const client = await createTestClient(server);
-    const result = await client.getPrompt(PROMPT_OPTIONS);
+      expect(result.prompts).toContainEqual(expect.objectContaining({ name: "better-tests" }));
+    });
 
-    expect(result.messages[0].content.text).toContain(
-      "Use `it` instead of `test` for individual test cases",
-    );
-    expect(result.messages[0].content.text).toContain("Use contexts to organize related tests");
-    expect(result.messages[0].content.text).toContain("Always use the `expect` syntax");
-  });
+    it("includes the file path and better tests guide", async () => {
+      const result = await client.getPrompt(PROMPT_OPTIONS);
 
-  it("removes the frontmatter from the tests guide", async () => {
-    const client = await createTestClient(server);
-    const result = await client.getPrompt(PROMPT_OPTIONS);
+      expect(result.messages).toHaveLength(1);
+      expect(result.messages[0].content.text).toContain("test/user.test.ts");
+    });
 
-    expect(result.messages[0].content.text).not.toContain("---");
-    expect(result.messages[0].content.text).not.toContain("title: Better Tests");
+    it("includes the better tests conventions", async () => {
+      const result = await client.getPrompt(PROMPT_OPTIONS);
+
+      expect(result.messages[0].content.text).toContain(
+        "Use `it` instead of `test` for individual test cases",
+      );
+      expect(result.messages[0].content.text).toContain("Use contexts to organize related tests");
+      expect(result.messages[0].content.text).toContain("Always use the `expect` syntax");
+    });
+
+    it("removes the frontmatter from the tests guide", async () => {
+      const result = await client.getPrompt(PROMPT_OPTIONS);
+
+      expect(result.messages[0].content.text).not.toContain("---");
+      expect(result.messages[0].content.text).not.toContain("title: Better Tests");
+    });
   });
 });
