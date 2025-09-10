@@ -1,6 +1,14 @@
 # MCP Servers
 
-This is my personal collection of Model Context Protocol (MCP) servers.
+This repo contains my personal collection of Model Context Protocol (MCP) servers, which are mostly
+composed of custom prompts. I _could_ implement prompts directly in tools like Claude Code, but
+using MCP servers has a few advantages:
+
+- The context for the prompts can be dynamically retrieved.
+- I can easily change the prompt text to fit the specific circumstances.
+- I can selectively exclude prompts that are not applicable to the current project.
+- MCP servers can be called from a variety of agents, not just Claude Code.
+- With MCP servers, I can run subagents in isolated contexts, preserving the main context window of the caller.
 
 ## Servers
 
