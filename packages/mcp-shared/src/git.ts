@@ -1,5 +1,14 @@
 import spawn, { SubprocessError } from "nano-spawn";
 
+interface GitCommit {
+  sha: string;
+  title: string;
+}
+
+interface GitDiff {
+  commits: GitCommit[];
+  diff: string;
+}
 
 /**
  * Asserts that a command-line tool is installed by checking its exit code.
@@ -34,4 +43,43 @@ export async function assertGitInstalled() {
  */
 export async function assertGitHubInstalled() {
   await assertInstalled("GitHub", "gh");
+}
+
+/**
+ * Get the diff between two commits or branches, including the list of commits and the diff itself.
+ * This is equivalent to the diff produced with `git diff from..to` and `git log from..to`. This
+ * means 'from' is excluded (non-inclusive) and 'to' is included (inclusive).
+ *
+ * @example This returns all commits on `feature` that aren't on `main`, plus their cumulative diff.
+ *
+ * ```typescript
+ * await diff("main", "feature");
+ * ```
+ *
+ * @param from The starting commit/branch reference (excluded from results).
+ * @param to The ending commit/branch reference (included in results).
+ * @returns An object containing the commits between the references and the diff.
+ */
+export async function diff(from: string, to: string): Promise<GitDiff> {
+  // Get the list of commits between the two references
+  const log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
+
+  // Ensure there are commits to process
+  if (!log) {
+    return { commits: [], diff: "" };
+  }
+
+  // Parse the commits
+  const commits: GitCommit[] = log.split("\n").map((line) => {
+    const [, sha, title] = line.match(/^(\w+) (.+)$/)!;
+    return { sha, title };
+  });
+
+  // Get the diff between the two references
+  const diff = (await spawn("git", ["diff", `${from}..${to}`])).stdout.trim();
+
+  return {
+    commits,
+    diff: diff.trim(),
+  };
 }
