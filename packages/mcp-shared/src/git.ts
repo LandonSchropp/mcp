@@ -1,13 +1,5 @@
-import nanoSpawn, { SubprocessError } from "nano-spawn";
+import spawn, { SubprocessError } from "nano-spawn";
 
-/**
- * This is a wrapper around nano-spawn. It works almost exactly the same, except if a
- *
- * @param command The command to run.
- * @param args The arguments to pass to the command.
- * @returns The result of the command.
- */
-function spawn(command: string, args: string[] = []) {}
 
 /**
  * Asserts that a command-line tool is installed by checking its exit code.
@@ -18,7 +10,7 @@ function spawn(command: string, args: string[] = []) {}
  */
 async function assertInstalled(name: string, command: string, args: string[] = []): Promise<void> {
   try {
-    await nanoSpawn(command, args);
+    await spawn(command, args);
   } catch (error) {
     if (error instanceof SubprocessError) {
       throw new Error(`${name} is not installed.`);
