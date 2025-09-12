@@ -8,6 +8,7 @@
   "type": "module",
   "exports": {
     "./env": "./src/env.ts",
+    "./git": "./src/git.ts",
     "./markdown": "./src/markdown.ts",
     "./message": "./src/message.ts",
     "./template": "./src/template.ts",
