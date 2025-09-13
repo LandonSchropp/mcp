@@ -10,6 +10,7 @@ describe("resources/branch", () => {
     // Mock the git functions
     mock.module("@landonschropp/mcp-shared/git", () => ({
       getDefaultBranch: mock(async () => "main"),
+      getCurrentBranch: mock(async () => "current-feature"),
       getDiff: mock(async () => ({
         commits: [
           { sha: "abc123", title: "Add new feature" },
@@ -72,6 +73,52 @@ describe("resources/branch", () => {
         { sha: "def456", title: "Fix bug in login" },
       ],
       diff: expect.stringContaining("export function newFeature()"),
+    });
+  });
+
+  describe("current branch resource", () => {
+    it("calls getCurrentBranch to get the current branch", async () => {
+      const { getCurrentBranch } = await import("@landonschropp/mcp-shared/git");
+
+      await client.readResource({
+        uri: "context://branch",
+      });
+
+      expect(getCurrentBranch).toHaveBeenCalled();
+    });
+
+    it("returns JSON data for the current branch", async () => {
+      const result = await client.readResource({
+        uri: "context://branch",
+      });
+
+      expect(result.contents).toEqual([
+        {
+          uri: "context://branch",
+          mimeType: "application/json",
+          text: expect.any(String),
+        },
+      ]);
+
+      const diff = JSON.parse(result.contents[0].text as string);
+
+      expect(diff).toEqual({
+        commits: [
+          { sha: "abc123", title: "Add new feature" },
+          { sha: "def456", title: "Fix bug in login" },
+        ],
+        diff: expect.stringContaining("export function newFeature()"),
+      });
+    });
+
+    it("calls getDiff with default branch and current branch", async () => {
+      const { getDiff } = await import("@landonschropp/mcp-shared/git");
+
+      await client.readResource({
+        uri: "context://branch",
+      });
+
+      expect(getDiff).toHaveBeenCalledWith("main", "current-feature");
     });
   });
 });
