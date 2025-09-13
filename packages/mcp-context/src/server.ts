@@ -6,7 +6,4 @@ export const server = new McpServer({
   version: "0.0.0",
 });
 
-// Prompt imports will be added here as they are implemented
-// Example:
-// await import("./prompts/claudemd.ts");
-// await import("./prompts/project.ts");
+await import("./resources/branch.ts");
