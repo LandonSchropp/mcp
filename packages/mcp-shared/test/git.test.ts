@@ -2,6 +2,8 @@ import {
   assertGitInstalled,
   assertGitHubInstalled,
   getDiff,
+  getCurrentBranch,
+  getDefaultBranch,
   getPullRequest,
   getBranches,
 } from "../src/git.js";
@@ -274,6 +276,76 @@ describe("getPullRequest", () => {
     ]);
 
     expect(result.diff).toContain("export function newFeature()");
+  });
+});
+
+describe("getCurrentBranch", () => {
+  beforeEach(() => {
+    mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
+
+    mock.module("nano-spawn", () => ({
+      default: mockSpawn,
+      SubprocessError,
+    }));
+  });
+
+  it("calls git branch with --show-current flag", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "feature-branch\n" }));
+
+    await getCurrentBranch();
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--show-current"]);
+  });
+
+  it("returns the current branch name", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "my-feature-branch\n" }));
+
+    const result = await getCurrentBranch();
+
+    expect(result).toBe("my-feature-branch");
+  });
+
+  it("trims whitespace from branch name", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "  main  \n" }));
+
+    const result = await getCurrentBranch();
+
+    expect(result).toBe("main");
+  });
+});
+
+describe("getDefaultBranch", () => {
+  beforeEach(() => {
+    mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
+
+    mock.module("nano-spawn", () => ({
+      default: mockSpawn,
+      SubprocessError,
+    }));
+  });
+
+  it("calls git default-branch command", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "main\n" }));
+
+    await getDefaultBranch();
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["default-branch"]);
+  });
+
+  it("returns the default branch name", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "main\n" }));
+
+    const result = await getDefaultBranch();
+
+    expect(result).toBe("main");
+  });
+
+  it("trims whitespace from branch name", async () => {
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "  develop  \n" }));
+
+    const result = await getDefaultBranch();
+
+    expect(result).toBe("develop");
   });
 });
 

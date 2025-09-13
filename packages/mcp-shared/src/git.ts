@@ -89,6 +89,19 @@ export async function getDiff(from: string, to: string): Promise<GitDiff> {
   };
 }
 
+/** @returns The name of the current branch. */
+export async function getCurrentBranch(): Promise<string> {
+  return (await spawn("git", ["branch", "--show-current"])).stdout.trim();
+}
+
+/** @returns The name of the default branch. */
+export async function getDefaultBranch(): Promise<string> {
+  // TODO: This uses my custom default-branch command, which will only work with my dotfiles. If I'd
+  // like for this to be usable by others, I need to fully implement a default branch detection
+  // mechanism here.
+  return (await spawn("git", ["default-branch"])).stdout.trim();
+}
+
 /**
  * Get a list of all local Git branches.
  *
