@@ -90,6 +90,21 @@ export async function diff(from: string, to: string): Promise<GitDiff> {
 }
 
 /**
+ * Get a list of all local Git branches.
+ *
+ * @returns An array of branch names.
+ */
+export async function listBranches(): Promise<string[]> {
+  const branches = (await spawn("git", ["branch", "--format=%(refname:short)"])).stdout.trim();
+
+  if (!branches) {
+    return [];
+  }
+
+  return branches.split("\n").map((branch) => branch.trim());
+}
+
+/**
  * Get pull request information including commits, diff, title, and description. Uses GitHub CLI to
  * fetch PR details and combines them with git diff information.
  *

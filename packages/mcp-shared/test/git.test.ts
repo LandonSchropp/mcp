@@ -1,10 +1,16 @@
-import { assertGitInstalled, assertGitHubInstalled, diff, pullRequest } from "../src/git.js";
+import {
+  assertGitInstalled,
+  assertGitHubInstalled,
+  diff,
+  pullRequest,
+  listBranches,
+} from "../src/git.js";
 import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
 import dedent from "ts-dedent";
 
 let mockSpawn: Mock<any>;
 
-class SubprocessError extends Error { }
+class SubprocessError extends Error {}
 
 describe("assertGitInstalled", () => {
   beforeEach(() => {
@@ -268,5 +274,67 @@ describe("pullRequest", () => {
     ]);
 
     expect(result.diff).toContain("export function newFeature()");
+  });
+});
+
+describe("listBranches", () => {
+  beforeEach(() => {
+    mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
+
+    mock.module("nano-spawn", () => ({
+      default: mockSpawn,
+      SubprocessError,
+    }));
+  });
+
+  it("calls git branch with the correct format", async () => {
+    await listBranches();
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--format=%(refname:short)"]);
+  });
+
+  describe("when there are no branches", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "" }));
+    });
+
+    it("returns empty array", async () => {
+      const result = await listBranches();
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("when there are branches", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation(() =>
+        Promise.resolve({
+          stdout: dedent`
+          main
+          feature/new-ui
+          bugfix/auth-issue
+          develop
+        `,
+        }),
+      );
+    });
+
+    it("returns array of branch names", async () => {
+      const result = await listBranches();
+
+      expect(result).toEqual(["main", "feature/new-ui", "bugfix/auth-issue", "develop"]);
+    });
+
+    it("trims whitespace from branch names", async () => {
+      mockSpawn.mockImplementation(() =>
+        Promise.resolve({
+          stdout: "  main  \n  feature/test  \n",
+        }),
+      );
+
+      const result = await listBranches();
+
+      expect(result).toEqual(["main", "feature/test"]);
+    });
   });
 });
