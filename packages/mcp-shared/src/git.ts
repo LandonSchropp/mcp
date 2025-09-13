@@ -58,14 +58,14 @@ export async function assertGitHubInstalled() {
  * @example This returns all commits on `feature` that aren't on `main`, plus their cumulative diff.
  *
  * ```typescript
- * await diff("main", "feature");
+ * await getDiff("main", "feature");
  * ```
  *
  * @param from The starting commit/branch reference (excluded from results).
  * @param to The ending commit/branch reference (included in results).
  * @returns An object containing the commits between the references and the diff.
  */
-export async function diff(from: string, to: string): Promise<GitDiff> {
+export async function getDiff(from: string, to: string): Promise<GitDiff> {
   // Get the list of commits between the two references
   const log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
 
@@ -94,7 +94,7 @@ export async function diff(from: string, to: string): Promise<GitDiff> {
  *
  * @returns An array of branch names.
  */
-export async function listBranches(): Promise<string[]> {
+export async function getBranches(): Promise<string[]> {
   const branches = (await spawn("git", ["branch", "--format=%(refname:short)"])).stdout.trim();
 
   if (!branches) {
@@ -111,14 +111,14 @@ export async function listBranches(): Promise<string[]> {
  * @example Get PR information for PR #123 in org/repo.
  *
  * ```typescript
- * const pullRequest = await pullRequest("org/repo", 123);
+ * const pullRequest = await getPullRequest("org/repo", 123);
  * ```
  *
  * @param repo The repository in "owner/name" format.
  * @param prNumber The pull request number.
  * @returns An object containing PR details, commits, and diff.
  */
-export async function pullRequest(repo: string, prNumber: number): Promise<PullRequest> {
+export async function getPullRequest(repo: string, prNumber: number): Promise<PullRequest> {
   const pullRequestData = JSON.parse(
     (
       await spawn("gh", [

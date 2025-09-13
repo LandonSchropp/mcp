@@ -1,9 +1,9 @@
 import {
   assertGitInstalled,
   assertGitHubInstalled,
-  diff,
-  pullRequest,
-  listBranches,
+  getDiff,
+  getPullRequest,
+  getBranches,
 } from "../src/git.js";
 import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
 import dedent from "ts-dedent";
@@ -78,7 +78,7 @@ describe("assertGitHubInstalled", () => {
   });
 });
 
-describe("diff", () => {
+describe("getDiff", () => {
   beforeEach(() => {
     mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
 
@@ -116,13 +116,13 @@ describe("diff", () => {
   });
 
   it("calls git log with the correct range", async () => {
-    await diff("main", "feature");
+    await getDiff("main", "feature");
 
     expect(mockSpawn).toHaveBeenNthCalledWith(1, "git", ["log", "main..feature", "--format=%h %s"]);
   });
 
   it("calls git diff with the correct range", async () => {
-    await diff("main", "feature");
+    await getDiff("main", "feature");
 
     expect(mockSpawn).toHaveBeenNthCalledWith(2, "git", ["diff", "main..feature"]);
   });
@@ -133,13 +133,13 @@ describe("diff", () => {
     });
 
     it("returns empty commits array", async () => {
-      const result = await diff("main", "feature");
+      const result = await getDiff("main", "feature");
 
       expect(result.commits).toEqual([]);
     });
 
     it("returns empty diff string", async () => {
-      const result = await diff("main", "feature");
+      const result = await getDiff("main", "feature");
 
       expect(result.diff).toEqual("");
     });
@@ -147,7 +147,7 @@ describe("diff", () => {
 
   describe("when there are commits", () => {
     it("returns parsed commits with sha and title", async () => {
-      const result = await diff("main", "feature");
+      const result = await getDiff("main", "feature");
 
       expect(result.commits).toHaveLength(2);
 
@@ -164,7 +164,7 @@ describe("diff", () => {
     });
 
     it("returns the diff output", async () => {
-      const result = await diff("main", "feature");
+      const result = await getDiff("main", "feature");
 
       expect(result.diff).toContain("diff --git a/file.txt b/file.txt");
       expect(result.diff).toContain("-old line");
@@ -173,7 +173,7 @@ describe("diff", () => {
   });
 });
 
-describe("pullRequest", () => {
+describe("getPullRequest", () => {
   beforeEach(() => {
     mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
 
@@ -205,7 +205,7 @@ describe("pullRequest", () => {
       return { stdout: "" };
     });
 
-    await pullRequest("org/repo", 123);
+    await getPullRequest("org/repo", 123);
 
     expect(mockSpawn).toHaveBeenCalledWith("gh", [
       "pr",
@@ -257,7 +257,7 @@ describe("pullRequest", () => {
       return { stdout: "" };
     });
 
-    const result = await pullRequest("org/repo", 123);
+    const result = await getPullRequest("org/repo", 123);
 
     expect(result.title).toBe("Add new feature");
     expect(result.description).toBe("This PR adds a new feature to the application");
@@ -277,7 +277,7 @@ describe("pullRequest", () => {
   });
 });
 
-describe("listBranches", () => {
+describe("getBranches", () => {
   beforeEach(() => {
     mockSpawn = mock(() => Promise.resolve({ stdout: "" }));
 
@@ -288,7 +288,7 @@ describe("listBranches", () => {
   });
 
   it("calls git branch with the correct format", async () => {
-    await listBranches();
+    await getBranches();
 
     expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--format=%(refname:short)"]);
   });
@@ -299,7 +299,7 @@ describe("listBranches", () => {
     });
 
     it("returns empty array", async () => {
-      const result = await listBranches();
+      const result = await getBranches();
 
       expect(result).toEqual([]);
     });
@@ -320,7 +320,7 @@ describe("listBranches", () => {
     });
 
     it("returns array of branch names", async () => {
-      const result = await listBranches();
+      const result = await getBranches();
 
       expect(result).toEqual(["main", "feature/new-ui", "bugfix/auth-issue", "develop"]);
     });
@@ -332,7 +332,7 @@ describe("listBranches", () => {
         }),
       );
 
-      const result = await listBranches();
+      const result = await getBranches();
 
       expect(result).toEqual(["main", "feature/test"]);
     });
