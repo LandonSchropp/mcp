@@ -10,6 +10,11 @@ interface GitDiff {
   diff: string;
 }
 
+interface PullRequest extends GitDiff {
+  title: string;
+  description: string;
+}
+
 /**
  * Asserts that a command-line tool is installed by checking its exit code.
  *
@@ -81,5 +86,51 @@ export async function diff(from: string, to: string): Promise<GitDiff> {
   return {
     commits,
     diff: diff.trim(),
+  };
+}
+
+/**
+ * Get pull request information including commits, diff, title, and description. Uses GitHub CLI to
+ * fetch PR details and combines them with git diff information.
+ *
+ * @example Get PR information for PR #123 in org/repo.
+ *
+ * ```typescript
+ * const pullRequest = await pullRequest("org/repo", 123);
+ * ```
+ *
+ * @param repo The repository in "owner/name" format.
+ * @param prNumber The pull request number.
+ * @returns An object containing PR details, commits, and diff.
+ */
+export async function pullRequest(repo: string, prNumber: number): Promise<PullRequest> {
+  const pullRequestData = JSON.parse(
+    (
+      await spawn("gh", [
+        "pr",
+        "view",
+        prNumber.toString(),
+        "--repo",
+        repo,
+        "--json",
+        "title,body,commits",
+      ])
+    ).stdout,
+  );
+
+  const commits: GitCommit[] = pullRequestData.commits.map((commit: any) => ({
+    sha: commit.oid.substring(0, 7),
+    title: commit.messageHeadline,
+  }));
+
+  const diff = (
+    await spawn("gh", ["pr", "diff", prNumber.toString(), "--repo", repo])
+  ).stdout.trim();
+
+  return {
+    commits,
+    diff,
+    title: pullRequestData.title,
+    description: pullRequestData.body,
   };
 }
