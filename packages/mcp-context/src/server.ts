@@ -7,4 +7,5 @@ export const server = new McpServer({
 });
 
 await import("./resources/branch.ts");
+await import("./prompts/branch.ts");
 await import("./prompts/current-branch.ts");
