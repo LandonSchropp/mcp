@@ -31,7 +31,7 @@ async function getBranchResourceResult(uri: string, branchName: string) {
 
 server.registerResource(
   "branch",
-  new ResourceTemplate("context://branch/{branch}", {
+  new ResourceTemplate("context://branch/{+branch}", {
     list: undefined,
     complete: {
       branch: async (value: string) => {

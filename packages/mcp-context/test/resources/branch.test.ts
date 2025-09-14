@@ -52,7 +52,7 @@ describe("resources/branch", () => {
     expect(getDiff).toHaveBeenCalledWith("main", "my-branch");
   });
 
-  it("returns JSON data showing the diff for the current branch", async () => {
+  it("returns JSON data showing the diff for the branch", async () => {
     const result = await client.readResource({
       uri: "context://branch/feature",
     });
@@ -73,6 +73,25 @@ describe("resources/branch", () => {
         { sha: "def456", title: "Fix bug in login" },
       ],
       diff: expect.stringContaining("export function newFeature()"),
+    });
+  });
+
+  describe("when the branch name contains slashes", () => {
+    it("returns JSON data showing the diff for the branch", async () => {
+      const result = await client.readResource({
+        uri: "context://branch/feature/auth",
+      });
+
+      expect(result.contents).toEqual([
+        {
+          uri: "context://branch/feature/auth",
+          mimeType: "application/json",
+          text: expect.any(String),
+        },
+      ]);
+
+      const { getDiff } = await import("@landonschropp/mcp-shared/git");
+      expect(getDiff).toHaveBeenCalledWith("main", "feature/auth");
     });
   });
 
