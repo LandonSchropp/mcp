@@ -1,8 +1,13 @@
 # MCP Servers
 
-This repo contains my personal collection of Model Context Protocol (MCP) servers, which are mostly
-composed of custom prompts. I _could_ implement prompts directly in tools like Claude Code, but
-using MCP servers has a few advantages:
+This repo contains my personal Model Context Protocol (MCP) server, which is primarily composed of
+custom prompts. The server is completely customized to my personal workflow, and isn't meant to be
+used by anyone else, although others are welcome to use it if they'd like.
+
+## Why Not Just Use Claude Code?
+
+I _could_ implement prompts directly in tools like Claude Code, but using MCP servers has a few
+advantages:
 
 - The context for the prompts can be dynamically retrieved.
 - I can easily change the prompt text to fit the specific circumstances.
@@ -10,29 +15,78 @@ using MCP servers has a few advantages:
 - MCP servers can be called from a variety of agents, not just Claude Code.
 - With MCP servers, I can run subagents in isolated contexts, preserving the main context window of the caller.
 
-## Servers
+## Running the Server
 
-- **[Writing MCP Server](packages/mcp-writing)** - An MCP server that provides writing assistance tools and commands.
+You can connect the server to Claude Code directly when running the following command from this
+project's root directory.
+
+```bash
+claude mcp add landon bun --cwd $(pwd) start
+```
+
+Note: The package is not yet published, so you cannot run it with `bunx`.
+
+## Environment
+
+The server requires three environment variables. All of these should contain the paths to markdown
+files containing specific .
+
+- `WRITING_FORMAT`: Formatting conventions.
+- `WRITING_VOICE`: Language and voice guidelines—how the writing should sound.
+- `WRITING_IMPROVEMENT`: Coaching and improvement suggestions.
 
 ## Architecture
 
-This project is a [Bun](https://bun.sh) monorepo with packages organized under `packages/`. Each package is an independent MCP server that can be run directly using Bun's built-in TypeScript support. It uses Bun as both the package manager and runtime, with workspaces handling dependency management across all packages. Since Bun has native TypeScript support, there's no build step required—you can run TypeScript files directly.
+This project is a [Bun](https://bun.sh) monorepo with packages organized under `packages/`. Each
+package is an independent MCP server that can be run directly using Bun's built-in TypeScript
+support. It uses Bun as both the package manager and runtime, with workspaces handling dependency
+management across all packages. Since Bun has native TypeScript support, there's no build step
+required—you can run TypeScript files directly.
 
-Type checking is handled by a single shared `tsconfig.json` that validates types across all packages in the monorepo.
+### Prompts
+
+Since most of this repository is dedicated to creating custom prompts, I've made that process as
+easy as possible. Prompts are stored in the `prompts` directory, and the prompt is named after the
+path of the file in the directory. The metadata for prompts is automatically pulled from the
+frontmatter of the prompt files.
+
+The prompts are Handlebars templates that are compiled into markdown. The system is smart enough to
+recognize the [expressions](https://handlebarsjs.com/guide/expressions.html) present in each file
+and automatically add them as arguments to the prompt in the MCP server.
+
+### Expressions
+
+Currently, the following expressions are supported:
+
+- `{{ target }}`: The target the prompt should be applied to. If omitted, it will be inferred from
+  the current context.
+- `{{ branch }}`: The branch the prompt should be applied to, or the current branch if none is
+  provided.
+
+### Helpers
+
+An `include` helper embeds file content directly into prompts. It automatically strips any
+frontmatter from the files before embedding them. It also supports including a specific section of
+the document.
+
+Here are some examples:
+
+```markdown
+{{include "documentation/better-specs.md"}}
+{{include "writing/format.md" section="Lists"}}
+```
+
+The following files are automatically loaded using the environment variables provided to the server.
+
+- `writing/format.md`
+- `writing/voice.md`
+- `writing/improvement.md`
 
 ## Development
 
-The servers all come with a few standard commands:
+The MCP server comes with a commands:
 
 - `bun check-types`: Run TypeScript type checking.
 - `bun inspector`: Run the MCP inspector for the server.
 - `bun start`: Start the server locally.
 - `bun test`: Run the tests for the server.
-
-You can connect any server to Claude directly during local development. For example, to connect the writing server:
-
-```bash
-claude mcp add <server-name> bun --cwd <path-to-server>
-```
-
-Note: The packages are not yet published, so you cannot run them with `bunx`.
