@@ -48,8 +48,10 @@
     "packages/mcp-shared": {
       "name": "@landonschropp/mcp-shared",
       "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.17.5",
         "nano-spawn": "^1.0.3",
+      },
+      "peerDependencies": {
+        "@modelcontextprotocol/sdk": "^1.17.5",
       },
     },
     "packages/mcp-writing": {

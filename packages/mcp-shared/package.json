@@ -18,7 +18,9 @@
     "check-types": "bun --cwd ../.. check-types --project packages/mcp-shared"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.5",
     "nano-spawn": "^1.0.3"
+  },
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5"
   }
 }
