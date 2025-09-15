@@ -5,4 +5,4 @@ description: Apply Better Specs conventions to JavaScript/TypeScript test code
 
 Apply the following guidelines to {{target}}:
 
-{{content}}
+{{documentation "code/better-tests"}}
