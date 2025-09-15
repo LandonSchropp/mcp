@@ -1,3 +1,8 @@
+---
+title: Add Tests
+description: Add tests using a structured testing approach
+---
+
 Add tests for {{target}} using the following process:
 
 1. **Analyze current state:** Determine the appropriate test file location. If there's an existing test file, read it to understand the current structure.
