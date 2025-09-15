@@ -1,4 +1,4 @@
-import { removeFrontmatter, extractSection } from "../src/markdown";
+import { extractSection } from "../src/markdown";
 import { describe, it, expect } from "bun:test";
 import { dedent } from "ts-dedent";
 
@@ -23,45 +23,6 @@ const MARKDOWN_EXAMPLE = dedent`
 
   Conclusion content
 `;
-
-describe("removeFrontmatter", () => {
-  it("removes frontmatter and leaves content unchanged", () => {
-    const markdown = dedent`
-      ---
-      title: Test
-      author: Example
-      ---
-
-      This is content that should remain.
-
-      ## Section Header
-
-      More content here.
-    `;
-
-    const expected = dedent`
-      This is content that should remain.
-
-      ## Section Header
-
-      More content here.
-    `;
-
-    expect(removeFrontmatter(markdown)).toBe(expected);
-  });
-
-  it("leaves markdown unchanged when no frontmatter exists", () => {
-    const markdown = dedent`
-      This is content without frontmatter.
-
-      ## Section Header
-
-      More content here.
-    `;
-
-    expect(removeFrontmatter(markdown)).toBe(markdown);
-  });
-});
 
 describe("extractSection", () => {
   describe("when the markdown is empty", () => {

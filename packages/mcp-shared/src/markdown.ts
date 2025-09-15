@@ -1,14 +1,4 @@
 /**
- * Removes frontmatter from a markdown string.
- *
- * @param markdown The markdown string to remove frontmatter from.
- * @returns The markdown string without the frontmatter.
- */
-export function removeFrontmatter(markdown: string): string {
-  return markdown.replace(/^---[\s\S]*?---\n+/, "");
-}
-
-/**
  * Extracts a section with the given header from a markdown string, up to the next header at the
  * same level. This does not include the header.
  *
