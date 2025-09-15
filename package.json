@@ -9,10 +9,15 @@
   "workspaces": [
     "packages/*"
   ],
+  "bin": {
+    "mcp": "src/index.ts"
+  },
   "scripts": {
     "preinstall": "bunx only-allow bun",
     "check-types": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "inspector": "bunx @modelcontextprotocol/inspector bun src/index.ts",
+    "start": "bun src/index.ts"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -23,6 +28,8 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "handlebars": "^4.7.8"
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "handlebars": "^4.7.8",
+    "zod": "3.25.76"
   }
 }
