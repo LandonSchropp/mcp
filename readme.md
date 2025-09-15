@@ -65,22 +65,23 @@ Currently, the following expressions are supported:
 
 ### Helpers
 
-An `include` helper embeds file content directly into prompts. It automatically strips any
-frontmatter from the files before embedding them. It also supports including a specific section of
-the document.
+An `documentation` helper embeds documentation files directly into prompts. It automatically strips
+any frontmatter from the files before embedding them. It also supports including specific sections
+via the `section` parameter. Section names should be in dash-case (lowercase with dashes).
 
 Here are some examples:
 
 ```markdown
-{{include "documentation/better-specs.md"}}
-{{include "writing/format.md" section="Lists"}}
+{{documentation "code/better-specs"}}
+{{documentation "writing/format" section="lists"}}
 ```
 
-The following files are automatically loaded using the environment variables provided to the server.
+The following documents are automatically loaded using the environment variables provided to the
+server.
 
-- `writing/format.md`
-- `writing/voice.md`
-- `writing/improvement.md`
+- `writing/format`
+- `writing/voice`
+- `writing/improvement`
 
 ## Development
 
