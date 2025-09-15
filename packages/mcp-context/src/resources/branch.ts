@@ -14,7 +14,7 @@ import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
  * @param branchName The name of the branch to get the diff for
  * @returns The resource result containing the diff and commits
  */
-async function getBranchResourceResult(uri: string, branchName: string) {
+export async function getBranchResourceResult(uri: string, branchName: string) {
   const defaultBranch = await getDefaultBranch();
   const diff = await getDiff(defaultBranch, branchName);
 
@@ -48,18 +48,5 @@ server.registerResource(
   async (uri, { branch }) => {
     const branchName = Array.isArray(branch) ? branch[0] : branch;
     return getBranchResourceResult(uri.href, branchName);
-  },
-);
-
-server.registerResource(
-  "current-branch",
-  "context://branch",
-  {
-    title: "Current Branch",
-    description: "The diff and commits for the current branch compared with the default branch",
-  },
-  async (uri) => {
-    const currentBranch = await getCurrentBranch();
-    return getBranchResourceResult(uri.href, currentBranch);
   },
 );
