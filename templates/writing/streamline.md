@@ -1,3 +1,8 @@
+---
+title: Streamline
+description: Analyze content to identify and remove redundant, verbose, or low-value content
+---
+
 Analyze {{target}} to identify and remove redundant, verbose, or low-value content.
 
 Focus on:
