@@ -1,3 +1,8 @@
+---
+title: Title
+description: Generate compelling titles for content
+---
+
 Generate 5-10 compelling title options for {{target}}.
 
 Create titles that are:

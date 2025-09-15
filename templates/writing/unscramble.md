@@ -1,3 +1,8 @@
+---
+title: Unscramble
+description: Reorganize and clarify the structure of writing
+---
+
 Reorganize and clarify the fragmented/stream-of-consciousness writing in {{target}} into coherent text.
 
 Use only existing ideas—never add new concepts. Leave polished content unchanged.

@@ -1,3 +1,8 @@
+---
+title: Outline
+description: Generate a detailed outline from content
+---
+
 Generate a detailed outline from {{target}}.
 
 Use bulleted lists with sub-bullets to organize the content.
