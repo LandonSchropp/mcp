@@ -1,4 +1,4 @@
-import { extractHeaders, extractSection } from "../src/markdown.ts";
+import { extractHeaders, extractSection, extractSectionById } from "../src/markdown.ts";
 import { describe, it, expect } from "bun:test";
 import { dedent } from "ts-dedent";
 
@@ -194,6 +194,50 @@ describe("extractSection", () => {
       const result = extractSection(markdown, "Duplicate");
 
       expect(result).toBe("First content");
+    });
+  });
+});
+
+describe("extractSectionById", () => {
+  describe("when the section exists", () => {
+    it("extracts the section content using ID matching", () => {
+      const result = extractSectionById(MARKDOWN_EXAMPLE, "subheader-1");
+
+      expect(result).toBe("Sub content 1");
+    });
+  });
+
+  describe("when the section does not exist", () => {
+    it("returns undefined", () => {
+      const result = extractSectionById(MARKDOWN_EXAMPLE, "nonexistent-section");
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("when the section has special characters", () => {
+    it("matches using kebab-case ID conversion", () => {
+      const markdown = dedent`
+        ## Use Contexts (With \`describe\`)
+        
+        Use contexts to organize related tests.
+        
+        ## Other Section
+        
+        Other content.
+      `;
+
+      const result = extractSectionById(markdown, "use-contexts-with-describe");
+
+      expect(result).toBe("Use contexts to organize related tests.");
+    });
+  });
+
+  describe("when the markdown is empty", () => {
+    it("returns undefined", () => {
+      const result = extractSectionById("", "any-section");
+
+      expect(result).toBeUndefined();
     });
   });
 });

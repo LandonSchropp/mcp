@@ -1,3 +1,5 @@
+import { kebabCase } from "./string.ts";
+
 /**
  * Extracts all headers contained within a markdown document.
  *
@@ -40,4 +42,21 @@ export function extractSection(markdown: string, header: string): string | undef
   // Extract content between boundaries
   const endIndex = endMatch?.index ?? markdown.length;
   return markdown.slice(startIndex, endIndex).trim();
+}
+
+/**
+ * Extracts a section using an HTML-like ID to match against headers.
+ *
+ * @param markdown The markdown string to extract the section from.
+ * @param sectionId The kebab-case ID of the section to find.
+ * @returns The section content, or undefined if the section is not present in the markdown.
+ */
+export function extractSectionById(markdown: string, sectionId: string): string | undefined {
+  const header = extractHeaders(markdown).find((header) => kebabCase(header) === sectionId);
+
+  if (!header) {
+    return undefined;
+  }
+
+  return extractSection(markdown, header);
 }
