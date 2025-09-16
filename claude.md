@@ -46,9 +46,9 @@ The writing server (`packages/mcp-writing`) uses:
 
 Configured in `mise.toml`:
 
-- `FORMAT_STYLE_GUIDE`: Path to formatting guidelines document
-- `VOICE_STYLE_GUIDE`: Path to voice/language guidelines document
-- `IMPROVEMENT_STYLE_GUIDE`: Path to writing weaknesses coaching guide
+- `WRITING_FORMAT`: Path to formatting guidelines document
+- `WRITING_VOICE`: Path to voice/language guidelines document
+- `WRITING_IMPROVEMENT`: Path to writing weaknesses coaching guide
 
 These link to external documents in `/Users/landon/Notes/Areas/AI/Writing/`
 

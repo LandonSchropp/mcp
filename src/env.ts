@@ -8,6 +8,6 @@ export function requireEnvironmentVariable(name: string): string {
   return value;
 }
 
-export const FORMAT_STYLE_GUIDE = requireEnvironmentVariable("FORMAT_STYLE_GUIDE");
-export const VOICE_STYLE_GUIDE = requireEnvironmentVariable("VOICE_STYLE_GUIDE");
-export const IMPROVEMENT_STYLE_GUIDE = requireEnvironmentVariable("IMPROVEMENT_STYLE_GUIDE");
+export const WRITING_FORMAT = requireEnvironmentVariable("WRITING_FORMAT");
+export const WRITING_VOICE = requireEnvironmentVariable("WRITING_VOICE");
+export const WRITING_IMPROVEMENT = requireEnvironmentVariable("WRITING_IMPROVEMENT");

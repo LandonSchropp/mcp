@@ -45,44 +45,44 @@ describe("requireEnvironmentVariable", () => {
 beforeEach(() => (process.env = { ...ORIGINAL_ENV }));
 afterEach(() => (process.env = ORIGINAL_ENV));
 
-describe("FORMAT_STYLE_GUIDE", () => {
-  describe("when FORMAT_STYLE_GUIDE is set", () => {
+describe("WRITING_FORMAT", () => {
+  describe("when WRITING_FORMAT is set", () => {
     it("exports the value", () => {
-      process.env.FORMAT_STYLE_GUIDE = "format-guide";
+      process.env.WRITING_FORMAT = "format-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { FORMAT_STYLE_GUIDE } = require("../src/env");
+      const { WRITING_FORMAT } = require("../src/env");
 
-      expect(FORMAT_STYLE_GUIDE).toBe("format-guide");
+      expect(WRITING_FORMAT).toBe("format-guide");
     });
   });
 });
 
-describe("VOICE_STYLE_GUIDE", () => {
-  describe("when VOICE_STYLE_GUIDE is set", () => {
+describe("WRITING_VOICE", () => {
+  describe("when WRITING_VOICE is set", () => {
     it("exports the value", () => {
-      process.env.VOICE_STYLE_GUIDE = "voice-guide";
+      process.env.WRITING_VOICE = "voice-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { VOICE_STYLE_GUIDE } = require("../src/env");
+      const { WRITING_VOICE } = require("../src/env");
 
-      expect(VOICE_STYLE_GUIDE).toBe("voice-guide");
+      expect(WRITING_VOICE).toBe("voice-guide");
     });
   });
 });
 
-describe("IMPROVEMENT_STYLE_GUIDE", () => {
-  describe("when IMPROVEMENT_STYLE_GUIDE is set", () => {
+describe("WRITING_IMPROVEMENT", () => {
+  describe("when WRITING_IMPROVEMENT is set", () => {
     it("exports the value", () => {
-      process.env.IMPROVEMENT_STYLE_GUIDE = "weaknesses-guide";
+      process.env.WRITING_IMPROVEMENT = "weaknesses-guide";
 
       // Clear module cache and re-import
       delete require.cache[require.resolve("../src/env")];
-      const { IMPROVEMENT_STYLE_GUIDE } = require("../src/env");
+      const { WRITING_IMPROVEMENT } = require("../src/env");
 
-      expect(IMPROVEMENT_STYLE_GUIDE).toBe("weaknesses-guide");
+      expect(WRITING_IMPROVEMENT).toBe("weaknesses-guide");
     });
   });
 });
