@@ -1,4 +1,4 @@
-import { extractSection } from "../src/markdown";
+import { extractHeaders, extractSection } from "../src/markdown.ts";
 import { describe, it, expect } from "bun:test";
 import { dedent } from "ts-dedent";
 
@@ -23,6 +23,64 @@ const MARKDOWN_EXAMPLE = dedent`
 
   Conclusion content
 `;
+
+describe("extractHeaders", () => {
+  describe("when the markdown contains headers", () => {
+    it("returns all header text", () => {
+      const result = extractHeaders(MARKDOWN_EXAMPLE);
+
+      expect(result).toEqual(["Introduction", "Body", "Subheader 1", "Subheader 2", "Conclusion"]);
+    });
+  });
+
+  describe("when the markdown is empty", () => {
+    it("returns empty array", () => {
+      const result = extractHeaders("");
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("when the markdown has no headers", () => {
+    it("returns empty array", () => {
+      const result = extractHeaders("Just some text without headers.");
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("when headers have different levels", () => {
+    it("includes all header levels", () => {
+      const markdown = dedent`
+        # Main Title
+        
+        ## Section
+        
+        ### Subsection
+        
+        #### Sub-subsection
+      `;
+
+      const result = extractHeaders(markdown);
+
+      expect(result).toEqual(["Main Title", "Section", "Subsection", "Sub-subsection"]);
+    });
+  });
+
+  describe("when headers contain special characters", () => {
+    it("preserves the header text", () => {
+      const markdown = dedent`
+        ## Use Contexts (With \`describe\`)
+        
+        ## API v2.0 Testing!
+      `;
+
+      const result = extractHeaders(markdown);
+
+      expect(result).toEqual(["Use Contexts (With `describe`)", "API v2.0 Testing!"]);
+    });
+  });
+});
 
 describe("extractSection", () => {
   describe("when the markdown is empty", () => {

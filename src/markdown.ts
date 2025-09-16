@@ -1,4 +1,17 @@
 /**
+ * Extracts all headers contained within a markdown document.
+ *
+ * @param markdown The markdown string to extract headers from.
+ * @returns An array of header text (without the # symbols).
+ */
+export function extractHeaders(markdown: string): string[] {
+  return markdown
+    .matchAll(/^(#+)\s+(.+)$/gm)
+    .map((match) => match[2])
+    .toArray();
+}
+
+/**
  * Extracts a section with the given header from a markdown string, up to the next header at the
  * same level. This does not include the header.
  *
