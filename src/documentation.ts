@@ -9,8 +9,8 @@ import z from "zod";
 // A schema for validating document frontmatter
 const DOCUMENT_SCHEMA = z.object({ title: z.string(), description: z.string() });
 
-// Fetch the regular documents from the docs directory
-const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../docs");
+// Fetch the regular documents from the documentation directory
+const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../documentation");
 const DOCUMENT_PATHS = await Array.fromAsync(glob(join(DOCUMENTS_DIRECTORY, "**/*.md")));
 
 /**

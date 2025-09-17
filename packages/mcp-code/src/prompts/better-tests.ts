@@ -19,7 +19,7 @@ if (isJavaScriptProject()) {
     },
     async ({ target }) => {
       let content = removeFrontmatter(
-        await Bun.file(join(import.meta.dir, "../../docs/better-tests.md")).text(),
+        await Bun.file(join(import.meta.dir, "../../documentation/better-tests.md")).text(),
       );
 
       return {

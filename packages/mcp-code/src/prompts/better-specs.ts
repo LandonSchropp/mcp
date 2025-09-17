@@ -19,7 +19,7 @@ if (isRubyProject()) {
     },
     async ({ target }) => {
       let content = removeFrontmatter(
-        await Bun.file(join(import.meta.dir, "../../docs/better-specs.md")).text(),
+        await Bun.file(join(import.meta.dir, "../../documentation/better-specs.md")).text(),
       );
 
       return {

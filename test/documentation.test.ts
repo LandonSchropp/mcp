@@ -151,7 +151,7 @@ describe("resources/documentation", () => {
   });
 
   describe("documentation://<path>", () => {
-    it("registers the resources in the docs directory", async () => {
+    it("registers the resources in the documentation directory", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
