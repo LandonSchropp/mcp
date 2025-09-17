@@ -5,6 +5,9 @@ import { handlebars } from "./index.ts";
 import { readFileSync } from "fs";
 import { join } from "path";
 
+// TODO: Should these be resources instead? I could always make a resource helper for embedding
+// resources (or resource paths when appropriate). That might make more sense, especially with other
+// types of content such as documentation.
 const WRITING_PATHS: Record<string, string> = {
   "writing/format": WRITING_FORMAT,
   "writing/voice": WRITING_VOICE,
