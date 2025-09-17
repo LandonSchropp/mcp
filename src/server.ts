@@ -6,4 +6,4 @@ export const server = new McpServer({
   version: "0.0.0",
 });
 
-// TODO: Add prompt auto-registration
+await import("./documentation.ts");
