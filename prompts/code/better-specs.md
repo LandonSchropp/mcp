@@ -5,4 +5,4 @@ description: Apply Better Specs conventions
 
 Apply the following guidelines to {{target}}:
 
-{{documentation "code/better-specs"}}
+@doc://code/better-specs

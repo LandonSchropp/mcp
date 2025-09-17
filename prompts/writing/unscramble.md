@@ -15,4 +15,4 @@ Use only existing ideas—never add new concepts. Leave polished content unchang
 
 Apply the following format guidelines:
 
-{{documentation "writing/format"}}
+@doc://writing/format

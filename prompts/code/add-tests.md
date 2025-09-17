@@ -22,4 +22,4 @@ Add tests for {{target}} using the following process:
 
 Follow the following guidelines:
 
-{{documentation "code/better-tests"}}
+@doc://code/better-tests

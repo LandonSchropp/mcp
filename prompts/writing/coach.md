@@ -26,4 +26,4 @@ Give actionable feedback:
 
 Work through each writing improvement area below one-at-a-time. Skip any areas not applicable to the document:
 
-{{documentation "writing/improvement"}}
+@doc://writing/improvement
