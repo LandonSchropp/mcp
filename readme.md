@@ -21,7 +21,7 @@ You can connect the server to Claude Code directly when running the following co
 project's root directory.
 
 ```bash
-claude mcp add landon bun --cwd $(pwd) start
+claude mcp add landon -- bun --cwd "$(pwd)" start
 ```
 
 Note: The package is not yet published, so you cannot run it with `bunx`.
