@@ -60,20 +60,20 @@ describe("resources/documentation", () => {
     client = await createTestClient(server);
   });
 
-  describe("documentation://writing/format", () => {
+  describe("doc://writing/format", () => {
     it("registers the resource", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
         name: "documentation",
         title: "Format Title",
-        uri: "documentation://writing/format",
+        uri: "doc://writing/format",
         description: "Format description",
       });
     });
 
     it("responds with the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/format" });
+      const result = await client.readResource({ uri: "doc://writing/format" });
 
       expect(result.contents).toHaveLength(1);
 
@@ -84,26 +84,26 @@ describe("resources/documentation", () => {
     });
 
     it("strips the frontmatter from the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/format" });
+      const result = await client.readResource({ uri: "doc://writing/format" });
 
       expect(result.contents[0].text).not.toContain("---");
     });
   });
 
-  describe("documentation://writing/voice", () => {
+  describe("doc://writing/voice", () => {
     it("registers the resource", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
         name: "documentation",
         title: "Voice Title",
-        uri: "documentation://writing/voice",
+        uri: "doc://writing/voice",
         description: "Voice description",
       });
     });
 
     it("responds with the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/voice" });
+      const result = await client.readResource({ uri: "doc://writing/voice" });
 
       expect(result.contents).toHaveLength(1);
 
@@ -114,26 +114,26 @@ describe("resources/documentation", () => {
     });
 
     it("strips the frontmatter from the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/voice" });
+      const result = await client.readResource({ uri: "doc://writing/voice" });
 
       expect(result.contents[0].text).not.toContain("---");
     });
   });
 
-  describe("documentation://writing/improvement", () => {
+  describe("doc://writing/improvement", () => {
     it("registers the resource", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
         name: "documentation",
         title: "Improvement Title",
-        uri: "documentation://writing/improvement",
+        uri: "doc://writing/improvement",
         description: "Improvement description",
       });
     });
 
     it("responds with the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/improvement" });
+      const result = await client.readResource({ uri: "doc://writing/improvement" });
 
       expect(result.contents).toHaveLength(1);
 
@@ -144,27 +144,27 @@ describe("resources/documentation", () => {
     });
 
     it("strips the frontmatter from the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://writing/improvement" });
+      const result = await client.readResource({ uri: "doc://writing/improvement" });
 
       expect(result.contents[0].text).not.toContain("---");
     });
   });
 
-  describe("documentation://<path>", () => {
+  describe("doc://<path>", () => {
     it("registers the resources in the documentation directory", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
         name: "documentation",
         title: "Better Tests",
-        uri: "documentation://code/better-tests",
+        uri: "doc://code/better-tests",
         description:
           "Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun",
       });
     });
 
     it("responds with the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://code/better-tests" });
+      const result = await client.readResource({ uri: "doc://code/better-tests" });
 
       expect(result.contents).toHaveLength(1);
       expect(result.contents[0].uri).toBe("code/better-tests");
@@ -172,7 +172,7 @@ describe("resources/documentation", () => {
     });
 
     it("strips the frontmatter from the documentation content", async () => {
-      const result = await client.readResource({ uri: "documentation://code/better-tests" });
+      const result = await client.readResource({ uri: "doc://code/better-tests" });
 
       expect(result.contents[0].text).not.toContain("---");
       expect(result.contents[0].text).not.toContain("title: Better Tests");

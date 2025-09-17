@@ -9,8 +9,8 @@ import z from "zod";
 // A schema for validating document frontmatter
 const DOCUMENT_SCHEMA = z.object({ title: z.string(), description: z.string() });
 
-// Fetch the regular documents from the documentation directory
-const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../documentation");
+// Fetch the regular documents from the doc directory
+const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../doc");
 const DOCUMENT_PATHS = await Array.fromAsync(glob(join(DOCUMENTS_DIRECTORY, "**/*.md")));
 
 /**
@@ -26,7 +26,7 @@ async function generateDocumentationResource(uriPath: string, filePath: string):
     DOCUMENT_SCHEMA,
   );
 
-  server.registerResource("documentation", `documentation://${uriPath}`, frontmatter, async () => ({
+  server.registerResource("documentation", `doc://${uriPath}`, frontmatter, async () => ({
     contents: [{ uri: uriPath, text: content }],
   }));
 }
