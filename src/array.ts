@@ -15,3 +15,13 @@ export function first<T>(arrayOrElement: T | T[]): T {
 
   return arrayOrElement[0];
 }
+
+/**
+ * Returns a new array with only unique elements from the input array.
+ *
+ * @param array The input array
+ * @returns A new array containing only unique elements
+ */
+export function unique<T>(array: T[]): T[] {
+  return Array.from(new Set(array));
+}
