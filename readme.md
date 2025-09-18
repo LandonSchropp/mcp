@@ -43,6 +43,18 @@ support. It uses Bun as both the package manager and runtime, with workspaces ha
 management across all packages. Since Bun has native TypeScript support, there's no build step
 required—you can run TypeScript files directly.
 
+### Resources
+
+This server automatically loads all of the documentation inside the docs directory as resources. All
+documentation resource URIs begin with `doc://`.
+
+In addition, the `WRITING_` environment variables above are automatically registered as the
+following resources:
+
+- `doc://writing/format`
+- `doc://writing/voice`
+- `doc://writing/improvement`
+
 ### Prompts
 
 Since most of this repository is dedicated to creating custom prompts, I've made that process as
@@ -51,8 +63,8 @@ path of the file in the directory. The metadata for prompts is automatically pul
 frontmatter of the prompt files.
 
 The prompts are Handlebars templates that are compiled into markdown. The system is smart enough to
-recognize the [expressions](https://handlebarsjs.com/guide/expressions.html) present in each file
-and automatically add them as arguments to the prompt in the MCP server.
+recognize the [expressions](https://handlebarsjs.com/guide/expressions.html) present in each
+template and automatically add them as arguments to the prompt in the MCP server.
 
 ### Expressions
 
@@ -62,26 +74,6 @@ Currently, the following expressions are supported:
   the current context.
 - `{{ branch }}`: The branch the prompt should be applied to, or the current branch if none is
   provided.
-
-### Helpers
-
-An `documentation` helper embeds documentation files directly into prompts. It automatically strips
-any frontmatter from the files before embedding them. It also supports including specific sections
-via the `section` parameter. Section names should be in dash-case (lowercase with dashes).
-
-Here are some examples:
-
-```markdown
-{{documentation "testing/better-specs"}}
-{{documentation "writing/format" section="lists"}}
-```
-
-The following documents are automatically loaded using the environment variables provided to the
-server.
-
-- `writing/format`
-- `writing/voice`
-- `writing/improvement`
 
 ## Development
 
