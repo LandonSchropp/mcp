@@ -5,11 +5,15 @@
  * @param transform - A function that takes a value and its key, and returns the transformed value.
  * @returns A new object with the same keys but transformed values.
  */
-export function mapValues<T, R>(
+export async function mapValuesAsync<T, R>(
   object: Record<string, T>,
-  transform: (value: T, key: string) => R,
-): Record<string, R> {
-  return Object.fromEntries(
-    Object.entries(object).map(([key, value]) => [key, transform(value, key)]),
+  transform: (value: T, key: string) => Promise<R>,
+): Promise<Record<string, R>> {
+  let entries = Object.entries(object);
+
+  let transformedEntries = await Promise.all(
+    entries.map(async ([key, value]) => [key, await transform(value, key)] as const),
   );
+
+  return Object.fromEntries(transformedEntries);
 }
