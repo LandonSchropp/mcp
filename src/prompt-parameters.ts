@@ -5,6 +5,7 @@ const TARGET_DEFAULT = "the current context";
 type Parameter = {
   name: string;
   description: string;
+  required: boolean;
 };
 
 // Definition of a prompt parameter and its resolver function
@@ -18,6 +19,7 @@ const ALLOWED_PARAMETERS: ParameterDefinition[] = [
     name: "target",
     // TODO: Come up with a better way to define the target description based upon the use case
     description: "Target (path, description, or reference)",
+    required: false,
     fallback: () => TARGET_DEFAULT,
   },
 ];
@@ -61,6 +63,6 @@ export function extractPromptParametersFromTemplate(template: string): Parameter
   let parameters = new Set(template.matchAll(PARAMETERS_REGEX).map((match) => match[1]));
 
   return ALLOWED_PARAMETERS.filter(({ name }) => parameters.has(name)).map(
-    ({ name, description }) => ({ name, description }),
+    ({ name, description, required }) => ({ name, description, required }),
   );
 }

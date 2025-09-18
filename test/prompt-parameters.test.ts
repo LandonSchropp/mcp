@@ -53,7 +53,11 @@ describe("extractPromptParametersFromTemplate", () => {
     describe("when the curly braces do not contain whitespace", () => {
       it("extracts the parameter name", () => {
         expect(extractPromptParametersFromTemplate("Apply to {{target}}")).toEqual([
-          { name: "target", description: "Target (path, description, or reference)" },
+          {
+            name: "target",
+            description: "Target (path, description, or reference)",
+            required: false,
+          },
         ]);
       });
     });
@@ -61,10 +65,18 @@ describe("extractPromptParametersFromTemplate", () => {
     describe("when the curly braces contain whitespace", () => {
       it("extracts the parameter name", () => {
         expect(extractPromptParametersFromTemplate("Apply to {{ target }}")).toEqual([
-          { name: "target", description: "Target (path, description, or reference)" },
+          {
+            name: "target",
+            description: "Target (path, description, or reference)",
+            required: false,
+          },
         ]);
         expect(extractPromptParametersFromTemplate("Apply to {{  target  }}")).toEqual([
-          { name: "target", description: "Target (path, description, or reference)" },
+          {
+            name: "target",
+            description: "Target (path, description, or reference)",
+            required: false,
+          },
         ]);
       });
     });
@@ -74,7 +86,11 @@ describe("extractPromptParametersFromTemplate", () => {
     it("only returns the parameter once", () => {
       const template = "Transform {{target}} and update {{ target }} with new {{target}}";
       expect(extractPromptParametersFromTemplate(template)).toEqual([
-        { name: "target", description: "Target (path, description, or reference)" },
+        {
+          name: "target",
+          description: "Target (path, description, or reference)",
+          required: false,
+        },
       ]);
     });
   });
@@ -83,7 +99,11 @@ describe("extractPromptParametersFromTemplate", () => {
     it("does not return the unknown parameters", () => {
       const template = "Apply to {{target}} and {{unknown}} parameter";
       expect(extractPromptParametersFromTemplate(template)).toEqual([
-        { name: "target", description: "Target (path, description, or reference)" },
+        {
+          name: "target",
+          description: "Target (path, description, or reference)",
+          required: false,
+        },
       ]);
     });
   });
