@@ -22,4 +22,4 @@ Add specs for {{target}} using the following process:
 
 Follow the following guidelines:
 
-@doc://code/better-specs
+@doc://testing/better-specs

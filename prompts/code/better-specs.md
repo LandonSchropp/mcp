@@ -5,4 +5,4 @@ description: Apply Better Specs conventions
 
 Apply the following guidelines to {{target}}:
 
-@doc://code/better-specs
+@doc://testing/better-specs

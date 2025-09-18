@@ -72,7 +72,7 @@ via the `section` parameter. Section names should be in dash-case (lowercase wit
 Here are some examples:
 
 ```markdown
-{{documentation "code/better-specs"}}
+{{documentation "testing/better-specs"}}
 {{documentation "writing/format" section="lists"}}
 ```
 
