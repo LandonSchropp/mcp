@@ -65,10 +65,11 @@ describe("resources/documentation", () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
-        name: "documentation",
+        name: "writing/format",
         title: "Format Title",
         uri: "doc://writing/format",
         description: "Format description",
+        mimeType: "text/markdown",
       });
     });
 
@@ -78,7 +79,7 @@ describe("resources/documentation", () => {
       expect(result.contents).toHaveLength(1);
 
       expect(result.contents[0]).toEqual({
-        uri: "writing/format",
+        uri: "doc://writing/format",
         text: "Format Content",
       });
     });
@@ -95,10 +96,11 @@ describe("resources/documentation", () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
-        name: "documentation",
+        name: "writing/voice",
         title: "Voice Title",
         uri: "doc://writing/voice",
         description: "Voice description",
+        mimeType: "text/markdown",
       });
     });
 
@@ -108,7 +110,7 @@ describe("resources/documentation", () => {
       expect(result.contents).toHaveLength(1);
 
       expect(result.contents[0]).toEqual({
-        uri: "writing/voice",
+        uri: "doc://writing/voice",
         text: "Voice Content",
       });
     });
@@ -125,10 +127,11 @@ describe("resources/documentation", () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
-        name: "documentation",
+        name: "writing/improvement",
         title: "Improvement Title",
         uri: "doc://writing/improvement",
         description: "Improvement description",
+        mimeType: "text/markdown",
       });
     });
 
@@ -138,7 +141,7 @@ describe("resources/documentation", () => {
       expect(result.contents).toHaveLength(1);
 
       expect(result.contents[0]).toEqual({
-        uri: "writing/improvement",
+        uri: "doc://writing/improvement",
         text: "Improvement Content",
       });
     });
@@ -150,16 +153,17 @@ describe("resources/documentation", () => {
     });
   });
 
-  describe("doc://<path>", () => {
+  describe("doc://{path}", () => {
     it("registers the resources in the documentation directory", async () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
-        name: "documentation",
+        name: "code/better-tests",
         title: "Better Tests",
         uri: "doc://code/better-tests",
         description:
           "Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun",
+        mimeType: "text/markdown",
       });
     });
 
@@ -167,7 +171,7 @@ describe("resources/documentation", () => {
       const result = await client.readResource({ uri: "doc://code/better-tests" });
 
       expect(result.contents).toHaveLength(1);
-      expect(result.contents[0].uri).toBe("code/better-tests");
+      expect(result.contents[0].uri).toBe("doc://code/better-tests");
       expect(result.contents[0].text).toContain("Use `it` instead of `test`");
     });
 
