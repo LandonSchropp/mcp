@@ -52,14 +52,20 @@ describe("extractPromptParametersFromTemplate", () => {
   describe("when template contains a single parameter", () => {
     describe("when the curly braces do not contain whitespace", () => {
       it("extracts the parameter name", () => {
-        expect(extractPromptParametersFromTemplate("Apply to {{target}}")).toEqual(["target"]);
+        expect(extractPromptParametersFromTemplate("Apply to {{target}}")).toEqual([
+          { name: "target", description: "Target (path, description, or reference)" },
+        ]);
       });
     });
 
     describe("when the curly braces contain whitespace", () => {
       it("extracts the parameter name", () => {
-        expect(extractPromptParametersFromTemplate("Apply to {{ target }}")).toEqual(["target"]);
-        expect(extractPromptParametersFromTemplate("Apply to {{  target  }}")).toEqual(["target"]);
+        expect(extractPromptParametersFromTemplate("Apply to {{ target }}")).toEqual([
+          { name: "target", description: "Target (path, description, or reference)" },
+        ]);
+        expect(extractPromptParametersFromTemplate("Apply to {{  target  }}")).toEqual([
+          { name: "target", description: "Target (path, description, or reference)" },
+        ]);
       });
     });
   });
