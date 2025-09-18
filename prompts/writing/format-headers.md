@@ -1,5 +1,5 @@
 ---
-title: Headers
+title: Format Headers
 description: Apply header formatting conventions to writing
 ---
 

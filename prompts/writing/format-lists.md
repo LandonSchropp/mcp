@@ -1,5 +1,5 @@
 ---
-title: Lists
+title: Format Lists
 description: Apply list formatting conventions to writing
 ---
 
