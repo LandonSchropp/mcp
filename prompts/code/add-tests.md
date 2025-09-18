@@ -20,6 +20,4 @@ Add tests for {{target}} using the following process:
 
 4. **Implement Incrementally:** Implement one context block at a time. Wait for approval after each context implementation. Run tests after each context addition. Fix failures before proceeding.
 
-Follow the following guidelines:
-
-@doc://testing/better-tests
+Follow the @doc://testing/better-tests guidelines.

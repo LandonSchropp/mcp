@@ -13,6 +13,4 @@ Use only existing ideas—never add new concepts. Leave polished content unchang
 - Use minimal structure: simple paragraphs, avoid headings unless clearly needed
 - Preserve original voice, tone, and all ideas exactly
 
-Apply the following format guidelines:
-
-@doc://writing/format
+Follow the @doc://writing/format guidelines.

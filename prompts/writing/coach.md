@@ -24,6 +24,4 @@ Give actionable feedback:
 - Focus on transformation: competent → memorable
 - Note strengths to show what to do MORE of.
 
-Work through each writing improvement area below one-at-a-time. Skip any areas not applicable to the document:
-
-@doc://writing/improvement
+Work through each writing improvement area in @doc://writing/improvement one-at-a-time. Skip any areas not applicable to the document.
