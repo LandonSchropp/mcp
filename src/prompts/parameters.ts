@@ -1,3 +1,5 @@
+import { extractPlaceholders } from "../templates/placeholders";
+
 // The default value for the target parameter
 const TARGET_DEFAULT = "the current context";
 
@@ -24,12 +26,6 @@ const ALLOWED_PARAMETERS: ParameterDefinition[] = [
   },
 ];
 
-// A simple regex to find allowed parameters in a template
-const PARAMETERS_REGEX = new RegExp(
-  `{{\\s*(${ALLOWED_PARAMETERS.map(({ name }) => name).join("|")})\\s*}}`,
-  "g",
-);
-
 /**
  * Resolves a prompt parameter by name using its associated resolver function.
  *
@@ -52,17 +48,15 @@ export async function resolvePromptParameterValue(
 }
 
 /**
- * Extracts allowed prompt parameters from a Handlebars template.
+ * Extracts allowed prompt parameters from a template.
  *
  * @param template The template string to analyze.
  * @returns An array of parameter names found in the template
  */
 export function extractPromptParametersFromTemplate(template: string): Parameter[] {
-  // TODO: Right now, this approach is very naive--it uses a regex to find parameters. Instead, we
-  // should leverage Handlebars to properly parse the template and extract variables.
-  let parameters = new Set(template.matchAll(PARAMETERS_REGEX).map((match) => match[1]));
+  const placeholders = extractPlaceholders(template);
 
-  return ALLOWED_PARAMETERS.filter(({ name }) => parameters.has(name)).map(
+  return ALLOWED_PARAMETERS.filter(({ name }) => placeholders.includes(name)).map(
     ({ name, description, required }) => ({ name, description, required }),
   );
 }
