@@ -1,6 +1,6 @@
 import { server } from "../server";
 import { parseFrontmatter } from "../templates/frontmatter";
-import { handlebars } from "../templates/handlebars";
+import { renderTemplate } from "../templates/render";
 import { mapToObjectAsync } from "../utilities/array";
 import { extractPromptParametersFromTemplate, resolvePromptParameterValue } from "./parameters";
 import { glob, readFile } from "fs/promises";
@@ -50,9 +50,6 @@ for (const filePath of PROMPT_FILES) {
     }),
   );
 
-  // Precompile the Handlebars template
-  let renderTemplate = handlebars.compile(content);
-
   // Register the prompt with just the basic info for now
   server.registerPrompt(
     promptName,
@@ -67,7 +64,7 @@ for (const filePath of PROMPT_FILES) {
       });
 
       // Render the template
-      let text = renderTemplate(context);
+      let text = renderTemplate(content, context);
 
       return {
         messages: [
