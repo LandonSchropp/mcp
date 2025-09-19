@@ -1,7 +1,7 @@
-import { first } from "./array.ts";
-import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "./env";
-import { parseFrontmatter, removeFrontmatter } from "./frontmatter.ts";
-import { server } from "./server";
+import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
+import { server } from "../server";
+import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
+import { first } from "../utilities/array";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Resource } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
@@ -12,7 +12,7 @@ import z from "zod";
 const DOCUMENT_SCHEMA = z.object({ title: z.string(), description: z.string() });
 
 // The directory the documents are contained in
-const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../doc");
+const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../../doc");
 
 // The paths of the writing documents that are defined by environment variables
 const WRITING_DOCUMENTS: Record<string, string> = {

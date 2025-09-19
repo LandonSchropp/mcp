@@ -1,4 +1,4 @@
-import { extractHeaders, extractSection, extractSectionById } from "../src/markdown.ts";
+import { extractHeaders, extractSection, extractSectionById } from "../../src/utilities/markdown";
 import { describe, it, expect } from "bun:test";
 import { dedent } from "ts-dedent";
 

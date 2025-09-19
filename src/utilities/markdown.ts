@@ -1,4 +1,4 @@
-import { kebabCase } from "./string.ts";
+import { kebabCase } from "./string";
 
 /**
  * Extracts all headers contained within a markdown document.

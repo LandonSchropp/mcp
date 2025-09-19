@@ -1,11 +1,8 @@
-import { mapToObjectAsync } from "./array";
-import { parseFrontmatter } from "./frontmatter";
-import { handlebars } from "./handlebars";
-import {
-  extractPromptParametersFromTemplate,
-  resolvePromptParameterValue,
-} from "./prompt-parameters";
-import { server } from "./server";
+import { server } from "../server";
+import { parseFrontmatter } from "../templates/frontmatter";
+import { handlebars } from "../templates/handlebars";
+import { mapToObjectAsync } from "../utilities/array";
+import { extractPromptParametersFromTemplate, resolvePromptParameterValue } from "./parameters";
 import { glob, readFile } from "fs/promises";
 import { join, relative } from "path";
 import z from "zod";
@@ -20,7 +17,7 @@ const PROMPT_SCHEMA = z.object({
 });
 
 // The directory containing prompt templates
-const PROMPTS_DIRECTORY = join(import.meta.dir, "../prompts");
+const PROMPTS_DIRECTORY = join(import.meta.dir, "../../prompts");
 
 // The prompt files
 const PROMPT_FILES = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/*.md")));

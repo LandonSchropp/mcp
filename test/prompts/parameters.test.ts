@@ -1,7 +1,7 @@
 import {
   resolvePromptParameterValue,
   extractPromptParametersFromTemplate,
-} from "../src/prompt-parameters";
+} from "../../src/prompts/parameters";
 import { describe, it, expect } from "bun:test";
 
 describe("resolvePromptParameterValue", () => {

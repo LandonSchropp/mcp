@@ -1,4 +1,4 @@
-import { kebabCase } from "../src/string.ts";
+import { kebabCase } from "../../src/utilities/string";
 import { describe, it, expect } from "bun:test";
 
 describe("kebabCase", () => {

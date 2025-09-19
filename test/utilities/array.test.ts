@@ -1,4 +1,4 @@
-import { first, unique, mapToObjectAsync } from "../src/array";
+import { first, unique, mapToObjectAsync } from "../../src/utilities/array";
 import { describe, it, expect } from "bun:test";
 
 describe("first", () => {
