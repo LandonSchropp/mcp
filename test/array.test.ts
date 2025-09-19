@@ -1,4 +1,4 @@
-import { first, unique } from "../src/array";
+import { first, unique, mapToObjectAsync } from "../src/array";
 import { describe, it, expect } from "bun:test";
 
 describe("first", () => {
@@ -92,6 +92,31 @@ describe("unique", () => {
   describe("when given an array with null and undefined", () => {
     it("treats them as unique values", () => {
       expect(unique([null, undefined, null, undefined])).toEqual([null, undefined]);
+    });
+  });
+});
+
+describe("mapToObjectAsync", () => {
+  describe("when given an empty array", () => {
+    it("returns an empty object", async () => {
+      const result = await mapToObjectAsync([], async (value) => value);
+      expect(result).toEqual({});
+    });
+  });
+
+  describe("when transforming keys to values", () => {
+    it("creates the object", async () => {
+      const input = ["apple", "banana", "cherry"];
+      const result = await mapToObjectAsync(input, async (key) => key.length);
+      expect(result).toEqual({ apple: 5, banana: 6, cherry: 6 });
+    });
+  });
+
+  describe("when keys are duplicated", () => {
+    it("overwrites with the last value", async () => {
+      const input = ["key", "key", "key"];
+      const result = await mapToObjectAsync(input, async (_, index) => index);
+      expect(result).toEqual({ key: 2 });
     });
   });
 });
