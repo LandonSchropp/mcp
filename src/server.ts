@@ -7,3 +7,4 @@ export const server = new McpServer({
 });
 
 await import("./documentation.ts");
+await import("./prompts.ts");
