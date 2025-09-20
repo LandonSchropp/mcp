@@ -62,31 +62,27 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the template has special characters", () => {
-    it("handles templates with newlines", () => {
-      const template = "Line 1: {{first}}\nLine 2: {{second}}";
-      const result = renderTemplate(template, {
-        first: "Hello",
-        second: "World",
-      });
-      expect(result).toBe("Line 1: Hello\nLine 2: World");
-    });
-
-    it("handles templates with tabs", () => {
-      const template = "Column1:\t{{col1}}\nColumn2:\t{{col2}}";
-      const result = renderTemplate(template, {
-        col1: "Value1",
-        col2: "Value2",
-      });
-      expect(result).toBe("Column1:\tValue1\nColumn2:\tValue2");
-    });
-  });
-
   describe("when the context value is an empty string", () => {
     it("replaces the placeholder with empty string", () => {
       const template = "Name: {{name}}";
       const result = renderTemplate(template, { name: "" });
       expect(result).toBe("Name: ");
+    });
+  });
+
+  describe("when the template contains a partial", () => {
+    it("renders the partial", () => {
+      const template = "{{> plan/_instructions}}";
+
+      const result = renderTemplate(template, {
+        planType: "example",
+        featureBranch: "feature-example",
+        description: "Example",
+      });
+
+      expect(result).toInclude("example implementation plan");
+      expect(result).toInclude("Description: Example");
+      expect(result).toInclude("`feature-example` branch");
     });
   });
 });

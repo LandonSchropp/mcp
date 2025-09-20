@@ -130,4 +130,33 @@ describe("prompts", () => {
       });
     });
   });
+
+  describe("when the template contains a partial", () => {
+    it("includes the partial content in the rendered output", async () => {
+      result = await client.getPrompt({
+        name: "plan/feature",
+        arguments: { description: "Add user authentication", featureBranch: "auth-feature" },
+      });
+
+      // The partial content should be included and rendered
+      expect(result.messages).toEqual([
+        expect.objectContaining({
+          role: "user",
+          content: expect.objectContaining({
+            text: expect.stringContaining("Your job is to"),
+            type: "text",
+          }),
+        }),
+      ]);
+
+      // Should not contain unresolved partial syntax
+      expect(result.messages).toEqual([
+        expect.objectContaining({
+          content: expect.objectContaining({
+            text: expect.not.stringMatching(/\{\{>|_instructions/),
+          }),
+        }),
+      ]);
+    });
+  });
 });
