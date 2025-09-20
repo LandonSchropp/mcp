@@ -1,12 +1,12 @@
 import { assertInstalled } from "./assertions";
 import spawn from "nano-spawn";
 
-interface GitCommit {
+export interface GitCommit {
   sha: string;
   title: string;
 }
 
-interface GitDiff {
+export interface GitDiff {
   commits: GitCommit[];
   diff: string;
 }
