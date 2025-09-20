@@ -3,10 +3,11 @@ import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
 import { server } from "../server";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
 import { first } from "../utilities/array";
+import { relativePathWithoutExtension } from "../utilities/path";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Resource } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
-import { join, relative } from "path";
+import { join } from "path";
 import z from "zod";
 
 // A schema for validating document frontmatter
@@ -18,14 +19,6 @@ const WRITING_DOCUMENTS: Record<string, string> = {
   "writing/voice": WRITING_VOICE,
   "writing/improvement": WRITING_IMPROVEMENT,
 };
-
-/**
- * @param path The file path of the document to determine the URI for
- * @returns The URI path for the document
- */
-function documentUriFromPath(path: string): string {
-  return relative(DOCUMENTS_DIRECTORY, path).replace(/\..*$/, "");
-}
 
 /**
  * Generates a Resource for a documentation file.
@@ -51,7 +44,7 @@ async function fetchDocumentationResources(): Promise<Resource[]> {
 
   return await Promise.all([
     ...documents.map((path) => {
-      return buildResourceSchema(documentUriFromPath(path), path);
+      return buildResourceSchema(relativePathWithoutExtension(DOCUMENTS_DIRECTORY, path), path);
     }),
     ...Object.entries(WRITING_DOCUMENTS).map(([uri, path]) => {
       return buildResourceSchema(uri, path);
