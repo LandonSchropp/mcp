@@ -43,6 +43,17 @@ support. It uses Bun as both the package manager and runtime, with workspaces ha
 management across all packages. Since Bun has native TypeScript support, there's no build step
 required—you can run TypeScript files directly.
 
+### Organization
+
+This repo is organized into several directories:
+
+- `src`: The main source code for the server.
+- `test`: Test files for the server.
+- `prompts`: Markdown files that are converted into MCP server prompts.
+- `docs`: Markdown files that are converted into MCP server resources.
+- `templates`: Reusable markdown content. Templates don't generate any resources, tools, or prompts
+  on the MCP server.
+
 ### Resources
 
 This server automatically loads all of the documentation inside the docs directory as resources. All
