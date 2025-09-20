@@ -51,8 +51,8 @@ describe("getDiff", () => {
       default: mockSpawn,
     }));
 
-    mockSpawn.mockImplementation(async (_command: string, args: string[]) => {
-      if (args[0] === "log") {
+    mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+      if (args?.[0] === "log") {
         return {
           stdout: dedent`
               abc123 Fix bug in authentication
@@ -62,7 +62,7 @@ describe("getDiff", () => {
         };
       }
 
-      if (args[0] === "diff") {
+      if (args?.[0] === "diff") {
         return {
           stdout: dedent`
               diff --git a/file.txt b/file.txt
