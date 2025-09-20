@@ -1,11 +1,19 @@
 import { createTestClient } from "./helpers";
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach, mock } from "bun:test";
 
 describe("prompts", () => {
   let client: Awaited<ReturnType<typeof createTestClient>>;
   let result: Awaited<ReturnType<typeof client.getPrompt>>;
 
   beforeEach(async () => {
+    // Mock the environment module
+    mock.module("../src/env.ts", () => ({
+      PLANS_DIRECTORY: "/tmp/plans",
+      WRITING_FORMAT: "/tmp/format.md",
+      WRITING_VOICE: "/tmp/voice.md",
+      WRITING_IMPROVEMENT: "/tmp/improvement.md",
+    }));
+
     const { server } = await import("../src/server");
     client = await createTestClient(server);
   });

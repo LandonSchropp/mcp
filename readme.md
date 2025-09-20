@@ -28,12 +28,15 @@ Note: The package is not yet published, so you cannot run it with `bunx`.
 
 ## Environment
 
-The server requires three environment variables. All of these should contain the paths to markdown
-files containing specific .
+The server requires three environment variables that contain paths to markdown files. These aren't
+included in the repository because they're meant to represent the unique writing style of the user.
 
 - `WRITING_FORMAT`: Formatting conventions.
 - `WRITING_VOICE`: Language and voice guidelines—how the writing should sound.
 - `WRITING_IMPROVEMENT`: Coaching and improvement suggestions.
+
+In addition, you'll need to provide a `PLANS_DIRECTORY` variable containing the relative path of a
+directory to store plan files in.
 
 ## Architecture
 

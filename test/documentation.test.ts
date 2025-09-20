@@ -50,6 +50,7 @@ describe("resources/documentation", () => {
 
     // Mock the environment module
     mock.module("../src/env.ts", () => ({
+      PLANS_DIRECTORY: "/tmp/plans",
       WRITING_FORMAT: FORMAT_PATH,
       WRITING_VOICE: VOICE_PATH,
       WRITING_IMPROVEMENT: IMPROVEMENT_PATH,

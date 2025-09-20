@@ -15,6 +15,14 @@ function requireEnvironmentVariable(name: string): string {
   return value;
 }
 
+/** The directory relative to the project's root where plan files are stored. */
+export const PLANS_DIRECTORY = requireEnvironmentVariable("PLANS_DIRECTORY");
+
+/** The path to a markdown file containing writing format guidelines. */
 export const WRITING_FORMAT = requireEnvironmentVariable("WRITING_FORMAT");
+
+/** The path to a markdown file containing writing voice guidelines. */
 export const WRITING_VOICE = requireEnvironmentVariable("WRITING_VOICE");
+
+/** The path to a markdown file containing writing improvement guidelines. */
 export const WRITING_IMPROVEMENT = requireEnvironmentVariable("WRITING_IMPROVEMENT");
