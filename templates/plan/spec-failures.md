@@ -10,7 +10,16 @@
 
 ## Specs
 
-<!-- List the failing specs provided in the arguments as a numbered list, ordered by abstraction level (lowest to highest). Output only the spec file paths with numbers—no subsections or abstraction labels. Fixing lower-level specs may resolve higher-level spec failures. -->
+<!--
+List the failing specs provided in the arguments as a numbered list.
+
+Order specs from lowest to highest to facilitate efficient root cause identification:
+
+1. Testing pyramid level: unit → integration → end-to-end
+2. Architectural abstraction: Consider the project's specific architecture to determine what constitutes low-level vs high-level within each testing tier (e.g., models → services → controllers → UI components)
+
+Output only the spec file paths with numbers—no subsections or abstraction labels.
+-->
 
 1. spec/path/to/unit_spec.rb
 2. spec/path/to/integration_spec.rb

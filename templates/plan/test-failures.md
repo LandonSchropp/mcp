@@ -10,7 +10,16 @@
 
 ## Tests
 
-<!-- List the failing tests provided in the arguments as a numbered list, ordered by abstraction level (lowest to highest). Output only the test file paths with numbers—no subsections or abstraction labels. Fixing lower-level tests may resolve higher-level test failures. -->
+<!--
+List the failing tests provided in the arguments as a numbered list.
+
+Order tests from lowest to highest to facilitate efficient root cause identification:
+
+1. Testing pyramid level: unit → integration → end-to-end
+2. Architectural abstraction: Consider the project's specific architecture to determine what constitutes low-level vs high-level within each testing tier (e.g., models → services → controllers → UI components)
+
+Output only the test file paths with numbers—no subsections or abstraction labels.
+-->
 
 1. test/path/to/unit_test.js
 2. test/path/to/integration_test.js

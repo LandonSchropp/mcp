@@ -1,6 +1,6 @@
 ---
 title: Refactor Plan
-description: Create a plan for systematically refactoring code to improve its structure and maintainability
+description: Create a plan for refactoring code to improve its structure and maintainability
 ---
 
-{{> plan/_instructions planType="refactoring"}}
+# {{> plan/_instructions planType="refactoring"}}
