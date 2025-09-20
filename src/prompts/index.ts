@@ -19,8 +19,8 @@ const PROMPT_SCHEMA = z.object({
 // The directory containing prompt templates
 const PROMPTS_DIRECTORY = join(import.meta.dir, "../../prompts");
 
-// The prompt files
-const PROMPT_FILES = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/*.md")));
+// The prompt files (excluding files that start with underscore)
+const PROMPT_FILES = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md")));
 
 /**
  * Converts a file path to a prompt name

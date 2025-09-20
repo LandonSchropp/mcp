@@ -30,6 +30,14 @@ describe("prompts", () => {
     );
   });
 
+  describe("when files in the prompts directory begin with an underscore", () => {
+    it("does not register those prompts", async () => {
+      const { prompts } = await client.listPrompts();
+
+      expect(prompts).not.toContainEqual(expect.objectContaining({ name: "plan/_instructions" }));
+    });
+  });
+
   it("returns the content of the prompt", async () => {
     result = await client.getPrompt({
       name: "writing/format",
@@ -61,7 +69,7 @@ describe("prompts", () => {
 
   // TODO: All current prompts have {{target}} parameter. We'll add tests for this case when we have
   // prompts without parameters.
-  describe("when the prompt does not include any expressions", () => {});
+  describe("when the prompt does not include any expressions", () => { });
 
   describe("when the prompt's template includes a {{target}} expression", () => {
     it("includes an optional target parameter", async () => {
