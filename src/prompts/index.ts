@@ -1,3 +1,4 @@
+import { PROMPTS_DIRECTORY } from "../constants";
 import { server } from "../server";
 import { parseFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
@@ -15,9 +16,6 @@ const PROMPT_SCHEMA = z.object({
   title: z.string(),
   description: z.string(),
 });
-
-// The directory containing prompt templates
-const PROMPTS_DIRECTORY = join(import.meta.dir, "../../prompts");
 
 // The prompt files (excluding files that start with underscore)
 const PROMPT_FILES = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md")));

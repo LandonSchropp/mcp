@@ -1,3 +1,4 @@
+import { DOCUMENTS_DIRECTORY } from "../constants";
 import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
 import { server } from "../server";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
@@ -10,9 +11,6 @@ import z from "zod";
 
 // A schema for validating document frontmatter
 const DOCUMENT_SCHEMA = z.object({ title: z.string(), description: z.string() });
-
-// The directory the documents are contained in
-const DOCUMENTS_DIRECTORY = join(import.meta.dir, "../../doc");
 
 // The paths of the writing documents that are defined by environment variables
 const WRITING_DOCUMENTS: Record<string, string> = {
