@@ -14,7 +14,7 @@ Description: {{description}}
 3. Research the feature and its implementation. Ask any clarifying questions needed to fully
    understand the scope of the work and what's required to implement it.
 
-4. Create plan file using the `create-plan` tool. This will generate a plan pre-populated with a
+4. Create plan file using the `plan/create-template` tool. This will generate a plan pre-populated with a
    template for you to fill out.
 
 5. Fill out each section of the plan one at a time. Follow the instructions in the template for each

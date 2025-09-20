@@ -6,5 +6,6 @@ export const server = new McpServer({
   version: "0.0.0",
 });
 
-await import("./resources/documentation");
 await import("./prompts");
+await import("./resources/documentation");
+await import("./tools/plan/create-template.ts");
