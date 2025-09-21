@@ -1,4 +1,4 @@
-import { createTestClient } from "./helpers";
+import { createTestClient } from "../helpers";
 import { describe, it, expect, beforeEach, mock } from "bun:test";
 
 describe("prompts", () => {
@@ -14,7 +14,7 @@ describe("prompts", () => {
       WRITING_IMPROVEMENT: "/tmp/improvement.md",
     }));
 
-    const { server } = await import("../src/server");
+    const { server } = await import("../../src/server");
     client = await createTestClient(server);
   });
 
@@ -77,7 +77,7 @@ describe("prompts", () => {
 
   // TODO: All current prompts have {{target}} parameter. We'll add tests for this case when we have
   // prompts without parameters.
-  describe("when the prompt does not include any expressions", () => { });
+  describe("when the prompt does not include any expressions", () => {});
 
   describe("when the prompt's template includes a {{target}} expression", () => {
     it("includes an optional target parameter", async () => {
