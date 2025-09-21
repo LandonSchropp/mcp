@@ -53,6 +53,17 @@ describe("extractPlaceholders", () => {
       expect(result).toEqual(["first", "second", "third"]);
     });
   });
+
+  describe("when the template includes a partial", () => {
+    it("extracts placeholders from both the template and the partial", () => {
+      const template = "{{title}} {{> plan/_instructions}}";
+      const result = extractPlaceholders(template);
+      expect(result).toContain("title");
+      expect(result).toContain("description");
+      expect(result).toContain("planType");
+      expect(result).toContain("featureBranch");
+    });
+  });
 });
 
 describe("replacePlaceholders", () => {

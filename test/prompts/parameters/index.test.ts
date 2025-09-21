@@ -407,7 +407,20 @@ describe("extractParametersUsedInTemplate", () => {
   describe("when template contains other Handlebars syntax", () => {
     it("does not include the expressions", () => {
       expect(extractParametersUsedInTemplate("Use {{#if condition}}{{/if}}")).toEqual([]);
-      expect(extractParametersUsedInTemplate("Use {{> partial}}")).toEqual([]);
+    });
+  });
+
+  describe("when template contains partials", () => {
+    it("includes parameters from the partial", () => {
+      const result = extractParametersUsedInTemplate("{{target}} {{> plan/_instructions}}");
+      const parameterNames = result.map((p) => p.name);
+
+      // target is in the main template
+      expect(parameterNames).toContain("target");
+      // description, planType, featureBranch are in the partial
+      expect(parameterNames).toContain("description");
+      expect(parameterNames).toContain("planType");
+      expect(parameterNames).toContain("featureBranch");
     });
   });
 });

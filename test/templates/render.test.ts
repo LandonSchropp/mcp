@@ -1,4 +1,4 @@
-import { renderTemplate } from "../../src/templates/render";
+import { renderTemplate, readPartialContent } from "../../src/templates/render";
 import { describe, it, expect } from "bun:test";
 
 describe("renderTemplate", () => {
@@ -83,6 +83,26 @@ describe("renderTemplate", () => {
       expect(result).toInclude("example implementation plan");
       expect(result).toInclude("Description: Example");
       expect(result).toInclude("`feature-example` branch");
+    });
+  });
+});
+
+describe("readPartialContent", () => {
+  describe("when the partial exists", () => {
+    it("returns the partial content", () => {
+      const content = readPartialContent("plan/_instructions");
+
+      expect(content).toInclude("Your job is to create");
+      expect(content).toInclude("{{planType}}");
+      expect(content).toInclude("{{description}}");
+    });
+  });
+
+  describe("when the partial does not exist", () => {
+    it("throws an error", () => {
+      expect(() => readPartialContent("nonexistent/partial")).toThrow(
+        "Partial nonexistent/partial was not found.",
+      );
     });
   });
 });
