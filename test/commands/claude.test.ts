@@ -6,17 +6,17 @@ let mockSpawn: Mock<
 >;
 
 describe("assertClaudeInstalled", () => {
-  let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => void>;
+  let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => Promise<void>>;
 
   beforeEach(() => {
-    mockAssertInstalled = mock(() => {});
+    mockAssertInstalled = mock(() => Promise.resolve());
     mock.module("../../src/commands/assertions", () => ({
       assertInstalled: mockAssertInstalled,
     }));
   });
 
-  it("calls assertInstalled with the correct parameters", () => {
-    assertClaudeInstalled();
+  it("calls assertInstalled with the correct parameters", async () => {
+    await assertClaudeInstalled();
 
     expect(mockAssertInstalled).toHaveBeenCalledTimes(1);
     expect(mockAssertInstalled).toHaveBeenCalledWith("Claude Code", "claude", ["--version"]);
@@ -24,16 +24,14 @@ describe("assertClaudeInstalled", () => {
 
   describe("when claude is not installed", () => {
     beforeEach(() => {
-      mockAssertInstalled = mock(() => {
-        throw new Error("Claude Code is not installed.");
-      });
+      mockAssertInstalled = mock(() => Promise.reject(new Error("Claude Code is not installed.")));
       mock.module("../../src/commands/assertions", () => ({
         assertInstalled: mockAssertInstalled,
       }));
     });
 
-    it("throws an error", () => {
-      expect(() => assertClaudeInstalled()).toThrow("Claude Code is not installed.");
+    it("throws an error", async () => {
+      return expect(assertClaudeInstalled()).rejects.toThrow("Claude Code is not installed.");
     });
   });
 });

@@ -6,8 +6,8 @@ import spawn from "nano-spawn";
  *
  * @throws If Claude Code is not installed.
  */
-export function assertClaudeInstalled() {
-  assertInstalled("Claude Code", "claude", ["--version"]);
+export async function assertClaudeInstalled() {
+  await assertInstalled("Claude Code", "claude", ["--version"]);
 }
 
 /**
