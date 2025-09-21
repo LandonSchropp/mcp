@@ -1,5 +1,9 @@
-import { assertClaudeInstalled } from "../../src/commands/claude";
+import { assertClaudeInstalled, claude } from "../../src/commands/claude";
 import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
+
+let mockSpawn: Mock<
+  (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>
+>;
 
 describe("assertClaudeInstalled", () => {
   let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => void>;
@@ -31,5 +35,29 @@ describe("assertClaudeInstalled", () => {
     it("throws an error", () => {
       expect(() => assertClaudeInstalled()).toThrow("Claude Code is not installed.");
     });
+  });
+});
+
+describe("claude", () => {
+  beforeEach(() => {
+    mockSpawn = mock(() => Promise.resolve({ stdout: "", stderr: "" }));
+
+    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "  Result  \n", stderr: "" }));
+
+    mock.module("nano-spawn", () => ({
+      default: mockSpawn,
+    }));
+  });
+
+  it("calls claude with --print flag", async () => {
+    await claude("echo 'Hello, world!'");
+
+    expect(mockSpawn).toHaveBeenCalledWith("claude", ["--print", "echo 'Hello, world!'"]);
+  });
+
+  it("returns the trimmed stdout", async () => {
+    const result = await claude("some command");
+
+    expect(result).toBe("Result");
   });
 });
