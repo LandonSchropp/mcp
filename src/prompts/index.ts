@@ -2,9 +2,8 @@ import { PROMPTS_DIRECTORY } from "../constants";
 import { server } from "../server";
 import { parseFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
-import { mapToObjectAsync } from "../utilities/array";
 import { relativePathWithoutExtension } from "../utilities/path";
-import { extractPromptParametersFromTemplate, resolvePromptParameterValue } from "./parameters";
+import { extractParametersUsedInTemplate, resolvePromptParameterValue } from "./parameters";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
 import z from "zod";
@@ -27,7 +26,7 @@ for (const filePath of PROMPT_FILES) {
   const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
 
   // Determine the parameters present in the template
-  let parameters = extractPromptParametersFromTemplate(content);
+  let parameters = extractParametersUsedInTemplate(content);
   let parameterNames = parameters.map(({ name }) => name);
 
   // Generate the arguments dynamically based on the template content's
@@ -48,9 +47,17 @@ for (const filePath of PROMPT_FILES) {
     },
     async (values) => {
       // Build the context from the provided values
-      let context = await mapToObjectAsync(parameterNames, async (name) => {
-        return await resolvePromptParameterValue(name, values[name]);
-      });
+      let context: Record<string, string> = {};
+
+      for await (let name of parameterNames) {
+        context[name] = await resolvePromptParameterValue(
+          server,
+          promptName,
+          name,
+          context,
+          values[name],
+        );
+      }
 
       // Render the template
       let text = renderTemplate(content, context);
