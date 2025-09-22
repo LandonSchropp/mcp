@@ -4,9 +4,10 @@ import { parseFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
 import { relativePathWithoutExtension } from "../utilities/path";
 import { extractParametersUsedInTemplate, resolvePromptParameterValue } from "./parameters";
+import { ParameterDefinition } from "./parameters/types";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
-import z from "zod";
+import z, { ZodOptional, ZodString } from "zod";
 
 // TODO: Prevent prompts from being registered if they're not applicable (e.g.
 // Ruby/TypeScript-specific prompts)
@@ -17,6 +18,12 @@ const PROMPT_SCHEMA = z.object({
   description: z.string(),
 });
 
+// Convert a ParameterDefinition to a Zod schema
+function parameterToZodSchema(parameter: ParameterDefinition): ZodString | ZodOptional<ZodString> {
+  let schema = z.string().describe(parameter.description);
+  return parameter.type === "optional" ? schema.optional() : schema;
+}
+
 // The prompt files (excluding files that start with underscore)
 const PROMPT_FILES = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md")));
 
@@ -26,16 +33,18 @@ for (const filePath of PROMPT_FILES) {
   const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
 
   // Determine the parameters present in the template
+  //
+  // BUG: There's a bug where where the {{description}} parameter is not being returned because
+  // it's contained in a partial. We'll probably need to update extractParametersUsedInTemplate to
+  // actually parse the template with all partials included.
   let parameters = extractParametersUsedInTemplate(content);
   let parameterNames = parameters.map(({ name }) => name);
 
   // Generate the arguments dynamically based on the template content's
   let argsSchema = Object.fromEntries(
-    parameters.map((param) => {
-      // TODO: My optional parameters are not working. I need to figure out how to enable optional
-      // parameters for MCP servers (if possible).
-      return [param.name, z.string().optional().describe(param.description)];
-    }),
+    parameters
+      .filter((parameter) => parameter.type === "required" || parameter.type === "optional")
+      .map((parameter) => [parameter.name, parameterToZodSchema(parameter)]),
   );
 
   // Register the prompt with just the basic info for now
@@ -49,7 +58,7 @@ for (const filePath of PROMPT_FILES) {
       // Build the context from the provided values
       let context: Record<string, string> = {};
 
-      for await (let name of parameterNames) {
+      for (let name of parameterNames) {
         context[name] = await resolvePromptParameterValue(
           server,
           promptName,
