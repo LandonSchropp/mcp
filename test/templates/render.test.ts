@@ -80,9 +80,9 @@ describe("renderTemplate", () => {
         description: "Example",
       });
 
-      expect(result).toInclude("example implementation plan");
-      expect(result).toInclude("Description: Example");
-      expect(result).toInclude("`feature-example` branch");
+      expect(result).toContain("example implementation plan");
+      expect(result).toContain("Description: Example");
+      expect(result).toContain("`feature-example` branch");
     });
   });
 });
@@ -92,9 +92,9 @@ describe("readPartialContent", () => {
     it("returns the partial content", () => {
       const content = readPartialContent("plan/_instructions");
 
-      expect(content).toInclude("Your job is to create");
-      expect(content).toInclude("{{planType}}");
-      expect(content).toInclude("{{description}}");
+      expect(content).toContain("Your job is to create");
+      expect(content).toContain("{{planType}}");
+      expect(content).toContain("{{description}}");
     });
   });
 
