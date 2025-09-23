@@ -1,8 +1,8 @@
 import { createTestClient } from "./helpers";
-import { describe, it, expect, mock, beforeEach } from "vitest";
 import { tmpdir } from "os";
 import { join } from "path";
 import { dedent } from "ts-dedent";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 let FORMAT_PATH = join(tmpdir(), `format-${Date.now()}.md`);
 let VOICE_PATH = join(tmpdir(), `voice-${Date.now()}.md`);

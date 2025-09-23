@@ -3,7 +3,7 @@ import {
   extractParametersUsedInTemplate,
 } from "../../../src/prompts/parameters";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { describe, it, expect, mock, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 let mockServer: McpServer;
 let mockClaude: Mock<(command: string) => Promise<string>>;
@@ -11,9 +11,9 @@ let mockClaude: Mock<(command: string) => Promise<string>>;
 describe("resolvePromptParameterValue", () => {
   beforeEach(() => {
     mockServer = {} as McpServer;
-    mockClaude = mock(() => Promise.resolve(""));
+    mockClaude = vi.fn(() => Promise.resolve(""));
 
-    mock.module("../../../src/commands/claude", () => ({
+    vi.mock("../../../src/commands/claude", () => ({
       claude: mockClaude,
     }));
   });

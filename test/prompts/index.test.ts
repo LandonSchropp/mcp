@@ -1,5 +1,5 @@
 import { createTestClient } from "../helpers";
-import { describe, it, expect, beforeEach, mock } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("prompts", () => {
   let client: Awaited<ReturnType<typeof createTestClient>>;
@@ -7,7 +7,7 @@ describe("prompts", () => {
 
   beforeEach(async () => {
     // Mock the environment module
-    mock.module("../src/env.ts", () => ({
+    vi.mock("../src/env.ts", () => ({
       PLANS_DIRECTORY: "/tmp/plans",
       WRITING_FORMAT: "/tmp/format.md",
       WRITING_VOICE: "/tmp/voice.md",

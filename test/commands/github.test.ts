@@ -1,6 +1,6 @@
 import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github";
-import { describe, it, expect, mock, beforeEach, Mock } from "vitest";
 import dedent from "ts-dedent";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 let mockSpawn: Mock<
   (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>
@@ -22,7 +22,7 @@ describe("assertGitHubInstalled", () => {
   let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => Promise<void>>;
 
   beforeEach(() => {
-    mockAssertInstalled = mock(() => Promise.resolve());
+    mockAssertInstalled = vi.fn(() => Promise.resolve());
     mock.module("../../src/commands/assertions", () => ({
       assertInstalled: mockAssertInstalled,
     }));
@@ -37,7 +37,7 @@ describe("assertGitHubInstalled", () => {
 
   describe("when github cli is not installed", () => {
     beforeEach(() => {
-      mockAssertInstalled = mock(() => Promise.reject(new Error("GitHub is not installed.")));
+      mockAssertInstalled = vi.fn(() => Promise.reject(new Error("GitHub is not installed.")));
       mock.module("../../src/commands/assertions", () => ({
         assertInstalled: mockAssertInstalled,
       }));
@@ -51,7 +51,7 @@ describe("assertGitHubInstalled", () => {
 
 describe("getPullRequest", () => {
   beforeEach(() => {
-    mockSpawn = mock(() => Promise.resolve({ stdout: "", stderr: "" }));
+    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
 
     mock.module("nano-spawn", () => ({
       default: mockSpawn,

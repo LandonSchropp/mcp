@@ -1,8 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { mock } from "vitest";
 import { join } from "path";
+import { vi } from "vitest";
 
 /**
  * Creates a fully connected MCP client for integration testing. This helper sets up:
