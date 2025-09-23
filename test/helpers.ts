@@ -31,7 +31,7 @@ export async function createTestClient(server: McpServer): Promise<Client> {
 export type RestoreMockModule = () => void;
 
 // The src directory path
-const SOURCE_DIRECTORY = join(import.meta.dir, "../src");
+const SOURCE_DIRECTORY = join(import.meta.dirname, "../src");
 
 /**
  * This implementation mocks a module before each test and restores the original module after each
