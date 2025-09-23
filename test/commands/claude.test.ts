@@ -1,5 +1,5 @@
 import { assertClaudeInstalled, claude } from "../../src/commands/claude";
-import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
+import { describe, it, expect, mock, beforeEach, Mock } from "vitest";
 
 let mockSpawn: Mock<
   (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>

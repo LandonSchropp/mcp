@@ -1,5 +1,5 @@
 import { first, unique } from "../../src/utilities/array";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("first", () => {
   describe("when given an array", () => {

@@ -1,5 +1,5 @@
 import { kebabCase } from "../../src/utilities/string";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("kebabCase", () => {
   describe("when given basic text", () => {

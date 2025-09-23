@@ -1,7 +1,7 @@
 import { server } from "../../src/server";
 import { getDiff } from "@landonschropp/mcp-shared/git";
 import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, mock } from "vitest";
 import dedent from "ts-dedent";
 
 let client: Awaited<ReturnType<typeof createTestClient>>;

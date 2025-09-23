@@ -5,7 +5,7 @@ import {
   getBaseBranch,
   getBranches,
 } from "../../src/commands/git";
-import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
+import { describe, it, expect, mock, beforeEach, Mock } from "vitest";
 import dedent from "ts-dedent";
 
 let mockSpawn: Mock<

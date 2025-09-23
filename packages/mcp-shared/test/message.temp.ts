@@ -1,5 +1,5 @@
 import { createTextMessage, createPromptMessageFromTemplate } from "../src/message.ts";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("createTextMessage", () => {
   it("creates a text message with user role", () => {

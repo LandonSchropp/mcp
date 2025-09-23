@@ -1,5 +1,5 @@
 import { replacePlaceholders, extractPlaceholders } from "../../src/templates/placeholders";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("extractPlaceholders", () => {
   describe("when the template has no placeholders", () => {

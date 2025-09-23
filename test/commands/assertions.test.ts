@@ -1,5 +1,5 @@
 import { assertInstalled } from "../../src/commands/assertions";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("assertInstalled", () => {
   describe("when the command exists", () => {

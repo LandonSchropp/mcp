@@ -3,7 +3,7 @@ import {
   extractParametersUsedInTemplate,
 } from "../../../src/prompts/parameters";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { describe, it, expect, mock, beforeEach, Mock } from "bun:test";
+import { describe, it, expect, mock, beforeEach, Mock } from "vitest";
 
 let mockServer: McpServer;
 let mockClaude: Mock<(command: string) => Promise<string>>;

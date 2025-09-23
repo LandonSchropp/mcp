@@ -1,5 +1,5 @@
 import { renderTemplate, renderTemplateFile } from "../src/template.ts";
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach } from "vitest";
 
 describe("renderTemplate", () => {
   describe("when the template is empty", () => {

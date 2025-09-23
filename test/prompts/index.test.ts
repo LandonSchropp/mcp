@@ -1,5 +1,5 @@
 import { createTestClient } from "../helpers";
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, mock } from "vitest";
 
 describe("prompts", () => {
   let client: Awaited<ReturnType<typeof createTestClient>>;

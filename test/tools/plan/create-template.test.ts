@@ -1,5 +1,5 @@
 import { createTestClient } from "../../helpers";
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, mock, beforeEach, afterEach } from "vitest";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";

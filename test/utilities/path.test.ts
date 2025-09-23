@@ -1,5 +1,5 @@
 import { relativePathWithoutExtension } from "../../src/utilities/path";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("relativePathWithoutExtension", () => {
   describe("when the path has a single extension", () => {

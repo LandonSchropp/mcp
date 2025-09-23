@@ -1,5 +1,5 @@
 import { renderTemplate, readPartialContent } from "../../src/templates/render";
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("renderTemplate", () => {
   describe("when the template has no placeholders", () => {

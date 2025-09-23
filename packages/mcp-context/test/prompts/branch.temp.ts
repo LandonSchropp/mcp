@@ -1,6 +1,6 @@
 import { server } from "../../src/server.ts";
 import { createTestClient } from "@landonschropp/mcp-shared/test";
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach } from "vitest";
 
 let client: Awaited<ReturnType<typeof createTestClient>>;
 

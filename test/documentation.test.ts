@@ -1,5 +1,5 @@
 import { createTestClient } from "./helpers";
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { describe, it, expect, mock, beforeEach } from "vitest";
 import { tmpdir } from "os";
 import { join } from "path";
 import { dedent } from "ts-dedent";
