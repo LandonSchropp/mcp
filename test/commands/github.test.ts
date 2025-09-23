@@ -1,31 +1,25 @@
 import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github";
+import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-let mockSpawn: Mock<
-  (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>
->;
+const mockAssertInstalled = vi.hoisted(() => vi.fn());
+const mockSpawn = vi.hoisted(() => vi.fn());
 
-class SubprocessError extends Error {
-  exitCode?: number;
-  signalName?: string;
+vi.mock("../../src/commands/assertions", () => ({
+  assertInstalled: mockAssertInstalled,
+}));
 
-  constructor(message: string, exitCode?: number, signalName?: string) {
-    super(message);
-    this.name = "SubprocessError";
-    this.exitCode = exitCode;
-    this.signalName = signalName;
-  }
-}
+vi.mock("nano-spawn", async (importOriginal) => {
+  return {
+    ...(await importOriginal<typeof import("nano-spawn")>()),
+    default: mockSpawn,
+  };
+});
 
 describe("assertGitHubInstalled", () => {
-  let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => Promise<void>>;
-
   beforeEach(() => {
-    mockAssertInstalled = vi.fn(() => Promise.resolve());
-    mock.module("../../src/commands/assertions", () => ({
-      assertInstalled: mockAssertInstalled,
-    }));
+    mockAssertInstalled.mockResolvedValue(undefined);
   });
 
   it("calls assertInstalled with the correct parameters", async () => {
@@ -37,10 +31,7 @@ describe("assertGitHubInstalled", () => {
 
   describe("when github cli is not installed", () => {
     beforeEach(() => {
-      mockAssertInstalled = vi.fn(() => Promise.reject(new Error("GitHub is not installed.")));
-      mock.module("../../src/commands/assertions", () => ({
-        assertInstalled: mockAssertInstalled,
-      }));
+      mockAssertInstalled.mockRejectedValue(new Error("GitHub is not installed."));
     });
 
     it("throws an error", async () => {
@@ -51,12 +42,7 @@ describe("assertGitHubInstalled", () => {
 
 describe("getPullRequest", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-      SubprocessError,
-    }));
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
   });
 
   it("calls gh pr view with correct arguments", async () => {
@@ -161,7 +147,9 @@ describe("getPullRequest", () => {
 
   describe("when no PR exists for the branch", () => {
     beforeEach(() => {
-      mockSpawn.mockRejectedValue(new SubprocessError("no pull requests found", 1));
+      const error = new SubprocessError("no pull requests found");
+      error.exitCode = 1;
+      mockSpawn.mockRejectedValue(error);
     });
 
     it("returns null", async () => {
@@ -173,7 +161,9 @@ describe("getPullRequest", () => {
 
   describe("when a subprocess error with exit code other than 1 occurs", () => {
     beforeEach(() => {
-      mockSpawn.mockRejectedValue(new SubprocessError("Authentication failed", 2));
+      const error = new SubprocessError("Authentication failed");
+      error.exitCode = 2;
+      mockSpawn.mockRejectedValue(error);
     });
 
     it("throws the error", async () => {

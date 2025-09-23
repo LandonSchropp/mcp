@@ -6,20 +6,25 @@ import {
   getBranches,
 } from "../../src/commands/git";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-let mockSpawn: Mock<
-  (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>
->;
+const mockAssertInstalled = vi.hoisted(() => vi.fn());
+const mockSpawn = vi.hoisted(() => vi.fn());
+
+vi.mock("../../src/commands/assertions", () => ({
+  assertInstalled: mockAssertInstalled,
+}));
+
+vi.mock("nano-spawn", async (importOriginal) => {
+  return {
+    ...(await importOriginal<typeof import("nano-spawn")>()),
+    default: mockSpawn,
+  };
+});
 
 describe("assertGitInstalled", () => {
-  let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => Promise<void>>;
-
   beforeEach(() => {
-    mockAssertInstalled = vi.fn(() => Promise.resolve());
-    mock.module("../../src/commands/assertions", () => ({
-      assertInstalled: mockAssertInstalled,
-    }));
+    mockAssertInstalled.mockResolvedValue(undefined);
   });
 
   it("calls assertInstalled with the correct parameters", async () => {
@@ -31,10 +36,7 @@ describe("assertGitInstalled", () => {
 
   describe("when git is not installed", () => {
     beforeEach(() => {
-      mockAssertInstalled = vi.fn(() => Promise.reject(new Error("Git is not installed.")));
-      mock.module("../../src/commands/assertions", () => ({
-        assertInstalled: mockAssertInstalled,
-      }));
+      mockAssertInstalled.mockRejectedValue(new Error("Git is not installed."));
     });
 
     it("throws an error", async () => {
@@ -45,12 +47,6 @@ describe("assertGitInstalled", () => {
 
 describe("getDiff", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-    }));
-
     mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
       if (args?.[0] === "log") {
         return {
@@ -141,11 +137,7 @@ describe("getDiff", () => {
 
 describe("getDefaultBranch", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-    }));
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
   });
 
   it("calls git default-branch command", async () => {
@@ -175,11 +167,7 @@ describe("getDefaultBranch", () => {
 
 describe("getBaseBranch", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-    }));
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
   });
 
   it("delegates to getDefaultBranch", async () => {
@@ -202,11 +190,7 @@ describe("getBaseBranch", () => {
 
 describe("getBranches", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-    }));
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
   });
 
   it("calls git branch with the correct format", async () => {

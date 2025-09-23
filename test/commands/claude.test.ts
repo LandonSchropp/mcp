@@ -1,18 +1,23 @@
 import { assertClaudeInstalled, claude } from "../../src/commands/claude";
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-let mockSpawn: Mock<
-  (command: string, args?: string[]) => Promise<{ stdout: string; stderr: string }>
->;
+const mockAssertInstalled = vi.hoisted(() => vi.fn());
+const mockSpawn = vi.hoisted(() => vi.fn());
+
+vi.mock("../../src/commands/assertions", () => ({
+  assertInstalled: mockAssertInstalled,
+}));
+
+vi.mock("nano-spawn", async (importOriginal) => {
+  return {
+    ...(await importOriginal<typeof import("nano-spawn")>()),
+    default: mockSpawn,
+  };
+});
 
 describe("assertClaudeInstalled", () => {
-  let mockAssertInstalled: Mock<(name: string, command: string, args?: string[]) => Promise<void>>;
-
   beforeEach(() => {
-    mockAssertInstalled = vi.fn(() => Promise.resolve());
-    mock.module("../../src/commands/assertions", () => ({
-      assertInstalled: mockAssertInstalled,
-    }));
+    mockAssertInstalled.mockResolvedValue(undefined);
   });
 
   it("calls assertInstalled with the correct parameters", async () => {
@@ -24,10 +29,7 @@ describe("assertClaudeInstalled", () => {
 
   describe("when claude is not installed", () => {
     beforeEach(() => {
-      mockAssertInstalled = vi.fn(() => Promise.reject(new Error("Claude Code is not installed.")));
-      mock.module("../../src/commands/assertions", () => ({
-        assertInstalled: mockAssertInstalled,
-      }));
+      mockAssertInstalled.mockRejectedValue(new Error("Claude Code is not installed."));
     });
 
     it("throws an error", async () => {
@@ -38,13 +40,7 @@ describe("assertClaudeInstalled", () => {
 
 describe("claude", () => {
   beforeEach(() => {
-    mockSpawn = vi.fn(() => Promise.resolve({ stdout: "", stderr: "" }));
-
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "  Result  \n", stderr: "" }));
-
-    mock.module("nano-spawn", () => ({
-      default: mockSpawn,
-    }));
+    mockSpawn.mockResolvedValue({ stdout: "  Result  \n", stderr: "" });
   });
 
   it("calls claude with --print flag", async () => {
