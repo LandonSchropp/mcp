@@ -4,11 +4,6 @@ import { ParameterDefinition, ParameterResolver } from "./types";
 const TARGET_DEFAULT = "the current context";
 const DESCRIPTION_DEFAULT = "the task in the current context";
 
-/** Resolves the plan type from the prompt name by extracting the substring after the last slash */
-const resolvePlanType: ParameterResolver = (_server: any, prompt: string) => {
-  return prompt.replace(/^.*\//, "");
-};
-
 const BRANCH_PRINT_INSTRUCTION = "Print the branch name and nothing else.";
 
 const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
@@ -33,13 +28,15 @@ const resolveFeatureBranch: ParameterResolver = async (
     );
   }
 
-  return await claude(
+  let result = await claude(
     `Create a simple branch name in a few words in kebab case based on the following description: 
 
     ${description}
 
     ${BRANCH_PRINT_INSTRUCTION}`,
   );
+
+  return result;
 };
 
 /** List of allowed parameters and their resolvers */
@@ -55,12 +52,6 @@ export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
     description: "A description of the task",
     type: "optional",
     resolve: () => DESCRIPTION_DEFAULT,
-  },
-  {
-    name: "planType",
-    description: "The type of plan",
-    type: "auto",
-    resolve: resolvePlanType,
   },
   {
     name: "featureBranch",
