@@ -1,4 +1,5 @@
 import { createTestClient } from "./helpers";
+import { writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { dedent } from "ts-dedent";
@@ -8,11 +9,21 @@ let FORMAT_PATH = join(tmpdir(), `format-${Date.now()}.md`);
 let VOICE_PATH = join(tmpdir(), `voice-${Date.now()}.md`);
 let IMPROVEMENT_PATH = join(tmpdir(), `improvement-${Date.now()}.md`);
 
+vi.mock("../src/env.ts", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/env.ts")>();
+  return {
+    ...actual,
+    WRITING_FORMAT: FORMAT_PATH,
+    WRITING_VOICE: VOICE_PATH,
+    WRITING_IMPROVEMENT: IMPROVEMENT_PATH,
+  };
+});
+
 describe("resources/documentation", () => {
   let client: Awaited<ReturnType<typeof createTestClient>>;
 
   beforeEach(async () => {
-    await Bun.write(
+    await writeFile(
       FORMAT_PATH,
       dedent`
         ---
@@ -24,7 +35,7 @@ describe("resources/documentation", () => {
       `,
     );
 
-    await Bun.write(
+    await writeFile(
       VOICE_PATH,
       dedent`
         ---
@@ -36,7 +47,7 @@ describe("resources/documentation", () => {
       `,
     );
 
-    await Bun.write(
+    await writeFile(
       IMPROVEMENT_PATH,
       dedent`
         ---
@@ -47,14 +58,6 @@ describe("resources/documentation", () => {
         Improvement Content
       `,
     );
-
-    // Mock the environment module
-    mock.module("../src/env.ts", () => ({
-      PLANS_DIRECTORY: "/tmp/plans",
-      WRITING_FORMAT: FORMAT_PATH,
-      WRITING_VOICE: VOICE_PATH,
-      WRITING_IMPROVEMENT: IMPROVEMENT_PATH,
-    }));
 
     // Import the server and documents after mocking
     const { server } = await import("../src/server");

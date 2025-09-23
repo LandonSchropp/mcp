@@ -6,6 +6,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 let PLANS_DIRECTORY = join(tmpdir(), `plans-${Date.now()}`);
 
+vi.mock("../../../src/env.ts", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../src/env.ts")>();
+  return {
+    ...actual,
+    PLANS_DIRECTORY: PLANS_DIRECTORY,
+  };
+});
+
 const TEMPLATE_TEST_CASES = [
   {
     type: "bug-fix",
@@ -45,14 +53,6 @@ describe("tools/plan/create-template", () => {
   beforeEach(async () => {
     // Create temp directory for plans
     await mkdir(PLANS_DIRECTORY, { recursive: true });
-
-    // Mock the environment module
-    mock.module("../../../src/env.ts", () => ({
-      PLANS_DIRECTORY: PLANS_DIRECTORY,
-      WRITING_FORMAT: "/tmp/format.md",
-      WRITING_VOICE: "/tmp/voice.md",
-      WRITING_IMPROVEMENT: "/tmp/improvement.md",
-    }));
 
     // Import the server after mocking
     const { server } = await import("../../../src/server");
