@@ -1,13 +1,19 @@
+import { server } from "../src/server";
 import { createTestClient } from "./helpers";
 import { writeFile } from "fs/promises";
-import { tmpdir } from "os";
-import { join } from "path";
 import { dedent } from "ts-dedent";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-let FORMAT_PATH = join(tmpdir(), `format-${Date.now()}.md`);
-let VOICE_PATH = join(tmpdir(), `voice-${Date.now()}.md`);
-let IMPROVEMENT_PATH = join(tmpdir(), `improvement-${Date.now()}.md`);
+const { FORMAT_PATH, VOICE_PATH, IMPROVEMENT_PATH } = await vi.hoisted(async () => {
+  const { tmpdir } = await import("os");
+  const { join } = await import("path");
+
+  return {
+    FORMAT_PATH: join(tmpdir(), `format-${Date.now()}.md`),
+    VOICE_PATH: join(tmpdir(), `voice-${Date.now()}.md`),
+    IMPROVEMENT_PATH: join(tmpdir(), `improvement-${Date.now()}.md`),
+  };
+});
 
 vi.mock("../src/env.ts", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../src/env.ts")>();
@@ -59,8 +65,6 @@ describe("resources/documentation", () => {
       `,
     );
 
-    // Import the server and documents after mocking
-    const { server } = await import("../src/server");
     client = await createTestClient(server);
   });
 

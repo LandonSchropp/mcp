@@ -1,10 +1,15 @@
+import { server } from "../../../src/server";
 import { createTestClient } from "../../helpers";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
-import { tmpdir } from "os";
 import { join } from "path";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-let PLANS_DIRECTORY = join(tmpdir(), `plans-${Date.now()}`);
+let PLANS_DIRECTORY = await vi.hoisted(async () => {
+  const { tmpdir } = await import("os");
+  const { join } = await import("path");
+
+  return join(tmpdir(), `plans-${Date.now()}`);
+});
 
 vi.mock("../../../src/env.ts", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../../src/env.ts")>();
@@ -54,8 +59,6 @@ describe("tools/plan/create-template", () => {
     // Create temp directory for plans
     await mkdir(PLANS_DIRECTORY, { recursive: true });
 
-    // Import the server after mocking
-    const { server } = await import("../../../src/server");
     client = await createTestClient(server);
   });
 
