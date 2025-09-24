@@ -1,21 +1,23 @@
+import { claude } from "../../../src/commands/claude";
 import {
   resolvePromptParameterValue,
   extractParametersUsedInTemplate,
 } from "../../../src/prompts/parameters";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+vi.mock("../../../src/commands/claude", () => ({
+  claude: vi.fn(() => Promise.resolve("")),
+}));
+
+const mockClaude = vi.mocked(claude);
 
 let mockServer: McpServer;
-let mockClaude: Mock<(command: string) => Promise<string>>;
 
 describe("resolvePromptParameterValue", () => {
   beforeEach(() => {
     mockServer = {} as McpServer;
-    mockClaude = vi.fn(() => Promise.resolve(""));
-
-    vi.mock("../../../src/commands/claude", () => ({
-      claude: mockClaude,
-    }));
+    mockClaude.mockResolvedValue("");
   });
 
   describe("when the parameter is 'target'", () => {
@@ -148,47 +150,6 @@ describe("resolvePromptParameterValue", () => {
           "   \t\n  ",
         );
         expect(result).toBe("the task in the current context");
-      });
-    });
-  });
-
-  describe("when the parameter is 'planType'", () => {
-    describe("when the prompt name contains a single slash", () => {
-      it("returns the value after the slash", async () => {
-        const result = await resolvePromptParameterValue(
-          mockServer,
-          "plan/bug-fix",
-          "planType",
-          {},
-          undefined,
-        );
-        expect(result).toBe("bug-fix");
-      });
-    });
-
-    describe("when the prompt name contains multiple slashes", () => {
-      it("returns the value after the last slash", async () => {
-        const result = await resolvePromptParameterValue(
-          mockServer,
-          "category/subcategory/feature",
-          "planType",
-          {},
-          undefined,
-        );
-        expect(result).toBe("feature");
-      });
-    });
-
-    describe("when the prompt name contains no slashes", () => {
-      it("returns the entire prompt name", async () => {
-        const result = await resolvePromptParameterValue(
-          mockServer,
-          "simple-prompt",
-          "planType",
-          {},
-          undefined,
-        );
-        expect(result).toBe("simple-prompt");
       });
     });
   });
@@ -412,15 +373,13 @@ describe("extractParametersUsedInTemplate", () => {
 
   describe("when template contains partials", () => {
     it("includes parameters from the partial", () => {
-      const result = extractParametersUsedInTemplate("{{target}} {{> plan/_instructions}}");
-      const parameterNames = result.map((p) => p.name);
+      const result = extractParametersUsedInTemplate(
+        '{{target}} {{> plan/_instructions planType="test""}}',
+      );
 
-      // target is in the main template
-      expect(parameterNames).toContain("target");
-      // description, planType, featureBranch are in the partial
-      expect(parameterNames).toContain("description");
-      expect(parameterNames).toContain("planType");
-      expect(parameterNames).toContain("featureBranch");
+      const parameterNames = result.map(({ name }) => name);
+
+      expect(parameterNames).toEqual(["target", "description", "featureBranch"]);
     });
   });
 });
