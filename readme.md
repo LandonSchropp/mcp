@@ -21,10 +21,10 @@ You can connect the server to Claude Code directly when running the following co
 project's root directory.
 
 ```bash
-claude mcp add landon -- bun --cwd "$(pwd)" start
+claude mcp add landon -- pnpm --dir "$(pwd)" start
 ```
 
-Note: The package is not yet published, so you cannot run it with `bunx`.
+Note: The package is not yet published, so you cannot run it with `npx`.
 
 ## Environment
 
@@ -40,11 +40,8 @@ directory to store plan files in.
 
 ## Architecture
 
-This project is a [Bun](https://bun.sh) monorepo with packages organized under `packages/`. Each
-package is an independent MCP server that can be run directly using Bun's built-in TypeScript
-support. It uses Bun as both the package manager and runtime, with workspaces handling dependency
-management across all packages. Since Bun has native TypeScript support, there's no build step
-required—you can run TypeScript files directly.
+This project is an MCP server that can be run directly using tsx for TypeScript execution. Since tsx
+has native TypeScript support, there's no build step required—you can run TypeScript files directly.
 
 ### Organization
 
@@ -93,7 +90,7 @@ Currently, the following expressions are supported:
 
 The MCP server comes with a commands:
 
-- `bun check-types`: Run TypeScript type checking.
-- `bun inspector`: Run the MCP inspector for the server.
-- `bun start`: Start the server locally.
-- `bun test`: Run the tests for the server.
+- `pnpm check-types`: Run TypeScript type checking.
+- `pnpm inspector`: Run the MCP inspector for the server.
+- `pnpm start`: Start the server locally.
+- `pnpm test`: Run the tests for the server.

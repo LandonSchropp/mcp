@@ -4,28 +4,28 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-This is a Model Context Protocol (MCP) servers monorepo using Bun as both the runtime and package manager. The project provides writing assistance tools through MCP servers that can be connected directly to Claude.
+This is a Model Context Protocol (MCP) server using pnpm as the package manager and Node.js with tsx as the runtime. The project provides writing assistance tools through an MCP server that can be connected directly to Claude.
 
 ## Commands
 
-- `bun check-types`: Run TypeScript type checking.
-- `bun start`: Start the server locally.
-- `bun test`: Run the tests for the server.
-- `bun test <path>`: Run the tests for a specific file
-- `bun prettier --write <path>`: Format a file.
+- `pnpm check-types`: Run TypeScript type checking.
+- `pnpm start`: Start the server locally.
+- `pnpm test`: Run the tests for the server.
+- `pnpm test <path>`: Run the tests for a specific file
+- `pnpm prettier --write <path>`: Format a file.
 
 ## Architecture
 
-### Monorepo Structure
+### Project Structure
 
-- **Bun Workspaces**: All packages under `packages/` directory
-- **Shared TypeScript Config**: Single `tsconfig.json` at root validates all packages
-- **No Build Step**: Bun runs TypeScript directly - no compilation needed
-- **Direct Execution**: `bun run src/index.ts` works without preprocessing
+- **Single MCP Server**: All functionality in a single server at root level
+- **TypeScript Config**: `tsconfig.json` at root validates the entire project
+- **No Build Step**: tsx runs TypeScript directly - no compilation needed
+- **Direct Execution**: `tsx src/index.ts` works without preprocessing
 
 ### MCP Server Pattern
 
-Each server follows this structure:
+The server follows this structure:
 
 - `src/index.ts` - Entry point with stdio transport setup
 - `src/server.ts` - MCP server configuration and prompt/tool registration
@@ -33,9 +33,9 @@ Each server follows this structure:
 - `templates/` - Markdown template files for prompts
 - `test/` - Test files mirroring src structure
 
-### Writing Server Architecture
+### Server Architecture
 
-The writing server (`packages/mcp-writing`) uses:
+The server uses:
 
 - **Template-based prompts**: Each prompt loads a markdown template from `templates/`
 - **Environment-dependent style guides**: Integrates external style guides via environment variables
@@ -54,7 +54,7 @@ These link to external documents in `/Users/landon/Notes/Areas/AI/Writing/`
 
 ## Testing Approach
 
-- **Test Runner**: Bun's built-in test runner
+- **Test Runner**: Vitest
 - **Test Structure**: Mirror source structure with `.test.ts` suffix
 - **Test Helpers**: Use `createTestClient()` from `test/helpers.ts` for MCP client setup
 - **Test Pattern**: Each prompt tested for registration, argument handling, and content generation
