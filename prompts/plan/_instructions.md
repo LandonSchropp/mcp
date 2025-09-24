@@ -1,6 +1,6 @@
 ---
 title: Instructions
-description: The process, steps and template elements used by all plan commands
+description: The process used by all plan commands
 ---
 
 Your job is to create a {{planType}} implementation plan by breaking it down into manageable components and defining a systematic development approach.
