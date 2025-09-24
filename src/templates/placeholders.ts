@@ -1,7 +1,8 @@
 import { readPartialContent } from "./render";
 
 const PLACEHOLDER_REGEX = /\{\{\s*(\S+)\s*\}\}/g;
-const PARTIAL_REGEX = /\{\{>\s*(\S+)(?:\s+\w+=(\w+))*\s*\}\}/g;
+const PARTIAL_REGEX = /\{\{>\s*(\S+)((?:\s+[^=\s]+=[^=\s]+)*)\s*\}\}/g;
+const PARTIAL_PARAMETER_REGEX = /\s+([^=\s]+)=[^=\s]+/g;
 
 /**
  * Replaces {{placeholders}} in a template string with values from a context object.
@@ -35,9 +36,15 @@ export function extractPlaceholders(template: string): string[] {
   }
 
   // Extract partial placeholders
-  for (const [, partial] of template.matchAll(PARTIAL_REGEX)) {
+  for (const [, partial, partialParameters] of template.matchAll(PARTIAL_REGEX)) {
+    let ignoredPlaceholders = new Set(
+      [...partialParameters.matchAll(PARTIAL_PARAMETER_REGEX)].map(([, key]) => key),
+    );
+
     for (const partialPlaceholder of extractPlaceholders(readPartialContent(partial))) {
-      placeholders.add(partialPlaceholder);
+      if (!ignoredPlaceholders.has(partialPlaceholder)) {
+        placeholders.add(partialPlaceholder);
+      }
     }
   }
 
