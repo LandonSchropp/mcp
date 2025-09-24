@@ -1,8 +1,13 @@
 import { createTestClient } from "../helpers";
+import { Client } from "@modelcontextprotocol/sdk/client";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
+vi.mock("../../src/commands/claude", () => ({
+  claude: vi.fn(() => Promise.resolve("mock-branch-name")),
+}));
+
 describe("prompts", () => {
-  let client: Awaited<ReturnType<typeof createTestClient>>;
+  let client: Client;
   let result: Awaited<ReturnType<typeof client.getPrompt>>;
 
   beforeEach(async () => {
