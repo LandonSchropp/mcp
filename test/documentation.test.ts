@@ -16,7 +16,7 @@ const { FORMAT_PATH, VOICE_PATH, IMPROVEMENT_PATH } = await vi.hoisted(async () 
 });
 
 vi.mock("../src/env.ts", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../src/env.ts")>();
+  const actual = await importOriginal<typeof import("../src/env")>();
   return {
     ...actual,
     WRITING_FORMAT: FORMAT_PATH,

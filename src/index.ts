@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { server } from "./server.ts";
+import { server } from "./server";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 const transport = new StdioServerTransport();

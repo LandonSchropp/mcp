@@ -12,7 +12,7 @@ let PLANS_DIRECTORY = await vi.hoisted(async () => {
 });
 
 vi.mock("../../../src/env.ts", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../src/env.ts")>();
+  const actual = await importOriginal<typeof import("../../../src/env")>();
   return {
     ...actual,
     PLANS_DIRECTORY: PLANS_DIRECTORY,

@@ -8,4 +8,4 @@ export const server = new McpServer({
 
 await import("./prompts");
 await import("./resources/documentation");
-await import("./tools/plan/create-template.ts");
+await import("./tools/plan/create-template");
