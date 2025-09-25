@@ -126,23 +126,17 @@ describe("getPullRequest", () => {
 
     const result = await getPullRequest("org/repo", "feature-branch");
 
-    expect(result).not.toBeNull();
-    expect(result!.title).toBe("Add new feature");
-    expect(result!.description).toBe("This PR adds a new feature to the application");
-    expect(result!.baseBranch).toBe("develop");
-
-    expect(result!.commits).toEqual([
-      {
-        sha: "abc1234",
-        title: "Add feature implementation",
-      },
-      {
-        sha: "def4567",
-        title: "Update tests",
-      },
-    ]);
-
-    expect(result!.diff).toContain("export function newFeature()");
+    expect(result).toEqual({
+      title: "Add new feature",
+      description: "This PR adds a new feature to the application",
+      branch: "feature-branch",
+      baseBranch: "develop",
+      commits: [
+        { sha: "abc1234", title: "Add feature implementation" },
+        { sha: "def4567", title: "Update tests" },
+      ],
+      diff: expect.stringContaining("export function newFeature()"),
+    });
   });
 
   describe("when no PR exists for the branch", () => {

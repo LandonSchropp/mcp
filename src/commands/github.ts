@@ -5,6 +5,7 @@ import spawn, { SubprocessError } from "nano-spawn";
 interface PullRequest extends GitDiff {
   title: string;
   description: string;
+  branch: string;
   baseBranch: string;
 }
 
@@ -60,6 +61,7 @@ export async function getPullRequest(repo: string, branch: string): Promise<Pull
       diff,
       title: pullRequestData.title,
       description: pullRequestData.body,
+      branch,
       baseBranch: pullRequestData.baseRefName,
     };
   } catch (error) {
