@@ -9,4 +9,5 @@ export const server = new McpServer({
 await import("./prompts");
 await import("./resources/documentation");
 await import("./resources/feature-branch");
+await import("./resources/pull-request");
 await import("./tools/plan/create-template");
