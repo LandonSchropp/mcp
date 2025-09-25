@@ -1,5 +1,6 @@
 import { server } from "../../../src/server";
 import { createTestClient } from "../../helpers";
+import { Client } from "@modelcontextprotocol/sdk/client";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { join } from "path";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
@@ -53,7 +54,7 @@ const TEMPLATE_TEST_CASES = [
 ];
 
 describe("tools/plan/create-template", () => {
-  let client: Awaited<ReturnType<typeof createTestClient>>;
+  let client: Client;
 
   beforeEach(async () => {
     // Create temp directory for plans

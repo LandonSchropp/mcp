@@ -1,5 +1,6 @@
 import { server } from "../src/server";
 import { createTestClient } from "./helpers";
+import { Client } from "@modelcontextprotocol/sdk/client";
 import { writeFile } from "fs/promises";
 import { dedent } from "ts-dedent";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -26,7 +27,7 @@ vi.mock("../src/env.ts", async (importOriginal) => {
 });
 
 describe("resources/documentation", () => {
-  let client: Awaited<ReturnType<typeof createTestClient>>;
+  let client: Client;
 
   beforeEach(async () => {
     await writeFile(
