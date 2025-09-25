@@ -37,17 +37,13 @@ export async function assertGitInstalled() {
  *   commits exist.
  */
 export async function getDiff(from: string, to: string): Promise<GitDiff | null> {
-  let log: string;
-
-  try {
-    // Get the list of commits between the two references
-    log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
-  } catch (error) {
-    if (error instanceof SubprocessError && error.exitCode === 128) {
-      return null;
-    }
-    throw error;
+  // Check if both branches exist
+  if (!(await doesBranchExist(from)) || !(await doesBranchExist(to))) {
+    return null;
   }
+
+  // Get the list of commits between the two references
+  const log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
 
   // Ensure there are commits to process
   if (!log) {
@@ -109,4 +105,22 @@ export async function getBranches(): Promise<string[]> {
  */
 export async function isWorkingDirectoryClean(): Promise<boolean> {
   return (await spawn("git", ["status", "--porcelain"])).stdout.trim() === "";
+}
+
+/**
+ * Check if a git branch exists.
+ *
+ * @param branch The branch name to check.
+ * @returns True if the branch exists, false otherwise.
+ */
+export async function doesBranchExist(branch: string): Promise<boolean> {
+  try {
+    await spawn("git", ["show-ref", "--verify", "--quiet", `refs/heads/${branch}`]);
+    return true;
+  } catch (error) {
+    if (error instanceof SubprocessError && error.exitCode !== 0) {
+      return false;
+    }
+    throw error;
+  }
 }

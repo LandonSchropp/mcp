@@ -5,6 +5,7 @@ import {
   getBaseBranch,
   getBranches,
   isWorkingDirectoryClean,
+  doesBranchExist,
 } from "../../src/commands/git";
 import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
@@ -50,6 +51,10 @@ describe("assertGitInstalled", () => {
 describe("getDiff", () => {
   beforeEach(() => {
     mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+      if (args?.[0] === "show-ref") {
+        return { stdout: "", stderr: "" }; // Branch exists
+      }
+
       if (args?.[0] === "log") {
         return {
           stdout: dedent`
@@ -82,13 +87,13 @@ describe("getDiff", () => {
   it("calls git log with the correct range", async () => {
     await getDiff("main", "feature");
 
-    expect(mockSpawn).toHaveBeenNthCalledWith(1, "git", ["log", "main..feature", "--format=%h %s"]);
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["log", "main..feature", "--format=%h %s"]);
   });
 
   it("calls git diff with the correct range", async () => {
     await getDiff("main", "feature");
 
-    expect(mockSpawn).toHaveBeenNthCalledWith(2, "git", ["diff", "main..feature"]);
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["diff", "main..feature"]);
   });
 
   describe("when there are no commits", () => {
@@ -105,12 +110,13 @@ describe("getDiff", () => {
 
   describe("when a branch does not exist", () => {
     beforeEach(() => {
-      mockSpawn.mockImplementation(() => {
-        const error = new SubprocessError(
-          "fatal: ambiguous argument 'main..nonexistent': unknown revision or path not in the working tree.",
-        );
-        error.exitCode = 128;
-        throw error;
+      mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+        if (args?.[0] === "show-ref" && args?.includes("refs/heads/nonexistent")) {
+          const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
+          error.exitCode = 1;
+          throw error;
+        }
+        return { stdout: "", stderr: "" };
       });
     });
 
@@ -314,6 +320,58 @@ describe("isWorkingDirectoryClean", () => {
       const result = await isWorkingDirectoryClean();
 
       expect(result).toBe(true);
+    });
+  });
+});
+
+describe("doesBranchExist", () => {
+  beforeEach(() => {
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+  });
+
+  it("calls git show-ref with the correct arguments", async () => {
+    await doesBranchExist("feature-branch");
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", [
+      "show-ref",
+      "--verify",
+      "--quiet",
+      "refs/heads/feature-branch",
+    ]);
+  });
+
+  describe("when the branch exists", () => {
+    it("returns true", async () => {
+      const result = await doesBranchExist("main");
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("when the branch does not exist", () => {
+    beforeEach(() => {
+      const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
+      error.exitCode = 1;
+      mockSpawn.mockRejectedValue(error);
+    });
+
+    it("returns false", async () => {
+      const result = await doesBranchExist("nonexistent");
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("when the git command fails with another error", () => {
+    beforeEach(() => {
+      const error = new SubprocessError("fatal: not a git repository");
+      error.exitCode = 128;
+      mockSpawn.mockRejectedValue(error);
+    });
+
+    it("returns false", async () => {
+      const result = await doesBranchExist("any-branch");
+      expect(result).toBe(false);
     });
   });
 });
