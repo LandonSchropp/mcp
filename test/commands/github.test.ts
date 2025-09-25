@@ -69,14 +69,12 @@ describe("getPullRequest", () => {
       return { stdout: "", stderr: "" };
     });
 
-    await getPullRequest("org/repo", "feature-branch");
+    await getPullRequest("feature-branch");
 
     expect(mockSpawn).toHaveBeenCalledWith("gh", [
       "pr",
       "view",
       "feature-branch",
-      "--repo",
-      "org/repo",
       "--json",
       "title,body,commits,baseRefName",
     ]);
@@ -124,7 +122,7 @@ describe("getPullRequest", () => {
       return { stdout: "", stderr: "" };
     });
 
-    const result = await getPullRequest("org/repo", "feature-branch");
+    const result = await getPullRequest("feature-branch");
 
     expect(result).toEqual({
       title: "Add new feature",
@@ -147,7 +145,7 @@ describe("getPullRequest", () => {
     });
 
     it("returns null", async () => {
-      const result = await getPullRequest("org/repo", "no-pr-branch");
+      const result = await getPullRequest("no-pr-branch");
 
       expect(result).toBeNull();
     });
@@ -161,9 +159,7 @@ describe("getPullRequest", () => {
     });
 
     it("throws the error", async () => {
-      return expect(getPullRequest("org/repo", "some-branch")).rejects.toThrow(
-        "Authentication failed",
-      );
+      return expect(getPullRequest("some-branch")).rejects.toThrow("Authentication failed");
     });
   });
 
@@ -173,7 +169,7 @@ describe("getPullRequest", () => {
     });
 
     it("throws the error", async () => {
-      return expect(getPullRequest("org/repo", "some-branch")).rejects.toThrow("Network error");
+      return expect(getPullRequest("some-branch")).rejects.toThrow("Network error");
     });
   });
 });

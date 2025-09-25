@@ -22,31 +22,21 @@ export async function assertGitHubInstalled() {
  * Get pull request information including commits, diff, title, and description. Uses GitHub CLI to
  * fetch PR details and combines them with git diff information.
  *
- * @example Get PR information for a branch in org/repo.
+ * @example Get PR information for a branch.
  *
  * ```typescript
- * const pullRequest = await getPullRequest("org/repo", "feature-branch");
+ * const pullRequest = await getPullRequest("feature-branch");
  * ```
  *
- * @param repo The repository in "owner/name" format.
  * @param branch The branch name for the pull request.
  * @returns An object containing PR details, commits, and diff, or null if no PR exists for the
  *   branch.
  */
-export async function getPullRequest(repo: string, branch: string): Promise<PullRequest | null> {
+export async function getPullRequest(branch: string): Promise<PullRequest | null> {
   try {
     const pullRequestData = JSON.parse(
-      (
-        await spawn("gh", [
-          "pr",
-          "view",
-          branch,
-          "--repo",
-          repo,
-          "--json",
-          "title,body,commits,baseRefName",
-        ])
-      ).stdout,
+      (await spawn("gh", ["pr", "view", branch, "--json", "title,body,commits,baseRefName"]))
+        .stdout,
     );
 
     const commits: GitCommit[] = pullRequestData.commits.map((commit: any) => ({
@@ -54,7 +44,7 @@ export async function getPullRequest(repo: string, branch: string): Promise<Pull
       title: commit.messageHeadline,
     }));
 
-    const diff = (await spawn("gh", ["pr", "diff", branch, "--repo", repo])).stdout.trim();
+    const diff = (await spawn("gh", ["pr", "diff", branch])).stdout.trim();
 
     return {
       commits,
