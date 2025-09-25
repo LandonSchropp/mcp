@@ -101,3 +101,12 @@ export async function getBranches(): Promise<string[]> {
 
   return branches.split("\n").map((branch) => branch.trim());
 }
+
+/**
+ * Check if the working directory is clean (no uncommitted changes).
+ *
+ * @returns True if the working directory is clean, false otherwise.
+ */
+export async function isWorkingDirectoryClean(): Promise<boolean> {
+  return (await spawn("git", ["status", "--porcelain"])).stdout.trim() === "";
+}

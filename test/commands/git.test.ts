@@ -4,6 +4,7 @@ import {
   getDefaultBranch,
   getBaseBranch,
   getBranches,
+  isWorkingDirectoryClean,
 } from "../../src/commands/git";
 import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
@@ -52,9 +53,9 @@ describe("getDiff", () => {
       if (args?.[0] === "log") {
         return {
           stdout: dedent`
-              abc123 Fix bug in authentication
-              def456 Add new feature
-            `,
+            abc123 Fix bug in authentication
+            def456 Add new feature
+          `,
           stderr: "",
         };
       }
@@ -62,14 +63,14 @@ describe("getDiff", () => {
       if (args?.[0] === "diff") {
         return {
           stdout: dedent`
-              diff --git a/file.txt b/file.txt
-              index 123..456 100644
-              --- a/file.txt
-              +++ b/file.txt
-              @@ -1,3 +1,3 @@
-              -old line
-              +new line
-            `,
+            diff --git a/file.txt b/file.txt
+            index 123..456 100644
+            --- a/file.txt
+            +++ b/file.txt
+            @@ -1,3 +1,3 @@
+            -old line
+            +new line
+          `,
           stderr: "",
         };
       }
@@ -92,7 +93,7 @@ describe("getDiff", () => {
 
   describe("when there are no commits", () => {
     beforeEach(() => {
-      mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "", stderr: "" }));
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
     });
 
     it("returns null", async () => {
@@ -150,54 +151,56 @@ describe("getDiff", () => {
 
 describe("getDefaultBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" });
   });
 
   it("calls git default-branch command", async () => {
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "main\n", stderr: "" }));
-
     await getDefaultBranch();
 
     expect(mockSpawn).toHaveBeenCalledWith("git", ["default-branch"]);
   });
 
   it("returns the default branch name", async () => {
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "main\n", stderr: "" }));
-
     const result = await getDefaultBranch();
 
     expect(result).toBe("main");
   });
 
-  it("trims whitespace from branch name", async () => {
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "  develop  \n", stderr: "" }));
+  describe("when branch name has whitespace", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "  develop  \n", stderr: "" });
+    });
 
-    const result = await getDefaultBranch();
+    it("trims whitespace from branch name", async () => {
+      const result = await getDefaultBranch();
 
-    expect(result).toBe("develop");
+      expect(result).toBe("develop");
+    });
   });
 });
 
 describe("getBaseBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" });
   });
 
   it("delegates to getDefaultBranch", async () => {
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "main\n", stderr: "" }));
-
     const result = await getBaseBranch("feature-branch");
 
     expect(mockSpawn).toHaveBeenCalledWith("git", ["default-branch"]);
     expect(result).toBe("main");
   });
 
-  it("returns the default branch regardless of input branch", async () => {
-    mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "develop\n", stderr: "" }));
+  describe("when default branch is develop", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "develop\n", stderr: "" });
+    });
 
-    const result = await getBaseBranch("any-branch-name");
+    it("returns the default branch regardless of input branch", async () => {
+      const result = await getBaseBranch("any-branch-name");
 
-    expect(result).toBe("develop");
+      expect(result).toBe("develop");
+    });
   });
 });
 
@@ -213,10 +216,6 @@ describe("getBranches", () => {
   });
 
   describe("when there are no branches", () => {
-    beforeEach(() => {
-      mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "", stderr: "" }));
-    });
-
     it("returns empty array", async () => {
       const result = await getBranches();
 
@@ -229,11 +228,11 @@ describe("getBranches", () => {
       mockSpawn.mockImplementation(() =>
         Promise.resolve({
           stdout: dedent`
-          main
-          feature/new-ui
-          bugfix/auth-issue
-          develop
-        `,
+            main
+            feature/new-ui
+            bugfix/auth-issue
+            develop
+          `,
           stderr: "",
         }),
       );
@@ -244,18 +243,77 @@ describe("getBranches", () => {
 
       expect(result).toEqual(["main", "feature/new-ui", "bugfix/auth-issue", "develop"]);
     });
+  });
+
+  describe("when branch names have whitespace", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({
+        stdout: "  main  \n  feature/test  \n",
+        stderr: "",
+      });
+    });
 
     it("trims whitespace from branch names", async () => {
-      mockSpawn.mockImplementation(() =>
-        Promise.resolve({
-          stdout: "  main  \n  feature/test  \n",
-          stderr: "",
-        }),
-      );
-
       const result = await getBranches();
 
       expect(result).toEqual(["main", "feature/test"]);
+    });
+  });
+});
+
+describe("isWorkingDirectoryClean", () => {
+  beforeEach(() => {
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+  });
+
+  it("calls git status --porcelain", async () => {
+    await isWorkingDirectoryClean();
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["status", "--porcelain"]);
+  });
+
+  describe("when working directory is clean", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    });
+
+    it("returns true", async () => {
+      const result = await isWorkingDirectoryClean();
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("when working directory has uncommitted changes", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation(() =>
+        Promise.resolve({
+          stdout: dedent`
+            M  modified-file.txt
+            D  deleted-file.txt
+            ?? untracked-file.txt
+          `,
+          stderr: "",
+        }),
+      );
+    });
+
+    it("returns false", async () => {
+      const result = await isWorkingDirectoryClean();
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("when working directory has only whitespace in output", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "   \n  \n", stderr: "" });
+    });
+
+    it("returns true", async () => {
+      const result = await isWorkingDirectoryClean();
+
+      expect(result).toBe(true);
     });
   });
 });
