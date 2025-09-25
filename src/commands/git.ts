@@ -1,5 +1,5 @@
 import { assertInstalled } from "./assertions";
-import spawn from "nano-spawn";
+import spawn, { SubprocessError } from "nano-spawn";
 
 export interface GitCommit {
   sha: string;
@@ -33,15 +33,25 @@ export async function assertGitInstalled() {
  *
  * @param from The starting commit/branch reference (excluded from results).
  * @param to The ending commit/branch reference (included in results).
- * @returns An object containing the commits between the references and the diff.
+ * @returns An object containing the commits between the references and the diff, or null if no
+ *   commits exist.
  */
-export async function getDiff(from: string, to: string): Promise<GitDiff> {
-  // Get the list of commits between the two references
-  const log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
+export async function getDiff(from: string, to: string): Promise<GitDiff | null> {
+  let log: string;
+
+  try {
+    // Get the list of commits between the two references
+    log = (await spawn("git", ["log", `${from}..${to}`, "--format=%h %s"])).stdout.trim();
+  } catch (error) {
+    if (error instanceof SubprocessError && error.exitCode === 128) {
+      return null;
+    }
+    throw error;
+  }
 
   // Ensure there are commits to process
   if (!log) {
-    return { commits: [], diff: "" };
+    return null;
   }
 
   // Parse the commits

@@ -5,6 +5,7 @@ import {
   getBaseBranch,
   getBranches,
 } from "../../src/commands/git";
+import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
@@ -94,16 +95,28 @@ describe("getDiff", () => {
       mockSpawn.mockImplementation(() => Promise.resolve({ stdout: "", stderr: "" }));
     });
 
-    it("returns empty commits array", async () => {
+    it("returns null", async () => {
       const result = await getDiff("main", "feature");
 
-      expect(result.commits).toEqual([]);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("when a branch does not exist", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation(() => {
+        const error = new SubprocessError(
+          "fatal: ambiguous argument 'main..nonexistent': unknown revision or path not in the working tree.",
+        );
+        error.exitCode = 128;
+        throw error;
+      });
     });
 
-    it("returns empty diff string", async () => {
-      const result = await getDiff("main", "feature");
+    it("returns null", async () => {
+      const result = await getDiff("main", "nonexistent");
 
-      expect(result.diff).toEqual("");
+      expect(result).toBeNull();
     });
   });
 
@@ -111,9 +124,9 @@ describe("getDiff", () => {
     it("returns parsed commits with sha and title", async () => {
       const result = await getDiff("main", "feature");
 
-      expect(result.commits).toHaveLength(2);
+      expect(result!.commits).toHaveLength(2);
 
-      expect(result.commits).toEqual([
+      expect(result!.commits).toEqual([
         {
           sha: "abc123",
           title: "Fix bug in authentication",
@@ -128,9 +141,9 @@ describe("getDiff", () => {
     it("returns the diff output", async () => {
       const result = await getDiff("main", "feature");
 
-      expect(result.diff).toContain("diff --git a/file.txt b/file.txt");
-      expect(result.diff).toContain("-old line");
-      expect(result.diff).toContain("+new line");
+      expect(result!.diff).toContain("diff --git a/file.txt b/file.txt");
+      expect(result!.diff).toContain("-old line");
+      expect(result!.diff).toContain("+new line");
     });
   });
 });

@@ -2,6 +2,7 @@ import { getBaseBranch, getBranches, getDiff } from "../commands/git";
 import { server } from "../server";
 import { first } from "../utilities/array";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
 server.registerResource(
   "feature-branch",
@@ -17,10 +18,16 @@ server.registerResource(
     title: "feature-branch",
     description: "Returns the details of a feature branch",
   },
-  async (_uri, parameters) => {
+  async (uri, parameters) => {
     const branch = first(parameters.branch);
     const baseBranch = await getBaseBranch(branch);
     const diff = await getDiff(baseBranch, branch);
+
+    if (!diff) {
+      throw new McpError(ErrorCode.InvalidRequest, `No commits found for branch: ${branch}`, {
+        uri,
+      });
+    }
 
     return {
       contents: [

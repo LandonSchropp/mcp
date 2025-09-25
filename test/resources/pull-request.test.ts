@@ -11,31 +11,26 @@ const BRANCHES = ["main", "feature/auth", "feature/ui", "bugfix/login"];
 const mockGetBranches = vi.hoisted(() => vi.fn(() => BRANCHES));
 
 const mockGetPullRequest = vi.hoisted(() =>
-  vi.fn((branch: string) => {
-    if (branch === "feature/auth") {
-      return {
-        title: "Add authentication feature",
-        description: "This PR adds authentication to the application",
-        branch: "feature/auth",
-        baseBranch: "main",
-        commits: [
-          { sha: "abc123", title: "Add authentication" },
-          { sha: "def456", title: "Fix login bug" },
-        ],
-        diff: dedent`diff --git a/auth.js b/auth.js
-          new file mode 100644
-          index 0000000..e69de29
-          --- /dev/null
-          +++ b/auth.js
-          @@ -0,0 +1,10 @@
-          +// Authentication module
-          +// login
-          +// logout
-        `,
-      };
-    }
-    return null;
-  }),
+  vi.fn(() => ({
+    title: "Add authentication feature",
+    description: "This PR adds authentication to the application",
+    branch: "feature/auth",
+    baseBranch: "main",
+    commits: [
+      { sha: "abc123", title: "Add authentication" },
+      { sha: "def456", title: "Fix login bug" },
+    ],
+    diff: dedent`diff --git a/auth.js b/auth.js
+      new file mode 100644
+      index 0000000..e69de29
+      --- /dev/null
+      +++ b/auth.js
+      @@ -0,0 +1,10 @@
+      +// Authentication module
+      +// login
+      +// logout
+    `,
+  })),
 );
 
 vi.mock("../../src/commands/git", () => ({
@@ -110,6 +105,10 @@ describe("github://pull-request/{+branch}", () => {
   });
 
   describe("when no pull request exists for the branch", () => {
+    beforeEach(() => {
+      mockGetPullRequest.mockReturnValue(null as any);
+    });
+
     it("throws an McpError error", async () => {
       return expect(
         client.readResource({ uri: "github://pull-request/bugfix/login" }),
