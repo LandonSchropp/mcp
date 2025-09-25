@@ -7,7 +7,7 @@ Your job is to create a {{planType}} implementation plan by breaking it down int
 
 Description: {{description}}
 
-1. Switch to the `{{featureBranch}}` branch using the `feature-branch` tool.
+1. Switch to the `{{featureBranch}}` branch using the `git/switch-branch` tool.
 
 2. Fetch the current context of the feature branch with with @git://feature-branch/{{featureBranch}}.
 
