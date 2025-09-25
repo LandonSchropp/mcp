@@ -6,6 +6,8 @@ import {
   getBranches,
   isWorkingDirectoryClean,
   doesBranchExist,
+  switchBranch,
+  createBranch,
 } from "../../src/commands/git";
 import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
@@ -373,5 +375,29 @@ describe("doesBranchExist", () => {
       const result = await doesBranchExist("any-branch");
       expect(result).toBe(false);
     });
+  });
+});
+
+describe("switchBranch", () => {
+  beforeEach(() => {
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+  });
+
+  it("calls git switch with the branch name", async () => {
+    await switchBranch("feature-branch");
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["switch", "feature-branch"]);
+  });
+});
+
+describe("createBranch", () => {
+  beforeEach(() => {
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+  });
+
+  it("calls git switch -c with the branch name", async () => {
+    await createBranch("new-feature");
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["switch", "-c", "new-feature"]);
   });
 });

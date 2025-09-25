@@ -124,3 +124,21 @@ export async function doesBranchExist(branch: string): Promise<boolean> {
     throw error;
   }
 }
+
+/**
+ * Switch to an existing git branch.
+ *
+ * @param branch The branch name to switch to.
+ */
+export async function switchBranch(branch: string): Promise<void> {
+  await spawn("git", ["switch", branch]);
+}
+
+/**
+ * Create a new git branch.
+ *
+ * @param branch The branch name to create.
+ */
+export async function createBranch(branch: string): Promise<void> {
+  await spawn("git", ["switch", "-c", branch]);
+}
