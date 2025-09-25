@@ -9,7 +9,7 @@ Description: {{description}}
 
 1. Switch to the `{{featureBranch}}` branch using the `feature-branch` tool.
 
-2. Fetch the current context of the feature branch with with @git://branch/{{featureBranch}}/context.
+2. Fetch the current context of the feature branch with with @git://feature-branch/{{featureBranch}}.
 
 3. Research the feature and its implementation. Ask any clarifying questions needed to fully
    understand the scope of the work and what's required to implement it.
