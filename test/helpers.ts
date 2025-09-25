@@ -1,6 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { expect } from "vitest";
 
 /**
  * Creates a fully connected MCP client for integration testing. This helper sets up:
@@ -24,3 +25,25 @@ export async function createTestClient(server: McpServer): Promise<Client> {
 
   return client;
 }
+
+expect.extend({
+  toHaveSameMembers(received: unknown, expected: unknown) {
+    if (!Array.isArray(received) || !Array.isArray(expected)) {
+      return {
+        pass: false,
+        message: () => "Expected both values to be arrays",
+      };
+    }
+
+    let receivedSet = new Set(received);
+    let expectedSet = new Set(expected);
+
+    return {
+      pass: receivedSet.size === expectedSet.size && receivedSet.isSubsetOf(expectedSet),
+      message: () => {
+        let diff = this.utils.printDiffOrStringify(receivedSet, expectedSet);
+        return `Expected arrays to ${this.isNot ? "not " : ""}have the same members.\n\n${diff}`;
+      },
+    };
+  },
+});
