@@ -1,8 +1,10 @@
-import { getBaseBranch, getBranches, getDiff } from "../commands/git";
+import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../commands/git";
 import { server } from "../server-instance";
 import { first } from "../utilities/array";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
+
+const EMPTY_DIFF = { commits: [], diff: "" };
 
 server.registerResource(
   "feature-branch",
@@ -20,14 +22,13 @@ server.registerResource(
   },
   async (uri, parameters) => {
     const branch = first(parameters.branch);
-    const baseBranch = await getBaseBranch(branch);
-    const diff = await getDiff(baseBranch, branch);
 
-    if (!diff) {
-      throw new McpError(ErrorCode.InvalidRequest, `No commits found for branch: ${branch}`, {
-        uri,
-      });
+    if (!(await doesBranchExist(branch))) {
+      throw new McpError(ErrorCode.InvalidParams, `Branch not found: ${branch}`, { uri });
     }
+
+    const baseBranch = await getBaseBranch(branch);
+    const diff = (await getDiff(baseBranch, branch)) ?? EMPTY_DIFF;
 
     return {
       contents: [

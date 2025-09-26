@@ -1,18 +1,20 @@
+import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../../src/commands/git";
 import { server } from "../../src/server";
 import { createTestClient } from "../helpers";
 import "../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 const BRANCHES = ["main", "feature/auth", "feature/ui", "bugfix/login"];
 
-const mockGetBaseBranch = vi.hoisted(() => vi.fn(() => "main"));
-const mockGetBranches = vi.hoisted(() => vi.fn(() => BRANCHES));
+const mockDoesBranchExist: Mock<typeof doesBranchExist> = vi.hoisted(() => vi.fn(async () => true));
+const mockGetBaseBranch: Mock<typeof getBaseBranch> = vi.hoisted(() => vi.fn(async () => "main"));
+const mockGetBranches: Mock<typeof getBranches> = vi.hoisted(() => vi.fn(async () => BRANCHES));
 
-const mockGetDiff = vi.hoisted(() =>
-  vi.fn(() => ({
+const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
+  vi.fn(async () => ({
     commits: [
       { sha: "abc123", title: "Add authentication" },
       { sha: "def456", title: "Fix login bug" },
@@ -31,6 +33,7 @@ const mockGetDiff = vi.hoisted(() =>
 );
 
 vi.mock("../../src/commands/git", () => ({
+  doesBranchExist: mockDoesBranchExist,
   getBaseBranch: mockGetBaseBranch,
   getBranches: mockGetBranches,
   getDiff: mockGetDiff,
@@ -93,13 +96,30 @@ describe("git://feature-branch/{+branch}", () => {
 
   describe("when the branch does not exist", () => {
     beforeEach(() => {
-      mockGetDiff.mockReturnValue(null as any);
+      mockDoesBranchExist.mockResolvedValue(false);
     });
 
     it("throws an error", async () => {
       await expect(
-        client.readResource({ uri: "git://feature-branch/bugfix/login" }),
-      ).rejects.toThrow("No commits found for branch: bugfix/login");
+        client.readResource({ uri: "git://feature-branch/nonexistent" }),
+      ).rejects.toThrow("Branch not found: nonexistent");
+    });
+  });
+
+  describe("when the branch has no diff", () => {
+    beforeEach(() => {
+      mockDoesBranchExist.mockResolvedValue(true);
+      mockGetDiff.mockResolvedValue(null);
+    });
+
+    it("returns empty commits and diff", async () => {
+      const result = await client.readResource({ uri: "git://feature-branch/feature/nodiff" });
+      const content = JSON.parse((result?.contents?.[0]?.text as string) ?? "{}");
+
+      expect(content.commits).toEqual([]);
+      expect(content.diff).toEqual("");
+      expect(content.branch).toEqual("feature/nodiff");
+      expect(content.baseBranch).toEqual("main");
     });
   });
 
