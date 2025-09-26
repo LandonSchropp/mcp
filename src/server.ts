@@ -1,14 +1,13 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+// Import all modules after server is created to avoid circular dependency issues
+import "./prompts";
+import "./resources/documentation";
+import "./resources/feature-branch";
+import "./resources/pull-request";
+import "./tools/git/switch-branch";
+import "./tools/plan/create-template";
 
-/** The unified MCP server with all prompts auto-registered. */
-export const server = new McpServer({
-  name: "Landon's Personal MCP Server",
-  version: "0.0.0",
-});
-
-await import("./prompts");
-await import("./resources/documentation");
-await import("./resources/feature-branch");
-await import("./resources/pull-request");
-await import("./tools/plan/create-template");
-await import("./tools/git/switch-branch");
+// HACK: In order to avoid circular dependency issues due to dynamic imports, we have to use a
+// separate file to create the server instance.
+//
+// https://github.com/nodejs/node/issues/55468
+export * from "./server-instance";

@@ -1,6 +1,6 @@
 import { DOCUMENTS_DIRECTORY } from "../constants";
 import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
-import { server } from "../server";
+import { server } from "../server-instance";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
 import { first } from "../utilities/array";
 import { relativePathWithoutExtension } from "../utilities/path";

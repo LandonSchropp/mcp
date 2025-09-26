@@ -1,6 +1,6 @@
 import { TEMPLATES_DIRECTORY } from "../../constants";
 import { PLANS_DIRECTORY } from "../../env";
-import { server } from "../../server";
+import { server } from "../../server-instance";
 import { renderTemplate } from "../../templates/render";
 import { format } from "date-fns";
 import { readFile } from "fs/promises";

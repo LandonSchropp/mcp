@@ -1,5 +1,5 @@
 import { PROMPTS_DIRECTORY } from "../constants";
-import { server } from "../server";
+import { server } from "../server-instance";
 import { parseFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
 import { relativePathWithoutExtension } from "../utilities/path";

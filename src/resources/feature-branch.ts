@@ -1,5 +1,5 @@
 import { getBaseBranch, getBranches, getDiff } from "../commands/git";
-import { server } from "../server";
+import { server } from "../server-instance";
 import { first } from "../utilities/array";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";

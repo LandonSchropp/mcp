@@ -4,7 +4,7 @@ import {
   switchBranch,
   createBranch,
 } from "../../commands/git";
-import { server } from "../../server";
+import { server } from "../../server-instance";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 
