@@ -13,7 +13,7 @@
     "preinstall": "pnpm dlx only-allow pnpm",
     "check-types": "tsc --noEmit",
     "test": "vitest --run --hideSkippedTests",
-    "inspector": "pnpm dlx @modelcontextprotocol/inspector node src/index.ts",
+    "inspector": "pnpm dlx @modelcontextprotocol/inspector tsx src/index.ts",
     "start": "tsx src/index.ts"
   },
   "dependencies": {
