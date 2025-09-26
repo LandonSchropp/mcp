@@ -3,8 +3,8 @@ import "./prompts";
 import "./resources/documentation";
 import "./resources/feature-branch";
 import "./resources/pull-request";
-import "./tools/git/switch-branch";
-import "./tools/plan/create-template";
+import "./tools/switch-git-branch";
+import "./tools/create-plan-template";
 
 // HACK: In order to avoid circular dependency issues due to dynamic imports, we have to use a
 // separate file to create the server instance.

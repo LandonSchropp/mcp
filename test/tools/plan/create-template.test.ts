@@ -53,7 +53,7 @@ const TEMPLATE_TEST_CASES = [
   },
 ];
 
-describe("tools/plan/create-template", () => {
+describe("tools/create-plan-template", () => {
   let client: Client;
 
   beforeEach(async () => {
@@ -70,7 +70,7 @@ describe("tools/plan/create-template", () => {
 
     expect(tools).toContainEqual(
       expect.objectContaining({
-        name: "plan/create-template",
+        name: "create-plan-template",
         description: "Creates an plan template",
       }),
     );
@@ -82,7 +82,7 @@ describe("tools/plan/create-template", () => {
 
       beforeEach(async () => {
         result = await client.callTool({
-          name: "plan/create-template",
+          name: "create-plan-template",
           arguments: {
             title,
             type,

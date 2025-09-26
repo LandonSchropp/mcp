@@ -3,15 +3,15 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../../commands/git";
-import { server } from "../../server-instance";
+} from "../commands/git";
+import { server } from "../server-instance";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 
 server.registerTool(
-  "git/switch-branch",
+  "switch-git-branch",
   {
-    title: "git/switch-branch",
+    title: "switch-git-branch",
     description: "Creates the branch if it doesn't exist and switches to it",
     inputSchema: {
       branch: z.string().describe("The branch name to switch to"),

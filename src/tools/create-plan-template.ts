@@ -1,7 +1,7 @@
-import { TEMPLATES_DIRECTORY } from "../../constants";
-import { PLANS_DIRECTORY } from "../../env";
-import { server } from "../../server-instance";
-import { renderTemplate } from "../../templates/render";
+import { TEMPLATES_DIRECTORY } from "../constants";
+import { PLANS_DIRECTORY } from "../env";
+import { server } from "../server-instance";
+import { renderTemplate } from "../templates/render";
 import { format } from "date-fns";
 import { readFile } from "fs/promises";
 import { mkdir } from "fs/promises";
@@ -14,9 +14,9 @@ const TEMPLATES = await Array.fromAsync(glob(join(TEMPLATES_DIRECTORY, "plan/*.m
 const TEMPLATE_NAMES = TEMPLATES.map((path) => basename(path, ".md")) as [string, ...string[]];
 
 server.registerTool(
-  "plan/create-template",
+  "create-plan-template",
   {
-    title: "plan/create-template",
+    title: "create-plan-template",
     description: "Creates an plan template",
     inputSchema: {
       title: z.string(),
