@@ -21,7 +21,7 @@ You can connect the server to Claude Code directly when running the following co
 project's root directory.
 
 ```bash
-claude mcp add landon -- pnpm --dir "$(pwd)" start
+claude mcp add ls -- pnpm --dir "$(pwd)" start
 ```
 
 Note: The package is not yet published, so you cannot run it with `npx`.
