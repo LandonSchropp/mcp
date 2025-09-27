@@ -5,7 +5,7 @@ description: The process used by all plan commands
 
 Your job is to create a {{planType}} implementation plan by breaking it down into manageable components and defining a systematic development approach.
 
-Ask the user to describe their {{planType}}. Substitute DESCRIPTION for the provided description throughout the rest of this process.
+{{> parameters/_description action=planType}}
 
 1. Switch to the `{{featureBranch}}` branch using the `switch-git-branch` tool.
 
