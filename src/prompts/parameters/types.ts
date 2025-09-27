@@ -16,6 +16,14 @@ export type ParameterResolver = (
   values: Record<string, string>,
 ) => Promise<string> | string;
 
+/**
+ * A function that transforms a provided parameter value.
+ *
+ * @param value The raw value provided for the parameter.
+ * @returns The transformed value.
+ */
+export type ParameterTransform = (value: string) => string;
+
 /** The basic information needed to define a prompt parameter. */
 type ParameterDefinitionBase = {
   /** The name of the parameter, as it appears in the prompt template. */
@@ -28,6 +36,9 @@ type ParameterDefinitionBase = {
   // TODO: Currently, Claude Code does not support sampling. When it does, I'd like to add a
   // `"prompt"` type to support iterative prompting.
   type: "required" | "optional" | "auto";
+
+  /** Optional function to transform the provided value. */
+  transform?: ParameterTransform;
 };
 
 /** A parameter that must be provided by the user as part of the prompt's arguments. */

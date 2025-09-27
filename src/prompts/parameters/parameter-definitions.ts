@@ -1,12 +1,21 @@
 import { claude } from "../../commands/claude";
 import { getCurrentBranch } from "../../commands/git";
 import { ParameterDefinition, ParameterResolver } from "./types";
+import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
 const TARGET_DEFAULT = "the current context";
 
 const BRANCH_PRINT_INSTRUCTION = "Print the branch name and nothing else.";
 
 const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
+
+const transformLinearIssueId = (value: string): string => {
+  const match = value.match(LINEAR_ISSUE_ID_REGEX);
+  if (match) {
+    return match[0];
+  }
+  throw new McpError(ErrorCode.InvalidParams, "No valid Linear issue ID found");
+};
 
 const resolveFeatureBranch: ParameterResolver = async (
   _server: any,
@@ -30,6 +39,12 @@ export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
     description: "Target (path, description, reference, etc.)",
     type: "optional",
     resolve: () => TARGET_DEFAULT,
+  },
+  {
+    name: "linearIssueId",
+    description: "Linear issue ID (e.g. AB-123)",
+    type: "required",
+    transform: transformLinearIssueId,
   },
   {
     name: "featureBranch",

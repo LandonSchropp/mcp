@@ -87,7 +87,7 @@ describe("prompts", () => {
   // TODO: All current prompts have {{target}} parameter. We'll add tests for this case when we have
   // prompts without parameters.
   describe.skip("when the prompt does not include any expressions", () => {
-    it("reutrns the content of the prompt", () => { });
+    it("reutrns the content of the prompt", () => {});
   });
 
   describe("when the prompt's template includes a {{target}} expression", () => {
@@ -205,8 +205,91 @@ describe("prompts", () => {
 
       expect(pullRequestPrompt).toBeDefined();
 
-      const argumentNames = pullRequestPrompt?.arguments?.map((arg) => arg.name)
+      const argumentNames = pullRequestPrompt?.arguments?.map((arg) => arg.name);
       expect(argumentNames).not.toContain("currentBranch");
+    });
+  });
+
+  describe("when the prompt uses the linearIssueId parameter", () => {
+    it("registers the linear/example prompt with linearIssueId parameter", async () => {
+      const { prompts } = await client.listPrompts();
+      const linearPrompt = prompts.find(({ name }) => name === "linear/example");
+
+      expect(linearPrompt).toBeDefined();
+      expect(linearPrompt?.arguments).toBeDefined();
+      expect(linearPrompt?.arguments).toHaveLength(1);
+
+      expect(linearPrompt?.arguments![0]).toEqual(
+        expect.objectContaining({
+          name: "linearIssueId",
+          description: "Linear issue ID (e.g. AB-123)",
+          required: true,
+        }),
+      );
+    });
+
+    describe("when linearIssueId parameter is provided with valid issue ID", () => {
+      it("extracts and includes the issue ID in the message", async () => {
+        result = await client.getPrompt({
+          name: "linear/example",
+          arguments: { linearIssueId: "ABC-123" },
+        });
+
+        expect(result.messages).toEqual([
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              text: expect.stringContaining("ABC-123"),
+              type: "text",
+            }),
+          }),
+        ]);
+      });
+    });
+
+    describe("when linearIssueId parameter contains text with issue ID", () => {
+      it("extracts just the issue ID from the text", async () => {
+        result = await client.getPrompt({
+          name: "linear/example",
+          arguments: { linearIssueId: "Fix the bug XY-789 today" },
+        });
+
+        expect(result.messages).toEqual([
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              text: expect.stringContaining("XY-789"),
+              type: "text",
+            }),
+          }),
+        ]);
+
+        // Should not contain the full text, just the extracted ID
+        expect(result.messages[0].content.text).not.toContain("Fix the bug");
+        expect(result.messages[0].content.text).not.toContain("today");
+      });
+    });
+
+    describe("when linearIssueId parameter is not provided", () => {
+      it("throws an error for missing required parameter", async () => {
+        await expect(
+          client.getPrompt({
+            name: "linear/example",
+            arguments: {},
+          }),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("when linearIssueId parameter contains invalid text", () => {
+      it("throws an error for invalid issue ID", async () => {
+        await expect(
+          client.getPrompt({
+            name: "linear/example",
+            arguments: { linearIssueId: "invalid text without issue ID" },
+          }),
+        ).rejects.toThrow();
+      });
     });
   });
 });

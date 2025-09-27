@@ -93,6 +93,61 @@ describe("resolvePromptParameterValue", () => {
     });
   });
 
+  describe("when the parameter is 'linearIssueId'", () => {
+    describe("when the value is a valid Linear issue ID", () => {
+      it("returns the issue ID", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "linearIssueId",
+          {},
+          "AB-123",
+        );
+        expect(result).toBe("AB-123");
+      });
+    });
+
+    describe("when the value contains text with issue ID", () => {
+      it("extracts the issue ID", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "linearIssueId",
+          {},
+          "Fix the bug ABC-456 today",
+        );
+        expect(result).toBe("ABC-456");
+      });
+    });
+
+    describe("when value is surrounded by extra whitespace", () => {
+      it("returns the trimmed issue ID", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "linearIssueId",
+          {},
+          "  XY-789  ",
+        );
+        expect(result).toBe("XY-789");
+      });
+    });
+
+    describe("when value does not contain valid issue ID", () => {
+      it("throws an McpError", async () => {
+        return expect(
+          resolvePromptParameterValue(
+            mockServer,
+            "test/prompt",
+            "linearIssueId",
+            {},
+            "invalid text",
+          ),
+        ).rejects.toThrow("No valid Linear issue ID found");
+      });
+    });
+  });
+
   describe("when the parameter is 'featureBranch'", () => {
     beforeEach(() => {
       mockClaude.mockResolvedValue("generated-branch-name");
@@ -209,6 +264,17 @@ describe("extractParametersUsedInTemplate", () => {
             description: "Target (path, description, reference, etc.)",
             type: "optional",
             resolve: expect.any(Function),
+          },
+        ]);
+      });
+
+      it("extracts linearIssueId parameter", () => {
+        expect(extractParametersUsedInTemplate("Issue: {{linearIssueId}}")).toEqual([
+          {
+            name: "linearIssueId",
+            description: "Linear issue ID (e.g. AB-123)",
+            type: "required",
+            transform: expect.any(Function),
           },
         ]);
       });

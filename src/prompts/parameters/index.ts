@@ -1,4 +1,5 @@
 import { extractPlaceholders } from "../../templates/placeholders";
+import { identity } from "../../utilities/function";
 import { PARAMETER_DEFINTIONS } from "./parameter-definitions";
 import { ParameterDefinition } from "./types";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -32,14 +33,15 @@ export async function resolvePromptParameterValue(
       throw new Error(`Missing required prompt parameter: ${name}`);
     }
 
-    return value;
+    return (parameter.transform ?? identity)(value);
   }
 
   if (parameter.type === "auto") {
     return await parameter.resolve(server, promptName, name, values);
   }
 
-  return value || (await parameter.resolve(server, promptName, name, values));
+  const resolvedValue = value || (await parameter.resolve(server, promptName, name, values));
+  return (parameter.transform ?? identity)(resolvedValue);
 }
 
 /**
