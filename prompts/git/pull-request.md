@@ -7,7 +7,7 @@ description: Create a pull request, automatically filling out the title and desc
 
 Create a pull request by analyzing the current branch's changes and generating an appropriate title and description based on the git diff.
 
-1. Analyze the changes to the current feature branch by reading the git://feature-branch/{{featureBranch}} resource. If there are no changes, then stop.
+1. Analyze the changes to the current feature branch by reading the git://feature-branch/{{currentBranch}} resource. If there are no changes, then stop.
 
 2. If the current branch `{{currentBranch}}` begins with a linear issue ID (two or more letters, followed by a dash and then a number), fetch the Linear issue using the Linear MCP.
 
