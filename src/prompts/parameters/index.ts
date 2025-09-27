@@ -52,5 +52,5 @@ export async function resolvePromptParameterValue(
  */
 export function extractParametersUsedInTemplate(template: string): ParameterDefinition[] {
   const placeholders = extractPlaceholders(template);
-  return PARAMETER_DEFINTIONS.filter(({ name }) => placeholders.includes(name));
+  return PARAMETER_DEFINTIONS.filter(({ name }) => placeholders.has(name));
 }

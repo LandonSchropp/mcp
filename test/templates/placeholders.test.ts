@@ -3,10 +3,10 @@ import { describe, it, expect } from "vitest";
 
 describe("extractPlaceholders", () => {
   describe("when the template has no placeholders", () => {
-    it("returns an empty array", () => {
+    it("returns an empty set", () => {
       const template = "This is a plain text template";
       const result = extractPlaceholders(template);
-      expect(result).toEqual([]);
+      expect(result).toEqual(new Set());
     });
   });
 
@@ -14,7 +14,7 @@ describe("extractPlaceholders", () => {
     it("returns the placeholder name", () => {
       const template = "Hello, {{name}}!";
       const result = extractPlaceholders(template);
-      expect(result).toEqual(["name"]);
+      expect(result).toEqual(new Set(["name"]));
     });
   });
 
@@ -22,7 +22,7 @@ describe("extractPlaceholders", () => {
     it("returns all unique placeholder names", () => {
       const template = "{{greeting}}, {{name}}! {{message}}";
       const result = extractPlaceholders(template);
-      expect(result).toEqual(["greeting", "name", "message"]);
+      expect(result).toEqual(new Set(["greeting", "name", "message"]));
     });
   });
 
@@ -30,7 +30,7 @@ describe("extractPlaceholders", () => {
     it("returns each placeholder name only once", () => {
       const template = "{{name}} meets {{name}} at {{location}}";
       const result = extractPlaceholders(template);
-      expect(result).toEqual(["name", "location"]);
+      expect(result).toEqual(new Set(["name", "location"]));
     });
   });
 
@@ -38,7 +38,7 @@ describe("extractPlaceholders", () => {
     it("trims whitespace from placeholder names", () => {
       const template = "Hello, {{ name }}! Welcome, {{  user  }}.";
       const result = extractPlaceholders(template);
-      expect(result).toEqual(["name", "user"]);
+      expect(result).toEqual(new Set(["name", "user"]));
     });
   });
 
@@ -50,7 +50,7 @@ describe("extractPlaceholders", () => {
         Line 3: {{first}} and {{third}}
       `;
       const result = extractPlaceholders(template);
-      expect(result).toEqual(["first", "second", "third"]);
+      expect(result).toEqual(new Set(["first", "second", "third"]));
     });
   });
 
@@ -74,6 +74,17 @@ describe("extractPlaceholders", () => {
       expect(result).toContain("featureBranch");
 
       expect(result).not.toContain("planType");
+    });
+
+    describe("when the parameter value contains whitespace", () => {
+      it("excludes the parameter from required placeholders", () => {
+        const template = '{{title}} {{> plan/_instructions planType="bug fix"}}';
+        const result = extractPlaceholders(template);
+
+        expect(result).toContain("title");
+        expect(result).toContain("featureBranch");
+        expect(result).not.toContain("planType");
+      });
     });
   });
 });

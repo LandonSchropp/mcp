@@ -1,7 +1,7 @@
 import { readPartialContent } from "./render";
 
 const PLACEHOLDER_REGEX = /\{\{\s*(\S+)\s*\}\}/g;
-const PARTIAL_REGEX = /\{\{>\s*(\S+)((?:\s+[^=\s]+=[^=\s]+)*)\s*\}\}/g;
+const PARTIAL_REGEX = /\{\{>\s*(\S+)((?:\s+[^=\s]+=[^=]+)*)\s*\}\}/g;
 const PARTIAL_PARAMETER_REGEX = /\s+([^=\s]+)=[^=\s]+/g;
 
 /**
@@ -22,12 +22,12 @@ export function replacePlaceholders(template: string, context: Record<string, st
 }
 
 /**
- * Extracts placeholder names from a template string, including from referenced partials.
+ * Extracts unique placeholder names from a template string.
  *
  * @param template The template string to analyze
- * @returns An array of unique placeholder names found in the template and its partials
+ * @returns A set of unique placeholder names found in the template
  */
-export function extractPlaceholders(template: string): string[] {
+function extractPlaceholdersFromContent(template: string): Set<string> {
   const placeholders = new Set<string>();
 
   // Extract placeholders
@@ -35,18 +35,42 @@ export function extractPlaceholders(template: string): string[] {
     placeholders.add(key);
   }
 
-  // Extract partial placeholders
-  for (const [, partial, partialParameters] of template.matchAll(PARTIAL_REGEX)) {
-    let ignoredPlaceholders = new Set(
-      [...partialParameters.matchAll(PARTIAL_PARAMETER_REGEX)].map(([, key]) => key),
+  return placeholders;
+}
+
+/**
+ * Parses the parameters provided to a partial and returns their names as a set.
+ *
+ * @param partialParameters The string containing parameters passed to a partial
+ * @returns A set of parameter names
+ */
+function parsePartialPlaceholders(partialParameters: string): Set<string> {
+  return new Set([...partialParameters.matchAll(PARTIAL_PARAMETER_REGEX)].map(([, key]) => key));
+}
+
+/**
+ * Extracts placeholder names from a template string, including from referenced partials.
+ *
+ * @param template The template string to analyze
+ * @returns An array of unique placeholder names found in the template and its partials
+ */
+export function extractPlaceholders(template: string): Set<string> {
+  // Start with the placeholders that are explicitly defined in the template
+  let placeholders = extractPlaceholdersFromContent(template);
+
+  // Extract the partial placeholders
+  for (const [, partialName, parsedPlaceholders] of template.matchAll(PARTIAL_REGEX)) {
+    // Recursively extract placeholders from the partial
+    let partialPlaceholders = extractPlaceholders(readPartialContent(partialName));
+
+    // Ignore placeholders from the partial that are explicitly provided by the template
+    let placeholdersToAdd = partialPlaceholders.difference(
+      parsePartialPlaceholders(parsedPlaceholders),
     );
 
-    for (const partialPlaceholder of extractPlaceholders(readPartialContent(partial))) {
-      if (!ignoredPlaceholders.has(partialPlaceholder)) {
-        placeholders.add(partialPlaceholder);
-      }
-    }
+    // Merge the new placeholders into the main set
+    placeholders = placeholders.union(placeholdersToAdd);
   }
 
-  return Array.from(placeholders);
+  return placeholders;
 }
