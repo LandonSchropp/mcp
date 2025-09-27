@@ -13,7 +13,7 @@
     "preinstall": "pnpm dlx only-allow pnpm",
     "check-types": "tsc --noEmit",
     "test": "vitest --run --hideSkippedTests",
-    "inspector": "pnpm dlx @modelcontextprotocol/inspector tsx src/index.ts",
+    "inspector": "mcp-inspector tsx src/index.ts",
     "start": "tsx src/index.ts"
   },
   "dependencies": {
@@ -25,6 +25,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.16.8",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/node": "^24.5.2",
     "prettier": "^3.6.2",
