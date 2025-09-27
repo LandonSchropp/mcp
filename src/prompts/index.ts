@@ -52,6 +52,7 @@ for (const filePath of PROMPT_FILES) {
     promptName,
     {
       ...frontmatter,
+      title: promptName,
       argsSchema,
     },
     async (values) => {

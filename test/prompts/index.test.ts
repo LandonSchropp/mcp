@@ -33,7 +33,7 @@ describe("prompts", () => {
     expect(prompts).toContainEqual(
       expect.objectContaining({
         name: "testing/add-tests",
-        title: "Add Tests",
+        title: "testing/add-tests",
         description: expect.stringContaining("Add tests"),
       }),
     );
@@ -41,7 +41,7 @@ describe("prompts", () => {
     expect(prompts).toContainEqual(
       expect.objectContaining({
         name: "writing/format",
-        title: "Format",
+        title: "writing/format",
         description: expect.stringContaining("formatting"),
       }),
     );
