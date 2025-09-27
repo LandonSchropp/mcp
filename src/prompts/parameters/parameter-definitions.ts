@@ -3,7 +3,6 @@ import { getCurrentBranch } from "../../commands/git";
 import { ParameterDefinition, ParameterResolver } from "./types";
 
 const TARGET_DEFAULT = "the current context";
-const DESCRIPTION_DEFAULT = "the task in the current context";
 
 const BRANCH_PRINT_INSTRUCTION = "Print the branch name and nothing else.";
 
@@ -15,30 +14,14 @@ const resolveFeatureBranch: ParameterResolver = async (
   _name: string,
   values: Record<string, string>,
 ) => {
-  let description = values["description"];
-
-  if (!description?.trim()) {
-    throw new Error("Cannot resolve featureBranch without a description");
-  }
-
-  let issueIdMatch = description.match(LINEAR_ISSUE_ID_REGEX);
-
-  if (issueIdMatch) {
-    return await claude(
-      `Fetch ${issueIdMatch[0]} using the Linear MCP get_issue resource. ${BRANCH_PRINT_INSTRUCTION}`,
-    );
-  }
-
-  let result = await claude(
-    `Create a simple branch name in a few words in kebab case based on the following description: 
-
-    ${description}
-
-    ${BRANCH_PRINT_INSTRUCTION}`,
+  return await claude(
+    `Create a simple branch name in a few words in kebab case for this ${_prompt} task. ${BRANCH_PRINT_INSTRUCTION}`,
   );
-
-  return result;
 };
+
+// TODO: Add back description parameter when Claude Code supports sampling. When sampling is
+// available, we can use it to prompt the user to enter multi-word descriptions.
+// See: https://github.com/anthropics/claude-code/issues/1785
 
 /** List of allowed parameters and their resolvers */
 export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
@@ -47,12 +30,6 @@ export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
     description: "Target (path, description, reference, etc.)",
     type: "optional",
     resolve: () => TARGET_DEFAULT,
-  },
-  {
-    name: "description",
-    description: "A description of the task",
-    type: "optional",
-    resolve: () => DESCRIPTION_DEFAULT,
   },
   {
     name: "featureBranch",

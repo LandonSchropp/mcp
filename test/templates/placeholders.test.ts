@@ -60,7 +60,6 @@ describe("extractPlaceholders", () => {
       const result = extractPlaceholders(template);
 
       expect(result).toContain("title");
-      expect(result).toContain("description");
       expect(result).toContain("planType");
       expect(result).toContain("featureBranch");
     });
@@ -72,7 +71,6 @@ describe("extractPlaceholders", () => {
       const result = extractPlaceholders(template);
 
       expect(result).toContain("title");
-      expect(result).toContain("description");
       expect(result).toContain("featureBranch");
 
       expect(result).not.toContain("planType");

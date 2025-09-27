@@ -81,7 +81,7 @@ describe("renderTemplate", () => {
       });
 
       expect(result).toContain("example implementation plan");
-      expect(result).toContain("Description: Example");
+      expect(result).toContain("Substitute DESCRIPTION for the provided description");
       expect(result).toContain("`feature-example` branch");
     });
   });
@@ -94,7 +94,7 @@ describe("readPartialContent", () => {
 
       expect(content).toContain("Your job is to create");
       expect(content).toContain("{{planType}}");
-      expect(content).toContain("{{description}}");
+      expect(content).toContain("DESCRIPTION");
     });
   });
 
