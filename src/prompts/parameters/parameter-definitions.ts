@@ -1,11 +1,8 @@
-import { claude } from "../../commands/claude";
-import { getCurrentBranch } from "../../commands/git";
+import { getCurrentBranch, getDefaultBranch } from "../../commands/git";
 import { ParameterDefinition, ParameterResolver } from "./types";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
 const TARGET_DEFAULT = "the current context";
-
-const BRANCH_PRINT_INSTRUCTION = "Print the branch name and nothing else.";
 
 const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
 
@@ -17,15 +14,21 @@ const transformLinearIssueId = (value: string): string => {
   throw new McpError(ErrorCode.InvalidParams, "No valid Linear issue ID found");
 };
 
-const resolveFeatureBranch: ParameterResolver = async (
-  _server: any,
-  prompt: string,
-  _name: string,
-  _values: Record<string, string>,
-) => {
-  return await claude(
-    `Create a simple branch name in a few words in kebab case for this ${prompt} task. ${BRANCH_PRINT_INSTRUCTION}`,
-  );
+// TODO: When Claude Code supports sampling, we can use it to prompt the user to enter multi-word
+// descriptions and convert them to branch names.
+const resolveFeatureBranch: ParameterResolver = async () => {
+  let currentBranch = await getCurrentBranch();
+  let defaultBranch = await getDefaultBranch();
+
+  if (currentBranch === defaultBranch) {
+    throw new McpError(
+      ErrorCode.InvalidParams,
+      `You are currently on the '${defaultBranch}'. Please switch to a feature branch or ` +
+        `provide the feature branch as an argument.`,
+    );
+  }
+
+  return currentBranch;
 };
 
 // TODO: Add back description parameter when Claude Code supports sampling. When sampling is

@@ -46,7 +46,12 @@ type RequiredParameter = ParameterDefinitionBase & {
   type: "required";
 };
 
-/** A parameter that may be provided by the user, but will fall back to a value if omitted. */
+/**
+ * A parameter that may be provided by the user, but will fall back to a value if omitted.
+ *
+ * NOTE: Currently, there's a bug in Claude Code where it seems to require optional parameters. See:
+ * https://github.com/anthropics/claude-code/issues/5597.
+ */
 type OptionalParameter = ParameterDefinitionBase & {
   type: "optional";
 

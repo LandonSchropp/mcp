@@ -1,5 +1,4 @@
-import { claude } from "../../../src/commands/claude";
-import { getCurrentBranch } from "../../../src/commands/git";
+import { getCurrentBranch, getDefaultBranch } from "../../../src/commands/git";
 import {
   resolvePromptParameterValue,
   extractParametersUsedInTemplate,
@@ -7,23 +6,19 @@ import {
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("../../../src/commands/claude", () => ({
-  claude: vi.fn(() => Promise.resolve("")),
-}));
-
 vi.mock("../../../src/commands/git", () => ({
   getCurrentBranch: vi.fn(() => Promise.resolve("mock-current-branch")),
+  getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
-const mockClaude = vi.mocked(claude);
 const mockGetCurrentBranch = vi.mocked(getCurrentBranch);
+const mockGetDefaultBranch = vi.mocked(getDefaultBranch);
 
 let mockServer: McpServer;
 
 describe("resolvePromptParameterValue", () => {
   beforeEach(() => {
     mockServer = {} as McpServer;
-    mockClaude.mockResolvedValue("");
   });
 
   describe("when the parameter is 'target'", () => {
@@ -149,25 +144,40 @@ describe("resolvePromptParameterValue", () => {
   });
 
   describe("when the parameter is 'featureBranch'", () => {
-    beforeEach(() => {
-      mockClaude.mockResolvedValue("generated-branch-name");
+    describe("when not on the default branch", () => {
+      beforeEach(() => {
+        mockGetCurrentBranch.mockResolvedValue("feature-branch");
+        mockGetDefaultBranch.mockResolvedValue("main");
+      });
+
+      it("returns the current branch", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "featureBranch",
+          {},
+          undefined,
+        );
+
+        expect(mockGetCurrentBranch).toHaveBeenCalled();
+        expect(mockGetDefaultBranch).toHaveBeenCalled();
+        expect(result).toBe("feature-branch");
+      });
     });
 
-    it("generates a branch name", async () => {
-      const result = await resolvePromptParameterValue(
-        mockServer,
-        "test/prompt",
-        "featureBranch",
-        {},
-        undefined,
-      );
+    describe("when on the default branch", () => {
+      beforeEach(() => {
+        mockGetCurrentBranch.mockResolvedValue("main");
+        mockGetDefaultBranch.mockResolvedValue("main");
+      });
 
-      expect(mockClaude).toHaveBeenCalledWith(
-        expect.stringContaining(
-          "Create a simple branch name in a few words in kebab case for this test/prompt task",
-        ),
-      );
-      expect(result).toBe("generated-branch-name");
+      it("throws an McpError", async () => {
+        await expect(
+          resolvePromptParameterValue(mockServer, "test/prompt", "featureBranch", {}, undefined),
+        ).rejects.toThrow(
+          "You are currently on the 'main'. Please switch to a feature branch or provide the feature branch as an argument.",
+        );
+      });
     });
   });
 
