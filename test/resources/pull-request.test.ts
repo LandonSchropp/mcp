@@ -33,9 +33,13 @@ const mockGetPullRequest = vi.hoisted(() =>
   })),
 );
 
-vi.mock("../../src/commands/git", () => ({
-  getBranches: mockGetBranches,
-}));
+vi.mock("../../src/commands/git", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../src/commands/git")>();
+  return {
+    ...actual,
+    getBranches: mockGetBranches,
+  };
+});
 
 vi.mock("../../src/commands/github", () => ({
   getPullRequest: mockGetPullRequest,

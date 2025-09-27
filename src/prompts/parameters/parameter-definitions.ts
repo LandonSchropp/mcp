@@ -1,4 +1,5 @@
 import { claude } from "../../commands/claude";
+import { getCurrentBranch } from "../../commands/git";
 import { ParameterDefinition, ParameterResolver } from "./types";
 
 const TARGET_DEFAULT = "the current context";
@@ -58,5 +59,11 @@ export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
     description: "The name of the feature branch",
     type: "auto",
     resolve: resolveFeatureBranch,
+  },
+  {
+    name: "currentBranch",
+    description: "The name of the current Git branch",
+    type: "auto",
+    resolve: getCurrentBranch,
   },
 ];

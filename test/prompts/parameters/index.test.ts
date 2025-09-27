@@ -1,4 +1,5 @@
 import { claude } from "../../../src/commands/claude";
+import { getCurrentBranch } from "../../../src/commands/git";
 import {
   resolvePromptParameterValue,
   extractParametersUsedInTemplate,
@@ -10,7 +11,12 @@ vi.mock("../../../src/commands/claude", () => ({
   claude: vi.fn(() => Promise.resolve("")),
 }));
 
+vi.mock("../../../src/commands/git", () => ({
+  getCurrentBranch: vi.fn(() => Promise.resolve("mock-current-branch")),
+}));
+
 const mockClaude = vi.mocked(claude);
+const mockGetCurrentBranch = vi.mocked(getCurrentBranch);
 
 let mockServer: McpServer;
 
@@ -269,6 +275,74 @@ describe("resolvePromptParameterValue", () => {
           ),
         ).rejects.toThrow("Cannot resolve featureBranch without a description");
       });
+    });
+  });
+
+  describe("when the parameter is 'currentBranch'", () => {
+    beforeEach(() => {
+      mockGetCurrentBranch.mockResolvedValue("feature-branch");
+    });
+
+    it("calls getCurrentBranch function", async () => {
+      const result = await resolvePromptParameterValue(
+        mockServer,
+        "test/prompt",
+        "currentBranch",
+        {},
+        undefined,
+      );
+
+      expect(mockGetCurrentBranch).toHaveBeenCalled();
+      expect(result).toBe("feature-branch");
+    });
+
+    describe("when getCurrentBranch returns a different branch", () => {
+      beforeEach(() => {
+        mockGetCurrentBranch.mockResolvedValue("main");
+      });
+
+      it("returns the current branch name", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "currentBranch",
+          {},
+          undefined,
+        );
+
+        expect(result).toBe("main");
+      });
+    });
+
+    describe("when getCurrentBranch returns a branch with special characters", () => {
+      beforeEach(() => {
+        mockGetCurrentBranch.mockResolvedValue("feature/ABC-123-fix-login");
+      });
+
+      it("returns the exact branch name", async () => {
+        const result = await resolvePromptParameterValue(
+          mockServer,
+          "test/prompt",
+          "currentBranch",
+          {},
+          undefined,
+        );
+
+        expect(result).toBe("feature/ABC-123-fix-login");
+      });
+    });
+
+    it("ignores any provided value and always gets the current branch", async () => {
+      const result = await resolvePromptParameterValue(
+        mockServer,
+        "test/prompt",
+        "currentBranch",
+        {},
+        "provided-value",
+      );
+
+      expect(mockGetCurrentBranch).toHaveBeenCalled();
+      expect(result).toBe("feature-branch");
     });
   });
 

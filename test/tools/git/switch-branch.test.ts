@@ -8,12 +8,16 @@ const mockDoesBranchExist = vi.hoisted(() => vi.fn());
 const mockSwitchBranch = vi.hoisted(() => vi.fn());
 const mockCreateBranch = vi.hoisted(() => vi.fn());
 
-vi.mock("../../../src/commands/git", () => ({
-  isWorkingDirectoryClean: mockIsWorkingDirectoryClean,
-  doesBranchExist: mockDoesBranchExist,
-  switchBranch: mockSwitchBranch,
-  createBranch: mockCreateBranch,
-}));
+vi.mock("../../../src/commands/git", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../src/commands/git")>();
+  return {
+    ...actual,
+    isWorkingDirectoryClean: mockIsWorkingDirectoryClean,
+    doesBranchExist: mockDoesBranchExist,
+    switchBranch: mockSwitchBranch,
+    createBranch: mockCreateBranch,
+  };
+});
 
 // TODO: For some reason, Vitest is not resetting the mocks between tests, so we have to do it
 // manually. This shouldn't be necessary.
