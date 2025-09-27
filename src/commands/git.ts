@@ -84,6 +84,15 @@ export async function getBaseBranch(_branch: string): Promise<string> {
 }
 
 /**
+ * Get the current Git branch.
+ *
+ * @returns The name of the current branch.
+ */
+export async function getCurrentBranch(): Promise<string> {
+  return (await spawn("git", ["branch", "--show-current"])).stdout.trim();
+}
+
+/**
  * Get a list of all local Git branches.
  *
  * @returns An array of branch names.

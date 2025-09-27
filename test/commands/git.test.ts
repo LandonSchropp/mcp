@@ -3,6 +3,7 @@ import {
   getDiff,
   getDefaultBranch,
   getBaseBranch,
+  getCurrentBranch,
   getBranches,
   isWorkingDirectoryClean,
   doesBranchExist,
@@ -208,6 +209,36 @@ describe("getBaseBranch", () => {
       const result = await getBaseBranch("any-branch-name");
 
       expect(result).toBe("develop");
+    });
+  });
+});
+
+describe("getCurrentBranch", () => {
+  beforeEach(() => {
+    mockSpawn.mockResolvedValue({ stdout: "feature-branch\n", stderr: "" });
+  });
+
+  it("calls git branch --show-current command", async () => {
+    await getCurrentBranch();
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--show-current"]);
+  });
+
+  it("returns the current branch name", async () => {
+    const result = await getCurrentBranch();
+
+    expect(result).toBe("feature-branch");
+  });
+
+  describe("when branch name has whitespace", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "  my-feature  \n", stderr: "" });
+    });
+
+    it("trims whitespace from branch name", async () => {
+      const result = await getCurrentBranch();
+
+      expect(result).toBe("my-feature");
     });
   });
 });
