@@ -3,12 +3,9 @@ import { createTestClient } from "../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock("../../src/commands/claude", () => ({
-  claude: vi.fn(() => Promise.resolve("mock-branch-name")),
-}));
-
 vi.mock("../../src/commands/git", () => ({
   getCurrentBranch: vi.fn(() => Promise.resolve("current-branch-name")),
+  getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
 // Mock the environment module
