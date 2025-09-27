@@ -61,7 +61,7 @@ describe("extractPlaceholders", () => {
 
       expect(result).toContain("title");
       expect(result).toContain("planType");
-      expect(result).toContain("featureBranch");
+      expect(result).toContain("currentBranch");
     });
   });
 
@@ -71,7 +71,7 @@ describe("extractPlaceholders", () => {
       const result = extractPlaceholders(template);
 
       expect(result).toContain("title");
-      expect(result).toContain("featureBranch");
+      expect(result).toContain("currentBranch");
 
       expect(result).not.toContain("planType");
     });
@@ -82,7 +82,7 @@ describe("extractPlaceholders", () => {
         const result = extractPlaceholders(template);
 
         expect(result).toContain("title");
-        expect(result).toContain("featureBranch");
+        expect(result).toContain("currentBranch");
         expect(result).not.toContain("planType");
       });
     });

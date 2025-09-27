@@ -76,13 +76,13 @@ describe("renderTemplate", () => {
 
       const result = renderTemplate(template, {
         planType: "example",
-        featureBranch: "feature-example",
+        currentBranch: "feature-example",
         description: "Example",
       });
 
       expect(result).toContain("example implementation plan");
       expect(result).toContain("Please describe the example");
-      expect(result).toContain("`feature-example` branch");
+      expect(result).toContain("@git://feature-branch/feature-example");
     });
   });
 });

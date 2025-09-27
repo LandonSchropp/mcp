@@ -1,4 +1,4 @@
-import { getCurrentBranch, getDefaultBranch } from "../../../src/commands/git";
+import { getCurrentBranch } from "../../../src/commands/git";
 import {
   resolvePromptParameterValue,
   extractParametersUsedInTemplate,
@@ -8,11 +8,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("../../../src/commands/git", () => ({
   getCurrentBranch: vi.fn(() => Promise.resolve("mock-current-branch")),
-  getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
 const mockGetCurrentBranch = vi.mocked(getCurrentBranch);
-const mockGetDefaultBranch = vi.mocked(getDefaultBranch);
 
 let mockServer: McpServer;
 
@@ -139,44 +137,6 @@ describe("resolvePromptParameterValue", () => {
             "invalid text",
           ),
         ).rejects.toThrow("No valid Linear issue ID found");
-      });
-    });
-  });
-
-  describe("when the parameter is 'featureBranch'", () => {
-    describe("when not on the default branch", () => {
-      beforeEach(() => {
-        mockGetCurrentBranch.mockResolvedValue("feature-branch");
-        mockGetDefaultBranch.mockResolvedValue("main");
-      });
-
-      it("returns the current branch", async () => {
-        const result = await resolvePromptParameterValue(
-          mockServer,
-          "test/prompt",
-          "featureBranch",
-          {},
-          undefined,
-        );
-
-        expect(mockGetCurrentBranch).toHaveBeenCalled();
-        expect(mockGetDefaultBranch).toHaveBeenCalled();
-        expect(result).toBe("feature-branch");
-      });
-    });
-
-    describe("when on the default branch", () => {
-      beforeEach(() => {
-        mockGetCurrentBranch.mockResolvedValue("main");
-        mockGetDefaultBranch.mockResolvedValue("main");
-      });
-
-      it("throws an McpError", async () => {
-        await expect(
-          resolvePromptParameterValue(mockServer, "test/prompt", "featureBranch", {}, undefined),
-        ).rejects.toThrow(
-          "You are currently on the 'main'. Please switch to a feature branch or provide the feature branch as an argument.",
-        );
       });
     });
   });
@@ -367,7 +327,7 @@ describe("extractParametersUsedInTemplate", () => {
 
       const parameterNames = result.map(({ name }) => name);
 
-      expect(parameterNames).toEqual(["target", "featureBranch"]);
+      expect(parameterNames).toEqual(["target", "currentBranch"]);
     });
   });
 });
