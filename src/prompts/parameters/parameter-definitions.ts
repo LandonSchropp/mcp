@@ -19,12 +19,12 @@ const transformLinearIssueId = (value: string): string => {
 
 const resolveFeatureBranch: ParameterResolver = async (
   _server: any,
-  _prompt: string,
+  prompt: string,
   _name: string,
-  values: Record<string, string>,
+  _values: Record<string, string>,
 ) => {
   return await claude(
-    `Create a simple branch name in a few words in kebab case for this ${_prompt} task. ${BRANCH_PRINT_INSTRUCTION}`,
+    `Create a simple branch name in a few words in kebab case for this ${prompt} task. ${BRANCH_PRINT_INSTRUCTION}`,
   );
 };
 
