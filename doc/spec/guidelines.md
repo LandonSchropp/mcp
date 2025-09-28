@@ -3,18 +3,26 @@ title: Spec Guidelines
 description: Additional testing guidelines beyond Better Specs
 ---
 
-## Articles and Copulas
+## Articles and Linking Verbs
 
-Use articles ('a', 'an', 'the') and copulas (is/are) in test descriptions. When the test block has an implicit subject, start with a copula.
+Use proper articles ('a', 'an', 'the') and linking verbs ('is', 'are', 'has', 'does') in test descriptions. When testing a subject directly, start descriptions with linking verbs like "is", "are", "has", or "does".
 
 ```ruby
-# Bad
+# Bad (missing articles)
 describe "when template includes partial"
 describe "when URI is preceded by @"
 
-# Good
+# Good (includes articles)
 describe "when the template includes a partial"
-describe "when the URI is preceded by a @"
+describe "when the URI is preceded by an @"
+
+# Bad (missing linking verbs for direct subject testing)
+it "valid"
+it "not saved"
+
+# Good (starts with linking verbs)
+it "is valid"
+it "is not saved"
 ```
 
 ## When to Mock
