@@ -1,3 +1,4 @@
+import { ProjectType } from "../types";
 import { ancestorPathExists } from "./file";
 
 /**
@@ -16,4 +17,19 @@ export async function isJavaScriptProject(): Promise<boolean> {
  */
 export async function isRubyProject(): Promise<boolean> {
   return ancestorPathExists("Gemfile");
+}
+
+/**
+ * Determines if the current working directory (or any ancestor) is a project of the given type.
+ *
+ * @param type The type of the project.
+ * @returns True if the scope is the provided type, false otherwise
+ */
+export async function isProjectType(type: ProjectType): Promise<boolean> {
+  switch (type) {
+    case "ruby":
+      return await isRubyProject();
+    case "typescript":
+      return await isJavaScriptProject();
+  }
 }

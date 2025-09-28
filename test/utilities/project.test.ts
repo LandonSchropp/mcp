@@ -1,8 +1,8 @@
-import { isJavaScriptProject, isRubyProject } from "../../src/utilities/project";
+import { isJavaScriptProject, isRubyProject, isProjectType } from "../../src/utilities/project";
 import { mkdtemp, writeFile, mkdir, rmdir } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
 describe("isJavaScriptProject", () => {
   let tempDirectory: string;
@@ -116,6 +116,58 @@ describe("isRubyProject", () => {
   describe("when a Gemfile does not exist", () => {
     it("returns false", async () => {
       expect(await isRubyProject()).toBe(false);
+    });
+  });
+});
+
+describe("isProjectType", () => {
+  let tempDirectory: string;
+  let originalCwd: string;
+
+  beforeEach(async () => {
+    originalCwd = process.cwd();
+    tempDirectory = await mkdtemp(join(tmpdir(), "test-"));
+    process.chdir(tempDirectory);
+  });
+
+  afterEach(async () => {
+    process.chdir(originalCwd);
+    await rmdir(tempDirectory, { recursive: true });
+  });
+
+  describe("when the type is 'typescript'", () => {
+    describe("when the project is a TypeScript/JavaScript project", () => {
+      beforeEach(async () => {
+        await writeFile(join(tempDirectory, "package.json"), "{}");
+      });
+
+      it("returns true", async () => {
+        expect(await isProjectType("typescript")).toBe(true);
+      });
+    });
+
+    describe("when the project is not a TypeScript/JavaScript project", () => {
+      it("returns false", async () => {
+        expect(await isProjectType("typescript")).toBe(false);
+      });
+    });
+  });
+
+  describe("when the type is 'ruby'", () => {
+    describe("when the project is a Ruby project", () => {
+      beforeEach(async () => {
+        await writeFile(join(tempDirectory, "Gemfile"), "source 'https://rubygems.org'");
+      });
+
+      it("returns true", async () => {
+        expect(await isProjectType("ruby")).toBe(true);
+      });
+    });
+
+    describe("when the project is not a Ruby project", () => {
+      it("returns false", async () => {
+        expect(await isProjectType("ruby")).toBe(false);
+      });
     });
   });
 });
