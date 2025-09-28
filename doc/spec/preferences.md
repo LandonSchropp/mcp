@@ -1,6 +1,6 @@
 ---
 title: Spec Preferences
-description: My preferences for writing specs in addition to the Better Specs guidelines
+description: My preferences for writing specs that complement the Better Specs guidelines
 ---
 
 ## Articles and Linking Verbs

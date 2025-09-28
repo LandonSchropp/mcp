@@ -1,6 +1,6 @@
 ---
 title: Test Preferences
-description: My preferences for writing tests in addition to the Better Tests guidelines
+description: My preferences for writing tests that complement the Better Tests guidelines
 ---
 
 ## Use `it` Instead of `test`
