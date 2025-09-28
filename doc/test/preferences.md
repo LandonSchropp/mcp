@@ -60,3 +60,29 @@ beforeEach(() => {
 ## Test Data Guidelines
 
 When creating lists of undifferentiated records, 3 is usually the right number.
+
+## Context Setup
+
+Put test setup in `beforeEach` blocks within the context, not inside individual tests. This keeps tests focused and makes adding new tests to the context simpler.
+
+```typescript
+// Bad
+describe("when a package.json exists in the directory", () => {
+  it("returns true", async () => {
+    await writeFile(join(tempDirectory, "package.json"), "{}");
+
+    expect(await isJavaScriptProject()).toBe(true);
+  });
+});
+
+// Good
+describe("when a package.json exists in the directory", () => {
+  beforeEach(async () => {
+    await writeFile(join(tempDirectory, "package.json"), "{}");
+  });
+
+  it("returns true", async () => {
+    expect(await isJavaScriptProject()).toBe(true);
+  });
+});
+```

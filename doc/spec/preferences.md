@@ -45,3 +45,29 @@ When creating undifferentiated lists of records, 3 is usually the right number.
 # Good
 let(:user) { FactoryBot.create_list(:user, 3) }
 ```
+
+## Context Setup
+
+Put test setup in `before` blocks within the context, not inside individual tests. This keeps tests focused and makes adding new tests to the context simpler.
+
+```ruby
+# Bad
+describe "when a Gemfile exists in the directory" do
+  it "returns true" do
+    File.write(File.join(temp_directory, "Gemfile"), "source 'https://rubygems.org'")
+
+    expect(subject).to be(true)
+  end
+end
+
+# Good
+describe "when a Gemfile exists in the directory" do
+  before do
+    File.write(File.join(temp_directory, "Gemfile"), "source 'https://rubygems.org'")
+  end
+
+  it "returns true" do
+    expect(subject).to be(true)
+  end
+end
+```
