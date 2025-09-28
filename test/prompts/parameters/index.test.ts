@@ -4,26 +4,26 @@ import {
   extractParametersUsedInTemplate,
 } from "../../../src/prompts/parameters";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+
+const mockGetCurrentBranch: Mock<typeof getCurrentBranch> = vi.hoisted(() =>
+  vi.fn(async () => "current-branch"),
+);
 
 vi.mock("../../../src/commands/git", () => ({
-  getCurrentBranch: vi.fn(() => Promise.resolve("mock-current-branch")),
+  getCurrentBranch: mockGetCurrentBranch,
 }));
 
-const mockGetCurrentBranch = vi.mocked(getCurrentBranch);
-
-let mockServer: McpServer;
+let server: McpServer;
 
 describe("resolvePromptParameterValue", () => {
-  beforeEach(() => {
-    mockServer = {} as McpServer;
-  });
+  beforeEach(() => (server = new McpServer({ name: "test", version: "0.0.0" })));
 
   describe("when the parameter is 'target'", () => {
     describe("when the value is defined", () => {
       it("returns the provided value", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "target",
           {},
@@ -36,7 +36,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when value is surrounded by extra whitespace", () => {
       it("returns the trimmed value", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "target",
           {},
@@ -49,7 +49,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when the value is undefined", () => {
       it("returns the default value", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "target",
           {},
@@ -61,13 +61,7 @@ describe("resolvePromptParameterValue", () => {
 
     describe("when value is an empty string", () => {
       it("returns the default value", async () => {
-        const result = await resolvePromptParameterValue(
-          mockServer,
-          "test/prompt",
-          "target",
-          {},
-          "",
-        );
+        const result = await resolvePromptParameterValue(server, "test/prompt", "target", {}, "");
         expect(result).toBe("the current context");
       });
     });
@@ -75,7 +69,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when value is only whitespace", () => {
       it("returns the default value", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "target",
           {},
@@ -90,7 +84,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when the value is a valid Linear issue ID", () => {
       it("returns the issue ID", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "linearIssueId",
           {},
@@ -103,7 +97,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when the value contains text with issue ID", () => {
       it("extracts the issue ID", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "linearIssueId",
           {},
@@ -116,7 +110,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when value is surrounded by extra whitespace", () => {
       it("returns the trimmed issue ID", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "linearIssueId",
           {},
@@ -129,13 +123,7 @@ describe("resolvePromptParameterValue", () => {
     describe("when value does not contain valid issue ID", () => {
       it("throws an McpError", async () => {
         return expect(
-          resolvePromptParameterValue(
-            mockServer,
-            "test/prompt",
-            "linearIssueId",
-            {},
-            "invalid text",
-          ),
+          resolvePromptParameterValue(server, "test/prompt", "linearIssueId", {}, "invalid text"),
         ).rejects.toThrow("No valid Linear issue ID found");
       });
     });
@@ -148,7 +136,7 @@ describe("resolvePromptParameterValue", () => {
 
     it("calls getCurrentBranch function", async () => {
       const result = await resolvePromptParameterValue(
-        mockServer,
+        server,
         "test/prompt",
         "currentBranch",
         {},
@@ -166,7 +154,7 @@ describe("resolvePromptParameterValue", () => {
 
       it("returns the current branch name", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "currentBranch",
           {},
@@ -184,7 +172,7 @@ describe("resolvePromptParameterValue", () => {
 
       it("returns the exact branch name", async () => {
         const result = await resolvePromptParameterValue(
-          mockServer,
+          server,
           "test/prompt",
           "currentBranch",
           {},
@@ -197,7 +185,7 @@ describe("resolvePromptParameterValue", () => {
 
     it("ignores any provided value and always gets the current branch", async () => {
       const result = await resolvePromptParameterValue(
-        mockServer,
+        server,
         "test/prompt",
         "currentBranch",
         {},
@@ -212,7 +200,7 @@ describe("resolvePromptParameterValue", () => {
   describe("when given a parameter that is not allowed", () => {
     it("throws an error", () => {
       return expect(
-        resolvePromptParameterValue(mockServer, "test/prompt", "unknown", {}, "value"),
+        resolvePromptParameterValue(server, "test/prompt", "unknown", {}, "value"),
       ).rejects.toThrow();
     });
   });
