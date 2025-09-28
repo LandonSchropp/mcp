@@ -33,9 +33,8 @@ const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
 );
 
 vi.mock("../../src/commands/git", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../src/commands/git")>();
   return {
-    ...actual,
+    ...(await importOriginal()),
     doesBranchExist: mockDoesBranchExist,
     getBaseBranch: mockGetBaseBranch,
     getBranches: mockGetBranches,

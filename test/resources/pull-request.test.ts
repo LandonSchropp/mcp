@@ -36,17 +36,15 @@ const mockGetPullRequest: Mock<typeof getPullRequest> = vi.hoisted(() =>
 );
 
 vi.mock("../../src/commands/git", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../src/commands/git")>();
   return {
-    ...actual,
+    ...(await importOriginal()),
     getBranches: mockGetBranches,
   };
 });
 
 vi.mock("../../src/commands/github", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../src/commands/github")>();
   return {
-    ...actual,
+    ...(await importOriginal()),
     getPullRequest: mockGetPullRequest,
   };
 });

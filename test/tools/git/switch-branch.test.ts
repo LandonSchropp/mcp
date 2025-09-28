@@ -15,9 +15,8 @@ const mockSwitchBranch: Mock<typeof switchBranch> = vi.hoisted(() => vi.fn());
 const mockCreateBranch: Mock<typeof createBranch> = vi.hoisted(() => vi.fn());
 
 vi.mock("../../../src/commands/git", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../src/commands/git")>();
   return {
-    ...actual,
+    ...(await importOriginal()),
     isWorkingDirectoryClean: mockIsWorkingDirectoryClean,
     doesBranchExist: mockDoesBranchExist,
     switchBranch: mockSwitchBranch,

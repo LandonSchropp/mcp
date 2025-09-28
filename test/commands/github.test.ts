@@ -13,7 +13,7 @@ vi.mock("../../src/commands/assertions", () => ({
 
 vi.mock("nano-spawn", async (importOriginal) => {
   return {
-    ...(await importOriginal<typeof import("nano-spawn")>()),
+    ...(await importOriginal()),
     default: mockSpawn,
   };
 });
