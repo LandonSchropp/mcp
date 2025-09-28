@@ -3,8 +3,9 @@ import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
 import { server } from "../server-instance";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
-import { first } from "../utilities/array";
+import { filterAsync, first } from "../utilities/array";
 import { relativePathWithoutExtension } from "../utilities/path";
+import { isProjectType } from "../utilities/project";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Resource } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
@@ -12,7 +13,11 @@ import { join } from "path";
 import z from "zod";
 
 // A schema for validating document frontmatter
-const DOCUMENT_SCHEMA = z.object({ title: z.string(), description: z.string() });
+const DOCUMENT_SCHEMA = z.object({
+  title: z.string(),
+  description: z.string(),
+  scope: z.enum(["ruby", "typescript"]).optional(),
+});
 
 // The paths of the writing documents that are defined by environment variables
 const WRITING_DOCUMENTS: Record<string, string> = {
@@ -39,10 +44,22 @@ async function buildResourceSchema(uri: string, path: string): Promise<Resource>
   };
 }
 
+/** Checks if the scope in the frontmatter matches the current project type */
+async function doesScopeMatchCurrentProject(path: string): Promise<boolean> {
+  // TODO: This is relatively inefficient since we're reading the file twice.
+  let { frontmatter } = parseFrontmatter(await readFile(path, "utf8"), DOCUMENT_SCHEMA);
+  return !frontmatter.scope || (await isProjectType(frontmatter.scope));
+}
+
 /** @returns An array of Resource objects representing the documentation files */
 async function fetchDocumentationResources(): Promise<Resource[]> {
+  // Find all markdown files in the documentation directory
   let documents = await Array.fromAsync(glob(join(DOCUMENTS_DIRECTORY, "**/*.md")));
 
+  // Exclude any document whose scope doesn't match
+  documents = await filterAsync(documents, doesScopeMatchCurrentProject);
+
+  // Map the document files to Resource objects
   return await Promise.all([
     ...documents.map((path) => {
       return buildResourceSchema(relativePathWithoutExtension(DOCUMENTS_DIRECTORY, path), path);

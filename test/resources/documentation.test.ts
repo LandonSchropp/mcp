@@ -1,9 +1,12 @@
 import { server } from "../../src/server";
+import { isProjectType } from "../../src/utilities/project";
 import { createTestClient } from "../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { writeFile } from "fs/promises";
 import { dedent } from "ts-dedent";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+
+const mockIsProjectType: Mock<typeof isProjectType> = vi.hoisted(() => vi.fn(async () => true));
 
 const { FORMAT_PATH, VOICE_PATH, IMPROVEMENT_PATH } = await vi.hoisted(async () => {
   const { tmpdir } = await import("os");
@@ -25,10 +28,18 @@ vi.mock("../../src/env.ts", async (importOriginal) => {
   };
 });
 
+vi.mock("../../src/utilities/project", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    isProjectType: mockIsProjectType,
+  };
+});
+
 describe("resources/documentation", () => {
   let client: Client;
 
   beforeEach(async () => {
+    mockIsProjectType.mockReset();
     await writeFile(
       FORMAT_PATH,
       dedent`
@@ -162,16 +173,103 @@ describe("resources/documentation", () => {
   });
 
   describe("doc://{path}", () => {
-    it("registers the resources in the documentation directory", async () => {
-      const { resources } = await client.listResources();
+    describe("registration", () => {
+      it("includes documents without a scope", async () => {
+        const { resources } = await client.listResources();
 
-      expect(resources).toContainEqual({
-        name: "test/better-tests",
-        title: "Better Tests",
-        uri: "doc://test/better-tests",
-        description:
-          "Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun",
-        mimeType: "text/markdown",
+        // Writing documents don't have scope, so they should always be included
+        expect(resources).toContainEqual({
+          name: "writing/format",
+          title: "Format Title",
+          uri: "doc://writing/format",
+          description: "Format description",
+          mimeType: "text/markdown",
+        });
+      });
+
+      describe("when the current project is a 'ruby' project", () => {
+        beforeEach(() => {
+          mockIsProjectType.mockImplementation((type: string) => Promise.resolve(type === "ruby"));
+        });
+
+        it("includes Ruby documents", async () => {
+          const { resources } = await client.listResources();
+
+          expect(resources).toContainEqual({
+            name: "spec/better-specs",
+            title: "Better Specs",
+            uri: "doc://spec/better-specs",
+            description: "A copy of betterspecs.org guidelines adapted for LLM code generation",
+            mimeType: "text/markdown",
+          });
+        });
+
+        it("does not include documents with a different scope", async () => {
+          const { resources } = await client.listResources();
+
+          expect(resources).not.toContainEqual(
+            expect.objectContaining({
+              name: "test/better-tests",
+              uri: "doc://test/better-tests",
+            }),
+          );
+        });
+      });
+
+      describe("when the current project is a 'typescript' project", () => {
+        beforeEach(() => {
+          mockIsProjectType.mockImplementation((type: string) =>
+            Promise.resolve(type === "typescript"),
+          );
+        });
+
+        it("includes TypeScript documents", async () => {
+          const { resources } = await client.listResources();
+
+          expect(resources).toContainEqual({
+            name: "test/better-tests",
+            title: "Better Tests",
+            uri: "doc://test/better-tests",
+            description:
+              "Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun",
+            mimeType: "text/markdown",
+          });
+        });
+
+        it("does not include documents with a different scope", async () => {
+          const { resources } = await client.listResources();
+
+          expect(resources).not.toContainEqual(
+            expect.objectContaining({
+              name: "spec/better-specs",
+              uri: "doc://spec/better-specs",
+            }),
+          );
+        });
+      });
+
+      describe("when the current project does not match any scope", () => {
+        beforeEach(() => {
+          mockIsProjectType.mockImplementation(() => Promise.resolve(false));
+        });
+
+        it("does not include documents with a different scope", async () => {
+          const { resources } = await client.listResources();
+
+          expect(resources).not.toContainEqual(
+            expect.objectContaining({
+              name: "test/better-tests",
+              uri: "doc://test/better-tests",
+            }),
+          );
+
+          expect(resources).not.toContainEqual(
+            expect.objectContaining({
+              name: "spec/better-specs",
+              uri: "doc://spec/better-specs",
+            }),
+          );
+        });
       });
     });
 
