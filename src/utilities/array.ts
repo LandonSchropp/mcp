@@ -25,3 +25,18 @@ export function first<T>(arrayOrElement: T | T[]): T {
 export function unique<T>(array: T[]): T[] {
   return Array.from(new Set(array));
 }
+
+export async function filterAsync<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => Promise<boolean>,
+): Promise<T[]> {
+  let result: T[] = [];
+
+  (await Promise.all(array.map(predicate))).forEach((include, index) => {
+    if (include) {
+      result.push(array[index]);
+    }
+  });
+
+  return result;
+}

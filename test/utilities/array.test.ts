@@ -1,4 +1,4 @@
-import { first, unique } from "../../src/utilities/array";
+import { first, unique, filterAsync } from "../../src/utilities/array";
 import { describe, it, expect } from "vitest";
 
 describe("first", () => {
@@ -92,6 +92,57 @@ describe("unique", () => {
   describe("when given an array with null and undefined", () => {
     it("treats them as unique values", () => {
       expect(unique([null, undefined, null, undefined])).toEqual([null, undefined]);
+    });
+  });
+});
+
+describe("filterAsync", () => {
+  describe("when the array is empty", () => {
+    it("returns an empty array", async () => {
+      const result = await filterAsync([], async () => true);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("when the predicate returns true for all elements", () => {
+    it("returns all elements", async () => {
+      const input = [1, 2, 3, 4];
+      const result = await filterAsync(input, async () => true);
+
+      expect(result).toEqual([1, 2, 3, 4]);
+    });
+  });
+
+  describe("when the predicate returns true for no elements", () => {
+    it("returns an empty array", async () => {
+      const input = [1, 2, 3, 4];
+      const result = await filterAsync(input, async () => false);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("when the predicate returns true for some elements", () => {
+    it("returns only the elements that match", async () => {
+      const input = [1, 2, 3, 4, 5];
+      const result = await filterAsync(input, async (n) => n % 2 === 0);
+
+      expect(result).toEqual([2, 4]);
+    });
+  });
+
+  describe("when the predicates resolve out of order", () => {
+    it("maintains the original array order", async () => {
+      const input = [1, 2, 3, 4];
+
+      const result = await filterAsync(input, async (number) => {
+        return new Promise((resolve) => {
+          return setTimeout(() => resolve(true), (5 - number) * 10);
+        });
+      });
+
+      expect(result).toEqual([1, 2, 3, 4]);
     });
   });
 });
