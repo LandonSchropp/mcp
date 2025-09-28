@@ -1,8 +1,5 @@
+import { PLACEHOLDER_REGEX, PARTIAL_PARAMETER_REGEX, PARTIAL_REGEX } from "./constants";
 import { readPartialContent } from "./render";
-
-const PLACEHOLDER_REGEX = /\{\{\s*(\S+)\s*\}\}/g;
-const PARTIAL_REGEX = /\{\{>\s*(\S+)((?:\s+[^=\s]+=[^=]+)*)\s*\}\}/g;
-const PARTIAL_PARAMETER_REGEX = /\s+([^=\s]+)=[^=\s]+/g;
 
 /**
  * Replaces {{placeholders}} in a template string with values from a context object.
