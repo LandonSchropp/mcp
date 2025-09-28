@@ -1,6 +1,6 @@
 import { pathExists, ancestorPathExists } from "../../src/utilities/file";
 import { stat } from "fs/promises";
-import { mkdtemp, writeFile, mkdir, rmdir } from "fs/promises";
+import { mkdtemp, writeFile, mkdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
@@ -15,7 +15,7 @@ describe("pathExists", () => {
   });
 
   afterEach(async () => {
-    await rmdir(tempDirectory, { recursive: true });
+    await rm(tempDirectory, { recursive: true });
   });
 
   describe("when the path is a file", () => {
@@ -79,7 +79,7 @@ describe("ancestorPathExists", () => {
   });
 
   afterEach(async () => {
-    await rmdir(tempDirectory, { recursive: true });
+    await rm(tempDirectory, { recursive: true });
   });
 
   describe("when the file exists in the current directory", () => {

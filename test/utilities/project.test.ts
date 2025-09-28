@@ -1,5 +1,5 @@
 import { isJavaScriptProject, isRubyProject, isProjectType } from "../../src/utilities/project";
-import { mkdtemp, writeFile, mkdir, rmdir } from "fs/promises";
+import { mkdtemp, writeFile, mkdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
@@ -16,7 +16,7 @@ describe("isJavaScriptProject", () => {
 
   afterEach(async () => {
     process.chdir(originalCwd);
-    await rmdir(tempDirectory, { recursive: true });
+    await rm(tempDirectory, { recursive: true });
   });
 
   describe("when a package.json file exists in the current directory", () => {
@@ -74,7 +74,7 @@ describe("isRubyProject", () => {
 
   afterEach(async () => {
     process.chdir(originalCwd);
-    await rmdir(tempDirectory, { recursive: true });
+    await rm(tempDirectory, { recursive: true });
   });
 
   describe("when a Gemfile exists in the current directory", () => {
@@ -132,7 +132,7 @@ describe("isProjectType", () => {
 
   afterEach(async () => {
     process.chdir(originalCwd);
-    await rmdir(tempDirectory, { recursive: true });
+    await rm(tempDirectory, { recursive: true });
   });
 
   describe("when the type is 'typescript'", () => {
