@@ -8,6 +8,20 @@ vi.mock("../../src/commands/git", () => ({
   getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
+// HACK: The server module loads the prompts on import. This means the filter logic that's used for
+// templateScopeMatchesCurrentProject is also run at that time. We can't later change the behavior
+// of the filter logic because the module has already been imported. And we don't dynamically import
+// the module because it's cached.
+//
+// To work around this limitation, the implementation of the mock dynamically excludes the add-specs
+// prompt. This allows us to test the exclusion behavior.
+vi.mock("../../src/templates/scope", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    templateScopeMatchesCurrentProject: vi.fn(async (path: string) => !path.includes("add-specs")),
+  };
+});
+
 describe("prompts", () => {
   let client: Client;
   let result: Awaited<ReturnType<typeof client.getPrompt>>;
@@ -16,31 +30,59 @@ describe("prompts", () => {
     client = await createTestClient(server);
   });
 
-  it("registers the prompts in the prompts directory", async () => {
-    const { prompts } = await client.listPrompts();
+  describe("registration", () => {
+    describe("when a prompt does not have a scope", () => {
+      it("registers the prompt", async () => {
+        const { prompts } = await client.listPrompts();
 
-    expect(prompts).toContainEqual(
-      expect.objectContaining({
-        name: "testing/add-tests",
-        title: "testing/add-tests",
-        description: expect.stringContaining("Add tests"),
-      }),
-    );
+        expect(prompts).toContainEqual(
+          expect.objectContaining({
+            name: "writing/format",
+            title: "writing/format",
+            description: expect.stringContaining("formatting"),
+          }),
+        );
+      });
+    });
 
-    expect(prompts).toContainEqual(
-      expect.objectContaining({
-        name: "writing/format",
-        title: "writing/format",
-        description: expect.stringContaining("formatting"),
-      }),
-    );
-  });
+    describe("when the prompt beings with an underscopre", () => {
+      it("does not register the prompt", async () => {
+        const { prompts } = await client.listPrompts();
 
-  describe("when files in the prompts directory begin with an underscore", () => {
-    it("does not register those prompts", async () => {
-      const { prompts } = await client.listPrompts();
+        expect(prompts).not.toContainEqual(expect.objectContaining({ name: "plan/_instructions" }));
+      });
+    });
 
-      expect(prompts).not.toContainEqual(expect.objectContaining({ name: "plan/_instructions" }));
+    describe("when the prompt's scope matches the current project", () => {
+      it("registers the prompt", async () => {
+        const { prompts } = await client.listPrompts();
+
+        expect(prompts).toContainEqual(
+          expect.objectContaining({
+            name: "testing/add-tests",
+          }),
+        );
+      });
+    });
+
+    describe("when the prompt's scope does not match the current project", () => {
+      it("does not register the prompt", async () => {
+        const { prompts } = await client.listPrompts();
+
+        expect(prompts).not.toContainEqual(
+          expect.objectContaining({
+            name: "testing/add-specs",
+          }),
+        );
+
+        // This expectation is just to verify that the mock is working as expected and not falling
+        // back to the defaults for _this_ repository.
+        expect(prompts).toContainEqual(
+          expect.objectContaining({
+            name: "plan/spec-failures",
+          }),
+        );
+      });
     });
   });
 
