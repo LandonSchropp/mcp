@@ -2,6 +2,7 @@ import { DOCUMENTS_DIRECTORY } from "../constants";
 import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env";
 import { server } from "../server-instance";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter";
+import { renderTemplate } from "../templates/render";
 import { first } from "../utilities/array";
 import { relativePathWithoutExtension } from "../utilities/path";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -73,12 +74,16 @@ server.registerResource(
     title: "Documentation",
     description: "A collection of documentation files",
   },
-  async (uri, { path }) => ({
-    contents: [
-      {
-        uri: uri.href,
-        text: await readDocumentation(first(path)),
-      },
-    ],
-  }),
+  async (uri, { path }) => {
+    let text = renderTemplate(await readDocumentation(first(path)));
+
+    return {
+      contents: [
+        {
+          uri: uri.href,
+          text,
+        },
+      ],
+    };
+  },
 );

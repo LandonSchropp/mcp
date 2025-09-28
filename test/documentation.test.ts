@@ -176,18 +176,39 @@ describe("resources/documentation", () => {
     });
 
     it("responds with the documentation content", async () => {
-      const result = await client.readResource({ uri: "doc://testing/better-tests" });
+      const result = await client.readResource({ uri: "doc://test/better-tests" });
 
       expect(result.contents).toHaveLength(1);
-      expect(result.contents[0].uri).toBe("doc://testing/better-tests");
-      expect(result.contents[0].text).toContain("Use `it` instead of `test`");
+      expect(result.contents[0].uri).toBe("doc://test/better-tests");
+      expect(result.contents[0].text).toContain("Keep Descriptions Short");
     });
 
     it("strips the frontmatter from the documentation content", async () => {
-      const result = await client.readResource({ uri: "doc://testing/better-tests" });
+      const result = await client.readResource({ uri: "doc://test/better-tests" });
 
       expect(result.contents[0].text).not.toContain("---");
       expect(result.contents[0].text).not.toContain("title: Better Tests");
+    });
+
+    describe("when the document contains a Handlebars partial", () => {
+      it("renders the partials as templates", async () => {
+        const result = await client.readResource({ uri: "doc://test/guidelines" });
+
+        expect(result.contents).toHaveLength(1);
+        expect(result.contents[0].uri).toBe("doc://test/guidelines");
+
+        // Contains content from the better-tests partial
+        expect(result.contents[0].text).toContain("Keep Descriptions Short");
+        expect(result.contents[0].text).toContain("Use Contexts");
+
+        // Contains content from the preferences partial
+        expect(result.contents[0].text).toContain("Articles and Linking Verbs");
+        expect(result.contents[0].text).toContain("Test Data Guidelines");
+
+        // Does not contain the partial syntax
+        expect(result.contents[0].text).not.toContain("{{> doc/test/better-tests}}");
+        expect(result.contents[0].text).not.toContain("{{> doc/test/preferences}}");
+      });
     });
   });
 });
