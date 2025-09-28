@@ -1,6 +1,6 @@
 ---
 title: Better Tests
-description: Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun
+description: Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun, adapted from betterspecs.org
 url: https://www.betterspecs.org/
 scope: typescript
 ---

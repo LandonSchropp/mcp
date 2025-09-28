@@ -1,6 +1,6 @@
 ---
 title: Better Specs
-description: A copy of betterspecs.org guidelines adapted for LLM code generation
+description: Testing best practices for RSpec, adapted from betterspecs.org
 url: https://www.betterspecs.org/
 scope: ruby
 ---

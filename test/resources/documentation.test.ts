@@ -199,7 +199,7 @@ describe("resources/documentation", () => {
             name: "spec/better-specs",
             title: "Better Specs",
             uri: "doc://spec/better-specs",
-            description: "A copy of betterspecs.org guidelines adapted for LLM code generation",
+            description: "Testing best practices for RSpec, adapted from betterspecs.org",
             mimeType: "text/markdown",
           });
         });
