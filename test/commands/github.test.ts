@@ -1,9 +1,10 @@
+import { assertInstalled } from "../../src/commands/assertions";
 import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github";
 import { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
-const mockAssertInstalled = vi.hoisted(() => vi.fn());
+const mockAssertInstalled: Mock<typeof assertInstalled> = vi.hoisted(() => vi.fn());
 const mockSpawn = vi.hoisted(() => vi.fn());
 
 vi.mock("../../src/commands/assertions", () => ({

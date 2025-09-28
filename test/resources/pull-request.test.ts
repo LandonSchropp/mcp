@@ -1,17 +1,19 @@
+import { getBranches } from "../../src/commands/git";
+import { getPullRequest } from "../../src/commands/github";
 import { server } from "../../src/server";
 import { createTestClient } from "../helpers";
 import "../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 const BRANCHES = ["main", "feature/auth", "feature/ui", "bugfix/login"];
 
-const mockGetBranches = vi.hoisted(() => vi.fn(() => BRANCHES));
+const mockGetBranches: Mock<typeof getBranches> = vi.hoisted(() => vi.fn(async () => BRANCHES));
 
-const mockGetPullRequest = vi.hoisted(() =>
-  vi.fn(() => ({
+const mockGetPullRequest: Mock<typeof getPullRequest> = vi.hoisted(() =>
+  vi.fn(async () => ({
     title: "Add authentication feature",
     description: "This PR adds authentication to the application",
     branch: "feature/auth",
@@ -41,9 +43,13 @@ vi.mock("../../src/commands/git", async (importOriginal) => {
   };
 });
 
-vi.mock("../../src/commands/github", () => ({
-  getPullRequest: mockGetPullRequest,
-}));
+vi.mock("../../src/commands/github", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../src/commands/github")>();
+  return {
+    ...actual,
+    getPullRequest: mockGetPullRequest,
+  };
+});
 
 describe("github://pull-request/{+branch}", () => {
   let client: Client;
@@ -110,7 +116,7 @@ describe("github://pull-request/{+branch}", () => {
 
   describe("when no pull request exists for the branch", () => {
     beforeEach(() => {
-      mockGetPullRequest.mockReturnValue(null as any);
+      mockGetPullRequest.mockResolvedValue(null);
     });
 
     it("throws an McpError error", async () => {

@@ -1,12 +1,18 @@
+import {
+  isWorkingDirectoryClean,
+  doesBranchExist,
+  switchBranch,
+  createBranch,
+} from "../../../src/commands/git";
 import { server } from "../../../src/server";
 import { createTestClient } from "../../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
-const mockIsWorkingDirectoryClean = vi.hoisted(() => vi.fn());
-const mockDoesBranchExist = vi.hoisted(() => vi.fn());
-const mockSwitchBranch = vi.hoisted(() => vi.fn());
-const mockCreateBranch = vi.hoisted(() => vi.fn());
+const mockIsWorkingDirectoryClean: Mock<typeof isWorkingDirectoryClean> = vi.hoisted(() => vi.fn());
+const mockDoesBranchExist: Mock<typeof doesBranchExist> = vi.hoisted(() => vi.fn());
+const mockSwitchBranch: Mock<typeof switchBranch> = vi.hoisted(() => vi.fn());
+const mockCreateBranch: Mock<typeof createBranch> = vi.hoisted(() => vi.fn());
 
 vi.mock("../../../src/commands/git", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../../src/commands/git")>();

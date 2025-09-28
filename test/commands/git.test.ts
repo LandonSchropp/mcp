@@ -1,3 +1,4 @@
+import { assertInstalled } from "../../src/commands/assertions";
 import {
   assertGitInstalled,
   getDiff,
@@ -11,10 +12,12 @@ import {
   createBranch,
 } from "../../src/commands/git";
 import { SubprocessError } from "nano-spawn";
+import spawn from "nano-spawn";
 import dedent from "ts-dedent";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
-const mockAssertInstalled = vi.hoisted(() => vi.fn());
+const mockAssertInstalled: Mock<typeof assertInstalled> = vi.hoisted(() => vi.fn());
+
 const mockSpawn = vi.hoisted(() => vi.fn());
 
 vi.mock("../../src/commands/assertions", () => ({
@@ -53,9 +56,9 @@ describe("assertGitInstalled", () => {
 
 describe("getDiff", () => {
   beforeEach(() => {
-    mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+    mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
       if (args?.[0] === "show-ref") {
-        return { stdout: "", stderr: "" }; // Branch exists
+        return { stdout: "", stderr: "" };
       }
 
       if (args?.[0] === "log") {
@@ -84,7 +87,7 @@ describe("getDiff", () => {
       }
 
       return { stdout: "", stderr: "" };
-    });
+    }) as Mock<typeof spawn>);
   });
 
   it("calls git log with the correct range", async () => {
