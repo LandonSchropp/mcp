@@ -1,6 +1,6 @@
 ---
 title: Test Guidelines
-description: Additional testing guidelines beyond Better Specs for TypeScript/JavaScript
+description: Additional testing guidelines beyond Better Tests
 ---
 
 ## Use `it` Instead of `test`
