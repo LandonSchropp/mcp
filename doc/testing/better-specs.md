@@ -42,22 +42,28 @@ context "when logged out" do
 end
 ```
 
-## Keep Descriptions Short
+## Keep `it` Descriptions Short
 
-Use proper articles ('a', 'an', 'the') and copulas (is/are) in test descriptions. When the test block has an implicit subject, start with a copula.
+Alternatively, use `is_expected` to remove the `it` description entirely.
 
 ```ruby
 # Bad
-it "has 422 status code if an unexpected params will be added"
+it "results in a true value" do
+  expect(subject).to be(true)
+end
 
-# Good
-context "when the parameters are not valid" do
-  it { is_expected.to respond_with(422) }
+it "has 422 status code if an unexpected params will be added" do
+  expect(subject).to respond_with(422)
+end
+
+# Good (explicit subject)
+it "returns true" do
+  expect(subject).to be(true)
 end
 
 # Good (implicit subject)
-it "is true" do
-  expect(subject).to be(true)
+context "when the parameters are not valid" do
+  it { is_expected.to respond_with(422) }
 end
 ```
 
@@ -163,19 +169,11 @@ let!(:admin) { create(:admin) }
 
 ## Mocks
 
-Use mocks sparingly, typically only when simulating external APIs or when calling something would have a side effect that can't be easily reverted in a test context. Test real behavior when possible.
-
-```ruby
-# Good (mocking external API)
-before { allow(WeatherService).to receive(:current_temperature).and_return(72) }
-
-# Good (mocking side effects)
-before { allow(File).to receive(:delete).and_return(true) }
-```
+Test real behavior when possible. Use mocks sparingly.
 
 ## Minimal Data
 
-Create only the test data you need. When creating lists of undifferentiated records, 3 is usually the right number.
+Create only the test data you need.
 
 ## Factories
 
