@@ -3,9 +3,9 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../../../src/commands/git";
-import { server } from "../../../src/server";
-import { createTestClient } from "../../helpers";
+} from "../../src/commands/git";
+import { server } from "../../src/server";
+import { createTestClient } from "../helpers";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
@@ -14,7 +14,7 @@ const mockDoesBranchExist: Mock<typeof doesBranchExist> = vi.hoisted(() => vi.fn
 const mockSwitchBranch: Mock<typeof switchBranch> = vi.hoisted(() => vi.fn());
 const mockCreateBranch: Mock<typeof createBranch> = vi.hoisted(() => vi.fn());
 
-vi.mock("../../../src/commands/git", async (importOriginal) => {
+vi.mock("../../src/commands/git", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     isWorkingDirectoryClean: mockIsWorkingDirectoryClean,
