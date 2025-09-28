@@ -3,7 +3,9 @@ title: Add Specs
 description: Add specs using a structured testing approach
 ---
 
-Add specs for {{target}} using the following process:
+{{> parameters/_target action="add specs for"}}
+
+Add specs for TARGET using the following process:
 
 1. **Analyze current state:** Determine the appropriate spec file location. If there's an existing spec file, read it to understand the current structure.
 

@@ -2,8 +2,6 @@ import { getCurrentBranch } from "../../commands/git";
 import { ParameterDefinition } from "./types";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
-const TARGET_DEFAULT = "the current context";
-
 const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
 
 const transformLinearIssueId = (value: string): string => {
@@ -20,12 +18,6 @@ const transformLinearIssueId = (value: string): string => {
 
 /** List of allowed parameters and their resolvers */
 export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
-  {
-    name: "target",
-    description: "Target (path, description, reference, etc.)",
-    type: "optional",
-    resolve: () => TARGET_DEFAULT,
-  },
   {
     name: "linearIssueId",
     description: "Linear issue ID (e.g. AB-123)",

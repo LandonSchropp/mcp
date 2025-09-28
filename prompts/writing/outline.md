@@ -3,7 +3,9 @@ title: Outline
 description: Generate a detailed outline from content
 ---
 
-Generate a detailed outline from {{target}}.
+{{> parameters/_target action="create an outline from"}}
+
+Generate a detailed outline from TARGET.
 
 Use bulleted lists with sub-bullets to organize the content.
 

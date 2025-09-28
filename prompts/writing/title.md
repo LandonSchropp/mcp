@@ -3,7 +3,9 @@ title: Title
 description: Generate compelling titles for content
 ---
 
-Generate 5-10 compelling title options for {{target}}.
+{{> parameters/_target action="generate titles for"}}
+
+Generate 5-10 compelling title options for TARGET.
 
 Create titles that are:
 

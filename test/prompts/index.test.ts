@@ -87,63 +87,42 @@ describe("prompts", () => {
     it("reutrns the content of the prompt", () => {});
   });
 
-  describe("when the prompt's template includes a {{target}} expression", () => {
-    it("includes an optional target parameter", async () => {
+  describe("when the prompt's template includes a target partial", () => {
+    it("has no target parameter", async () => {
       const { prompts } = await client.listPrompts();
 
       const prompt = prompts.find(({ name }) => name === "writing/format")!;
 
       expect(prompt.arguments).toBeDefined();
-      expect(prompt.arguments).toHaveLength(1);
+      expect(prompt.arguments).toHaveLength(0);
+    });
 
-      expect(prompt.arguments![0]).toEqual(
+    it("includes the target prompt in the message", async () => {
+      result = await client.getPrompt({ name: "writing/format", arguments: {} });
+
+      expect(result.messages).toEqual([
         expect.objectContaining({
-          name: "target",
-          description: expect.stringContaining("Target"),
-          required: false,
+          role: "user",
+          content: expect.objectContaining({
+            text: expect.stringContaining("What would you like to format?"),
+            type: "text",
+          }),
         }),
-      );
+      ]);
     });
 
-    describe("when the target parameter is provided", () => {
-      beforeEach(async () => {
-        result = await client.getPrompt({
-          name: "writing/format",
-          arguments: { target: "ExampleClass" },
-        });
-      });
+    it("includes TARGET placeholder in the message", async () => {
+      result = await client.getPrompt({ name: "writing/format", arguments: {} });
 
-      it("includes the target in the message", async () => {
-        expect(result.messages).toEqual([
-          expect.objectContaining({
-            role: "user",
-            content: expect.objectContaining({
-              text: expect.stringContaining("ExampleClass"),
-              type: "text",
-            }),
+      expect(result.messages).toEqual([
+        expect.objectContaining({
+          role: "user",
+          content: expect.objectContaining({
+            text: expect.stringContaining("TARGET"),
+            type: "text",
           }),
-        ]);
-      });
-
-      it("does not include 'the current context'", async () => {
-        expect(result.messages[0].content.text).not.toContain("the current context");
-      });
-    });
-
-    describe("when the target parameter is not provided", () => {
-      it("includes 'the current context' in the message", async () => {
-        result = await client.getPrompt({ name: "writing/format", arguments: {} });
-
-        expect(result.messages).toEqual([
-          expect.objectContaining({
-            role: "user",
-            content: expect.objectContaining({
-              text: expect.stringContaining("the current context"),
-              type: "text",
-            }),
-          }),
-        ]);
-      });
+        }),
+      ]);
     });
   });
 

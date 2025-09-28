@@ -19,67 +19,6 @@ let server: McpServer;
 describe("resolvePromptParameterValue", () => {
   beforeEach(() => (server = new McpServer({ name: "test", version: "0.0.0" })));
 
-  describe("when the parameter is 'target'", () => {
-    describe("when the value is defined", () => {
-      it("returns the provided value", async () => {
-        const result = await resolvePromptParameterValue(
-          server,
-          "test/prompt",
-          "target",
-          {},
-          "ExampleTarget",
-        );
-        expect(result).toBe("ExampleTarget");
-      });
-    });
-
-    describe("when value is surrounded by extra whitespace", () => {
-      it("returns the trimmed value", async () => {
-        const result = await resolvePromptParameterValue(
-          server,
-          "test/prompt",
-          "target",
-          {},
-          "  ExampleTarget  ",
-        );
-        expect(result).toBe("ExampleTarget");
-      });
-    });
-
-    describe("when the value is undefined", () => {
-      it("returns the default value", async () => {
-        const result = await resolvePromptParameterValue(
-          server,
-          "test/prompt",
-          "target",
-          {},
-          undefined,
-        );
-        expect(result).toBe("the current context");
-      });
-    });
-
-    describe("when value is an empty string", () => {
-      it("returns the default value", async () => {
-        const result = await resolvePromptParameterValue(server, "test/prompt", "target", {}, "");
-        expect(result).toBe("the current context");
-      });
-    });
-
-    describe("when value is only whitespace", () => {
-      it("returns the default value", async () => {
-        const result = await resolvePromptParameterValue(
-          server,
-          "test/prompt",
-          "target",
-          {},
-          "   \t\n  ",
-        );
-        expect(result).toBe("the current context");
-      });
-    });
-  });
-
   describe("when the parameter is 'linearIssueId'", () => {
     describe("when the value is a valid Linear issue ID", () => {
       it("returns the issue ID", async () => {
@@ -215,17 +154,6 @@ describe("extractParametersUsedInTemplate", () => {
 
   describe("when template contains a single parameter", () => {
     describe("when the curly braces do not contain whitespace", () => {
-      it("extracts the parameter name", () => {
-        expect(extractParametersUsedInTemplate("Apply to {{target}}")).toEqual([
-          {
-            name: "target",
-            description: "Target (path, description, reference, etc.)",
-            type: "optional",
-            resolve: expect.any(Function),
-          },
-        ]);
-      });
-
       it("extracts linearIssueId parameter", () => {
         expect(extractParametersUsedInTemplate("Issue: {{linearIssueId}}")).toEqual([
           {
@@ -239,21 +167,21 @@ describe("extractParametersUsedInTemplate", () => {
     });
 
     describe("when the curly braces contain whitespace", () => {
-      it("extracts the parameter name", () => {
-        expect(extractParametersUsedInTemplate("Apply to {{ target }}")).toEqual([
+      it("extracts linearIssueId parameter", () => {
+        expect(extractParametersUsedInTemplate("Issue: {{ linearIssueId }}")).toEqual([
           {
-            name: "target",
-            description: "Target (path, description, reference, etc.)",
-            type: "optional",
-            resolve: expect.any(Function),
+            name: "linearIssueId",
+            description: "Linear issue ID (e.g. AB-123)",
+            type: "required",
+            transform: expect.any(Function),
           },
         ]);
-        expect(extractParametersUsedInTemplate("Apply to {{  target  }}")).toEqual([
+        expect(extractParametersUsedInTemplate("Issue: {{  linearIssueId  }}")).toEqual([
           {
-            name: "target",
-            description: "Target (path, description, reference, etc.)",
-            type: "optional",
-            resolve: expect.any(Function),
+            name: "linearIssueId",
+            description: "Linear issue ID (e.g. AB-123)",
+            type: "required",
+            transform: expect.any(Function),
           },
         ]);
       });
@@ -262,13 +190,14 @@ describe("extractParametersUsedInTemplate", () => {
 
   describe("when template contains multiple occurrences of the same parameter", () => {
     it("only returns the parameter once", () => {
-      const template = "Transform {{target}} and update {{ target }} with new {{target}}";
+      const template =
+        "Issue {{linearIssueId}} and refer to {{ linearIssueId }} with new {{linearIssueId}}";
       expect(extractParametersUsedInTemplate(template)).toEqual([
         {
-          name: "target",
-          description: "Target (path, description, reference, etc.)",
-          type: "optional",
-          resolve: expect.any(Function),
+          name: "linearIssueId",
+          description: "Linear issue ID (e.g. AB-123)",
+          type: "required",
+          transform: expect.any(Function),
         },
       ]);
     });
@@ -276,13 +205,13 @@ describe("extractParametersUsedInTemplate", () => {
 
   describe("when template contains unknown parameters", () => {
     it("does not return the unknown parameters", () => {
-      const template = "Apply to {{target}} and {{unknown}} parameter";
+      const template = "Issue {{linearIssueId}} and {{unknown}} parameter";
       expect(extractParametersUsedInTemplate(template)).toEqual([
         {
-          name: "target",
-          description: "Target (path, description, reference, etc.)",
-          type: "optional",
-          resolve: expect.any(Function),
+          name: "linearIssueId",
+          description: "Linear issue ID (e.g. AB-123)",
+          type: "required",
+          transform: expect.any(Function),
         },
       ]);
     });
@@ -290,14 +219,14 @@ describe("extractParametersUsedInTemplate", () => {
 
   describe("when template contains single curly braces", () => {
     it("does not include the parameter", () => {
-      expect(extractParametersUsedInTemplate("Use {target} here")).toEqual([]);
+      expect(extractParametersUsedInTemplate("Use {linearIssueId} here")).toEqual([]);
     });
   });
 
   describe("when template contains incomplete braces", () => {
     it("does not include the parameter", () => {
-      expect(extractParametersUsedInTemplate("Use {{target here")).toEqual([]);
-      expect(extractParametersUsedInTemplate("Use target}} here")).toEqual([]);
+      expect(extractParametersUsedInTemplate("Use {{linearIssueId here")).toEqual([]);
+      expect(extractParametersUsedInTemplate("Use linearIssueId}} here")).toEqual([]);
     });
   });
 
@@ -310,12 +239,12 @@ describe("extractParametersUsedInTemplate", () => {
   describe("when template contains partials", () => {
     it("includes parameters from the partial", () => {
       const result = extractParametersUsedInTemplate(
-        '{{target}} {{> plan/_instructions planType="test""}}',
+        '{{linearIssueId}} {{> plan/_instructions planType="test""}}',
       );
 
       const parameterNames = result.map(({ name }) => name);
 
-      expect(parameterNames).toEqual(["target", "currentBranch"]);
+      expect(parameterNames).toEqual(["linearIssueId", "currentBranch"]);
     });
   });
 });

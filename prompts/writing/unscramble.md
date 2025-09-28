@@ -3,7 +3,9 @@ title: Unscramble
 description: Reorganize and clarify the structure of writing
 ---
 
-Reorganize and clarify the fragmented/stream-of-consciousness writing in {{target}} into coherent text.
+{{> parameters/_target action="unscramble"}}
+
+Reorganize and clarify the fragmented/stream-of-consciousness writing in TARGET into coherent text.
 
 Use only existing ideas—never add new concepts. Leave polished content unchanged.
 

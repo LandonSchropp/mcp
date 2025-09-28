@@ -3,7 +3,9 @@ title: Coach
 description: Provide direct, actionable writing feedback to transform competent writing into memorable content
 ---
 
-Provide writing feedback for {{target}} to transform competent writing into memorable, impactful content.
+{{> parameters/_target action="receive feedback on"}}
+
+Provide writing feedback for TARGET to transform competent writing into memorable, impactful content.
 
 Provide direct critique:
 

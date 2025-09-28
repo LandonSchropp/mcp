@@ -3,7 +3,9 @@ title: Draft
 description: Transform an outline into a fully developed document
 ---
 
-Transform the outline in {{target}} into a fully developed document.
+{{> parameters/_target action="transform into a draft"}}
+
+Transform the outline in TARGET into a fully developed document.
 
 Expand each point into:
 
