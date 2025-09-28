@@ -2,6 +2,7 @@
 title: Better Specs
 description: A copy of betterspecs.org guidelines adapted for LLM code generation
 url: https://www.betterspecs.org/
+scope: ruby
 ---
 
 ## Keep Descriptions Short

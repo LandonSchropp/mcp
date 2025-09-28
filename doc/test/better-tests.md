@@ -2,6 +2,7 @@
 title: Better Tests
 description: Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun
 url: https://www.betterspecs.org/
+scope: typescript
 ---
 
 ## Keep Descriptions Short

@@ -1,6 +1,7 @@
 ---
 title: Add Specs
 description: Add specs using a structured testing approach
+scope: ruby
 ---
 
 {{> parameters/_target action="add specs for"}}

@@ -1,6 +1,7 @@
 ---
 title: Add Tests
 description: Add tests using a structured testing approach
+scope: typescript
 ---
 
 {{> parameters/_target action="add tests for"}}

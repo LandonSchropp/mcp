@@ -1,6 +1,7 @@
 ---
 title: Test Preferences
 description: My preferences for writing tests that complement the Better Tests guidelines
+scope: typescript
 ---
 
 ## Use `it` Instead of `test`
