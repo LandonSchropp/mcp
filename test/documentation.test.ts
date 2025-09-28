@@ -166,9 +166,9 @@ describe("resources/documentation", () => {
       const { resources } = await client.listResources();
 
       expect(resources).toContainEqual({
-        name: "testing/better-tests",
+        name: "test/better-tests",
         title: "Better Tests",
-        uri: "doc://testing/better-tests",
+        uri: "doc://test/better-tests",
         description:
           "Testing best practices for TypeScript/JavaScript frameworks like Jest, Vitest, and Bun",
         mimeType: "text/markdown",

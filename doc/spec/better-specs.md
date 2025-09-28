@@ -14,8 +14,10 @@ describe "the authenticate method for User"
 describe "if the user is an admin"
 
 # Good
-describe ".authenticate"
-describe "#admin?"
+describe "User" do
+  describe ".authenticate"
+  describe "#admin?"
+end
 ```
 
 ## Use `context`
@@ -62,7 +64,7 @@ it "returns true" do
 end
 
 # Good (implicit subject)
-context "when the parameters are not valid" do
+context "when the parameters are invalid" do
   it { is_expected.to respond_with(422) }
 end
 ```

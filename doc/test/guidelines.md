@@ -1,0 +1,62 @@
+---
+title: Test Guidelines
+description: Additional testing guidelines beyond Better Specs for TypeScript/JavaScript
+---
+
+## Use `it` Instead of `test`
+
+Use `it` instead of `test` for individual test cases.
+
+```typescript
+// Bad
+test("returns a 200 status code", () => {
+  expect(response.status).toBe(200);
+});
+
+// Good
+it("returns a 200 status code", () => {
+  expect(response.status).toBe(200);
+});
+```
+
+## Articles and Linking Verbs
+
+Use proper articles ('a', 'an', 'the') and linking verbs ('is', 'are', 'has', 'does') in test descriptions. When testing a subject directly, start descriptions with linking verbs like "is", "are", "has", or "does".
+
+```typescript
+// Bad (missing articles)
+describe("when template includes partial");
+describe("when URI is preceded by @");
+
+// Good (includes articles)
+describe("when the template includes a partial");
+describe("when the URI is preceded by an @");
+
+// Bad (missing linking verbs for direct subject testing)
+it("valid");
+it("not saved");
+
+// Good (starts with linking verbs)
+it("is valid");
+it("is not saved");
+```
+
+## When to Mock
+
+Use mocks sparingly, typically only when simulating external APIs or when calling something would have a side effect that can't be easily reverted in a test context. Test real behavior when possible.
+
+```typescript
+// Good (mocking external API)
+beforeEach(() => {
+  jest.spyOn(weatherService, "getCurrentTemperature").mockResolvedValue(72);
+});
+
+// Good (mocking side effects)
+beforeEach(() => {
+  jest.spyOn(fs, "unlinkSync").mockImplementation(() => {});
+});
+```
+
+## Test Data Guidelines
+
+When creating lists of undifferentiated records, 3 is usually the right number.

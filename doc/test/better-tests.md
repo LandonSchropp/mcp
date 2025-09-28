@@ -4,22 +4,6 @@ description: Testing best practices for TypeScript/JavaScript frameworks like Je
 url: https://www.betterspecs.org/
 ---
 
-## Use `it`
-
-Use `it` instead of `test` for individual test cases.
-
-```typescript
-// Bad
-it("returns a 200 status code", () => {
-  expect(response.status).toBe(200);
-});
-
-// Good
-it("returns a 200 status code", () => {
-  expect(response.status).toBe(200);
-});
-```
-
 ## Keep Descriptions Short
 
 When testing classes, use `.` for static methods and `#` for instance methods. For standalone functions, use the function name. When testing multiple functions, use top-level describe blocks for each function.
@@ -30,9 +14,10 @@ describe("the authenticate method for User");
 describe("if the user is an admin");
 
 // Good (class methods)
-describe("User");
-describe(".authenticate");
-describe("#isAdmin");
+describe("User", () => {
+  describe(".authenticate");
+  describe("#isAdmin");
+});
 
 // Good (standalone functions)
 describe("calculateTax");
@@ -46,47 +31,40 @@ Use contexts to organize related tests. Start context descriptions with 'when', 
 ```typescript
 // Bad
 it("has 200 status code if logged in", () => {
-  expect(response.status).toBe(200);
+  expect(response.status).toEqual(200);
 });
 
 it("has 401 status code if not logged in", () => {
-  expect(response.status).toBe(401);
+  expect(response.status).toEqual(401);
 });
 
 // Good
 describe("when logged in", () => {
   it("returns a 200 status code", () => {
-    expect(response.status).toBe(200);
+    expect(response.status).toEqual(200);
   });
 });
 
 describe("when logged out", () => {
   it("returns a 401 status code", () => {
-    expect(response.status).toBe(401);
+    expect(response.status).toEqual(401);
   });
 });
 ```
 
-## Keep Descriptions Short
-
-Keep descriptions concise and use proper articles ('a', 'an', 'the') and copulas (is/are) in test descriptions. When the test block has an implicit subject, start with a copula.
+## Keep `it` Descriptions Short
 
 ```typescript
 // Bad
 it("has 422 status code if an unexpected params will be added", () => {
-  expect(response.status).toBe(422);
+  expect(response.status).toEqual(422);
 });
 
 // Good
-describe("when the parameters are not valid", () => {
-  it("returns a 422 status code", () => {
-    expect(response.status).toBe(422);
+describe("when the parameters are invalid", () => {
+  it("responds with a 422 status code", () => {
+    expect(response.status).toEqual(422);
   });
-});
-
-// Good (implicit subject)
-it("is true", () => {
-  expect(subject).toBe(true);
 });
 ```
 
@@ -136,19 +114,6 @@ describe("#delete", () => {
 });
 ```
 
-## `expect` vs. `should`
-
-Always use the `expect` syntax with standard matchers.
-
-```typescript
-// Bad
-response.status.should.equal(200);
-
-// Good
-expect(response.status).toBe(200);
-expect(response.headers["content-type"]).toContain("application/json");
-```
-
 ## Mocks
 
 Use mocks sparingly, typically only when simulating external APIs or when calling something would have a side effect that can't be easily reverted in a test context. Test real behavior when possible.
@@ -178,7 +143,10 @@ Use factory functions instead of inline object creation. Avoid complex data setu
 const user = { id: 1, name: "John", email: "john@example.com", ... };
 
 // Good
-const user = createUser({ name: "John" });
+const user = userFactory.build({ name: "John" });
+
+// Good (for database persistence)
+const user = await userFactory.create({ name: "John" });
 ```
 
 ## Avoid "should"
@@ -188,11 +156,11 @@ Avoid "should" in test descriptions. Use present tense, third person.
 ```typescript
 // Bad
 it("should not update the user's email", () => {
-  expect(user.email).toBe(originalEmail);
+  expect(user.email).toEqual(originalEmail);
 });
 
 // Good
 it("does not update the user's email", () => {
-  expect(user.email).toBe(originalEmail);
+  expect(user.email).toEqual(originalEmail);
 });
 ```
