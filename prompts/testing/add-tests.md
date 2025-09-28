@@ -12,7 +12,7 @@ Add tests for TARGET using the following process:
 2. **Plan test structure:** List describe and context blocks without wrapping in commands:
 
    ```
-   #method_name
+   functionName
      when condition A
      when condition B
      when edge case C
@@ -21,5 +21,7 @@ Add tests for TARGET using the following process:
 3. **Review and approval:** Wait for feedback on proposed structure before implementation.
 
 4. **Implement Incrementally:** Implement one context block at a time. Wait for approval after each context implementation. Run tests after each context addition. Fix failures before proceeding.
+
+5. **Final check:** When you're done, type check the test files.
 
 Follow the @doc://testing/better-tests guidelines.
