@@ -1,6 +1,6 @@
 ---
-title: Spec Guidelines
-description: Additional testing guidelines beyond Better Specs
+title: Spec Preferences
+description: My preferences for writing specs in addition to the Better Specs guidelines
 ---
 
 ## Articles and Linking Verbs
