@@ -8,13 +8,6 @@ vi.mock("../../src/commands/git", () => ({
   getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
-vi.mock("../src/env.ts", () => ({
-  PLANS_DIRECTORY: "/tmp/plans",
-  WRITING_FORMAT: "/tmp/format.md",
-  WRITING_VOICE: "/tmp/voice.md",
-  WRITING_IMPROVEMENT: "/tmp/improvement.md",
-}));
-
 describe("prompts", () => {
   let client: Client;
   let result: Awaited<ReturnType<typeof client.getPrompt>>;
