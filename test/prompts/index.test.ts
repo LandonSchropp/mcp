@@ -8,7 +8,6 @@ vi.mock("../../src/commands/git", () => ({
   getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));
 
-// Mock the environment module
 vi.mock("../src/env.ts", () => ({
   PLANS_DIRECTORY: "/tmp/plans",
   WRITING_FORMAT: "/tmp/format.md",
@@ -58,7 +57,7 @@ describe("prompts", () => {
       arguments: { target: "ExampleClass" },
     });
 
-    expect(result.messages).toEqual([
+    expect(result.messages[0]).toEqual(
       expect.objectContaining({
         role: "user",
         content: expect.objectContaining({
@@ -66,7 +65,7 @@ describe("prompts", () => {
           type: "text",
         }),
       }),
-    ]);
+    );
   });
 
   it("strips the frontmatter from the content", async () => {
@@ -100,7 +99,7 @@ describe("prompts", () => {
     it("includes the target prompt in the message", async () => {
       result = await client.getPrompt({ name: "writing/format", arguments: {} });
 
-      expect(result.messages).toEqual([
+      expect(result.messages[0]).toEqual(
         expect.objectContaining({
           role: "user",
           content: expect.objectContaining({
@@ -108,13 +107,13 @@ describe("prompts", () => {
             type: "text",
           }),
         }),
-      ]);
+      );
     });
 
     it("includes TARGET placeholder in the message", async () => {
       result = await client.getPrompt({ name: "writing/format", arguments: {} });
 
-      expect(result.messages).toEqual([
+      expect(result.messages[0]).toEqual(
         expect.objectContaining({
           role: "user",
           content: expect.objectContaining({
@@ -122,7 +121,7 @@ describe("prompts", () => {
             type: "text",
           }),
         }),
-      ]);
+      );
     });
   });
 
@@ -134,7 +133,7 @@ describe("prompts", () => {
       });
 
       // The partial content should be included and rendered
-      expect(result.messages).toEqual([
+      expect(result.messages[0]).toEqual(
         expect.objectContaining({
           role: "user",
           content: expect.objectContaining({
@@ -142,16 +141,10 @@ describe("prompts", () => {
             type: "text",
           }),
         }),
-      ]);
+      );
 
       // Should not contain unresolved partial syntax
-      expect(result.messages).toEqual([
-        expect.objectContaining({
-          content: expect.objectContaining({
-            text: expect.not.stringMatching(/\{\{>|_instructions/),
-          }),
-        }),
-      ]);
+      expect(result.messages[0].content.text).not.toMatch(/\{\{>|_instructions/);
     });
   });
 
@@ -162,7 +155,7 @@ describe("prompts", () => {
         arguments: {},
       });
 
-      expect(result.messages).toEqual([
+      expect(result.messages[0]).toEqual(
         expect.objectContaining({
           role: "user",
           content: expect.objectContaining({
@@ -170,7 +163,7 @@ describe("prompts", () => {
             type: "text",
           }),
         }),
-      ]);
+      );
 
       expect(result.messages[0].content.text).not.toContain("{{currentBranch}}");
     });
@@ -240,7 +233,6 @@ describe("prompts", () => {
           }),
         ]);
 
-        // Should not contain the full text, just the extracted ID
         expect(result.messages[0].content.text).not.toContain("Fix the bug");
         expect(result.messages[0].content.text).not.toContain("today");
       });
@@ -265,6 +257,70 @@ describe("prompts", () => {
             arguments: { linearIssueId: "invalid text without issue ID" },
           }),
         ).rejects.toThrow();
+      });
+    });
+  });
+
+  describe("resource URI extraction and linking", () => {
+    describe("when the prompt contains a full URI without placeholders", () => {
+      it("extracts the URI and includes it as a resource link", async () => {
+        result = await client.getPrompt({
+          name: "writing/format",
+          arguments: {},
+        });
+
+        expect(result.messages).toHaveLength(2);
+
+        expect(result.messages[0]).toEqual(
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              type: "text",
+            }),
+          }),
+        );
+
+        expect(result.messages[1]).toEqual(
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              type: "resource_link",
+              uri: "doc://writing/format",
+              name: "doc://writing/format",
+            }),
+          }),
+        );
+      });
+    });
+
+    describe("when the prompt contains a URI with placeholders", () => {
+      it("renders the placeholders and includes the rendered URI as a resource link", async () => {
+        result = await client.getPrompt({
+          name: "plan/feature",
+          arguments: { description: "Add user authentication", featureBranch: "auth-feature" },
+        });
+
+        expect(result.messages).toHaveLength(2);
+
+        expect(result.messages[0]).toEqual(
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              type: "text",
+            }),
+          }),
+        );
+
+        expect(result.messages[1]).toEqual(
+          expect.objectContaining({
+            role: "user",
+            content: expect.objectContaining({
+              type: "resource_link",
+              uri: "git://feature-branch/current-branch-name",
+              name: "git://feature-branch/current-branch-name",
+            }),
+          }),
+        );
       });
     });
   });

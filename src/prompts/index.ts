@@ -2,9 +2,11 @@ import { PROMPTS_DIRECTORY } from "../constants";
 import { server } from "../server-instance";
 import { parseFrontmatter } from "../templates/frontmatter";
 import { renderTemplate } from "../templates/render";
+import { extractResourceURIs } from "../templates/uri";
 import { relativePathWithoutExtension } from "../utilities/path";
 import { extractParametersUsedInTemplate, resolvePromptParameterValue } from "./parameters";
 import { ParameterDefinition } from "./parameters/types";
+import { PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
 import z, { ZodOptional, ZodString } from "zod";
@@ -72,12 +74,23 @@ for (const filePath of PROMPT_FILES) {
       // Render the template
       let text = renderTemplate(content, context);
 
+      // Extract the resource URIs from the rendered content and convert them to resource links
+      let resourceLinks: PromptMessage[] = Array.from(extractResourceURIs(text)).map((uri) => ({
+        role: "user",
+        content: {
+          type: "resource_link",
+          uri,
+          name: uri,
+        },
+      }));
+
       return {
         messages: [
           {
             role: "user",
             content: { text, type: "text" },
           },
+          ...resourceLinks,
         ],
       };
     },
