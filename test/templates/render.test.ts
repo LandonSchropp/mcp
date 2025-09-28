@@ -70,7 +70,7 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the template contains a partial", () => {
+  describe("when the template contains a prompt partial", () => {
     it("renders the partial", () => {
       const template = "{{> plan/_instructions}}";
 
@@ -83,6 +83,17 @@ describe("renderTemplate", () => {
       expect(result).toContain("example implementation plan");
       expect(result).toContain("Please describe the example");
       expect(result).toContain("@git://feature-branch/feature-example");
+    });
+  });
+
+  describe("when the template contains a documentation partial", () => {
+    it("renders the partial", () => {
+      const template = "{{> doc/test/better-tests}}";
+      const result = renderTemplate(template, {});
+
+      expect(result).toContain("Keep Descriptions Short");
+      expect(result).toContain("Use Contexts");
+      expect(result).toContain("Single Expectations");
     });
   });
 });
