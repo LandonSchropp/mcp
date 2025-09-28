@@ -22,4 +22,4 @@ Add specs for TARGET using the following process:
 
 4. **Implement Incrementally:** Implement one context block at a time. Wait for approval after each context implementation. Run specs after each context addition. Fix failures before proceeding.
 
-Follow the @doc://testing/better-specs guidelines.
+Follow the @doc://spec/better-specs guidelines.

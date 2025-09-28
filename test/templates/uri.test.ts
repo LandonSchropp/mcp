@@ -2,7 +2,7 @@ import { extractResourceURIs } from "../../src/templates/uri";
 import { describe, it, expect } from "vitest";
 
 describe("extractResourceURIs", () => {
-  describe("when the template has no URIs", () => {
+  describe("when template has no URIs", () => {
     it("returns an empty set", () => {
       const template = "This is a plain text template";
       const result = extractResourceURIs(template);
@@ -10,7 +10,7 @@ describe("extractResourceURIs", () => {
     });
   });
 
-  describe("when the template has a single URI", () => {
+  describe("when template has a single URI", () => {
     it("returns the URI", () => {
       const template = "Check out file:///path/to/file.txt for details";
       const result = extractResourceURIs(template);
@@ -18,7 +18,7 @@ describe("extractResourceURIs", () => {
     });
   });
 
-  describe("when the template has multiple URIs", () => {
+  describe("when template has multiple URIs", () => {
     it("returns all unique URIs", () => {
       const template = `
         - file:///first.txt
@@ -33,7 +33,13 @@ describe("extractResourceURIs", () => {
     });
   });
 
-  describe("when the template contains HTTP URIs", () => {
+  // TODO: We currently don't have a partial that contains URIs. When one is added, this test case
+  // can be implemented.
+  describe("when template includes a partial", () => {
+    it.skip("extracts URIs from both the template and the partial", () => {});
+  });
+
+  describe("when template contains HTTP URIs", () => {
     it("excludes HTTP URIs", () => {
       const template = "Valid: file:///local.txt Invalid: http://example.com/file.txt";
       const result = extractResourceURIs(template);
@@ -41,7 +47,7 @@ describe("extractResourceURIs", () => {
     });
   });
 
-  describe("when the template contains HTTPS URIs", () => {
+  describe("when template contains HTTPS URIs", () => {
     it("excludes HTTPS URIs", () => {
       const template = "Valid: file:///local.txt Invalid: https://example.com/file.txt";
       const result = extractResourceURIs(template);
