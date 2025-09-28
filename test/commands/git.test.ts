@@ -18,7 +18,7 @@ import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 const mockAssertInstalled: Mock<typeof assertInstalled> = vi.hoisted(() => vi.fn());
 
-const mockSpawn = vi.hoisted(() => vi.fn());
+const mockSpawn: Mock<typeof spawn> = vi.hoisted(() => vi.fn() as Mock<typeof spawn>);
 
 vi.mock("../../src/commands/assertions", () => ({
   assertInstalled: mockAssertInstalled,
@@ -104,7 +104,7 @@ describe("getDiff", () => {
 
   describe("when there are no commits", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
     });
 
     it("returns null", async () => {
@@ -116,14 +116,14 @@ describe("getDiff", () => {
 
   describe("when a branch does not exist", () => {
     beforeEach(() => {
-      mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+      mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
         if (args?.[0] === "show-ref" && args?.includes("refs/heads/nonexistent")) {
           const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
           error.exitCode = 1;
           throw error;
         }
         return { stdout: "", stderr: "" };
-      });
+      }) as Mock<typeof spawn>);
     });
 
     it("returns null", async () => {
@@ -163,7 +163,9 @@ describe("getDiff", () => {
 
 describe("getDefaultBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" } as Awaited<
+      ReturnType<typeof spawn>
+    >);
   });
 
   it("calls git default-branch command", async () => {
@@ -180,7 +182,9 @@ describe("getDefaultBranch", () => {
 
   describe("when branch name has whitespace", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "  develop  \n", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "  develop  \n", stderr: "" } as Awaited<
+        ReturnType<typeof spawn>
+      >);
     });
 
     it("trims whitespace from branch name", async () => {
@@ -193,7 +197,9 @@ describe("getDefaultBranch", () => {
 
 describe("getBaseBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" } as Awaited<
+      ReturnType<typeof spawn>
+    >);
   });
 
   it("delegates to getDefaultBranch", async () => {
@@ -205,7 +211,9 @@ describe("getBaseBranch", () => {
 
   describe("when default branch is develop", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "develop\n", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "develop\n", stderr: "" } as Awaited<
+        ReturnType<typeof spawn>
+      >);
     });
 
     it("returns the default branch regardless of input branch", async () => {
@@ -218,7 +226,9 @@ describe("getBaseBranch", () => {
 
 describe("getCurrentBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "feature-branch\n", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "feature-branch\n", stderr: "" } as Awaited<
+      ReturnType<typeof spawn>
+    >);
   });
 
   it("calls git branch --show-current command", async () => {
@@ -235,7 +245,9 @@ describe("getCurrentBranch", () => {
 
   describe("when branch name has whitespace", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "  my-feature  \n", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "  my-feature  \n", stderr: "" } as Awaited<
+        ReturnType<typeof spawn>
+      >);
     });
 
     it("trims whitespace from branch name", async () => {
@@ -248,7 +260,7 @@ describe("getCurrentBranch", () => {
 
 describe("getBranches", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls git branch with the correct format", async () => {
@@ -267,17 +279,15 @@ describe("getBranches", () => {
 
   describe("when there are branches", () => {
     beforeEach(() => {
-      mockSpawn.mockImplementation(() =>
-        Promise.resolve({
-          stdout: dedent`
-            main
-            feature/new-ui
-            bugfix/auth-issue
-            develop
-          `,
-          stderr: "",
-        }),
-      );
+      mockSpawn.mockResolvedValue({
+        stdout: dedent`
+          main
+          feature/new-ui
+          bugfix/auth-issue
+          develop
+        `,
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
     });
 
     it("returns array of branch names", async () => {
@@ -292,7 +302,7 @@ describe("getBranches", () => {
       mockSpawn.mockResolvedValue({
         stdout: "  main  \n  feature/test  \n",
         stderr: "",
-      });
+      } as Awaited<ReturnType<typeof spawn>>);
     });
 
     it("trims whitespace from branch names", async () => {
@@ -305,7 +315,7 @@ describe("getBranches", () => {
 
 describe("isWorkingDirectoryClean", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls git status --porcelain", async () => {
@@ -316,7 +326,7 @@ describe("isWorkingDirectoryClean", () => {
 
   describe("when working directory is clean", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
     });
 
     it("returns true", async () => {
@@ -328,16 +338,14 @@ describe("isWorkingDirectoryClean", () => {
 
   describe("when working directory has uncommitted changes", () => {
     beforeEach(() => {
-      mockSpawn.mockImplementation(() =>
-        Promise.resolve({
-          stdout: dedent`
-            M  modified-file.txt
-            D  deleted-file.txt
-            ?? untracked-file.txt
-          `,
-          stderr: "",
-        }),
-      );
+      mockSpawn.mockResolvedValue({
+        stdout: dedent`
+          M  modified-file.txt
+          D  deleted-file.txt
+          ?? untracked-file.txt
+        `,
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
     });
 
     it("returns false", async () => {
@@ -349,7 +357,9 @@ describe("isWorkingDirectoryClean", () => {
 
   describe("when working directory has only whitespace in output", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "   \n  \n", stderr: "" });
+      mockSpawn.mockResolvedValue({ stdout: "   \n  \n", stderr: "" } as Awaited<
+        ReturnType<typeof spawn>
+      >);
     });
 
     it("returns true", async () => {
@@ -362,7 +372,7 @@ describe("isWorkingDirectoryClean", () => {
 
 describe("doesBranchExist", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls git show-ref with the correct arguments", async () => {
@@ -414,7 +424,7 @@ describe("doesBranchExist", () => {
 
 describe("switchBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls git switch with the branch name", async () => {
@@ -426,7 +436,7 @@ describe("switchBranch", () => {
 
 describe("createBranch", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls git switch -c with the branch name", async () => {

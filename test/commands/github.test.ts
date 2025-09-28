@@ -1,11 +1,11 @@
 import { assertInstalled } from "../../src/commands/assertions";
 import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github";
-import { SubprocessError } from "nano-spawn";
+import spawn, { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 const mockAssertInstalled: Mock<typeof assertInstalled> = vi.hoisted(() => vi.fn());
-const mockSpawn = vi.hoisted(() => vi.fn());
+const mockSpawn: Mock<typeof spawn> = vi.hoisted(() => vi.fn() as Mock<typeof spawn>);
 
 vi.mock("../../src/commands/assertions", () => ({
   assertInstalled: mockAssertInstalled,
@@ -43,11 +43,11 @@ describe("assertGitHubInstalled", () => {
 
 describe("getPullRequest", () => {
   beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" });
+    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
   it("calls gh pr view with correct arguments", async () => {
-    mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+    mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
       if (args?.[0] === "pr" && args?.[1] === "view") {
         return {
           stdout: JSON.stringify({
@@ -68,7 +68,7 @@ describe("getPullRequest", () => {
         return { stdout: "diff --git...", stderr: "" };
       }
       return { stdout: "", stderr: "" };
-    });
+    }) as Mock<typeof spawn>);
 
     await getPullRequest("feature-branch");
 
@@ -82,7 +82,7 @@ describe("getPullRequest", () => {
   });
 
   it("returns PR details with commits and diff", async () => {
-    mockSpawn.mockImplementation(async (_command: string, args?: string[]) => {
+    mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
       if (args?.[0] === "pr" && args?.[1] === "view") {
         return {
           stdout: JSON.stringify({
@@ -121,7 +121,7 @@ describe("getPullRequest", () => {
       }
 
       return { stdout: "", stderr: "" };
-    });
+    }) as Mock<typeof spawn>);
 
     const result = await getPullRequest("feature-branch");
 
