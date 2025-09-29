@@ -22,6 +22,7 @@ project's root directory.
 
 ```bash
 claude mcp add ls \
+  --scope user \
   --env WRITING_FORMAT="$WRITING_FORMAT" \
   --env WRITING_VOICE="$WRITING_VOICE" \
   --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT" \
