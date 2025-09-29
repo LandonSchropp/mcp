@@ -22,10 +22,10 @@ project's root directory.
 
 ```bash
 claude mcp add ls \
-  --env WRITING_FORMAT="$WRITING_FORMAT"\
-  --env WRITING_VOICE="$WRITING_VOICE"
-  --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT"
-  --env PLANS_DIRECTORY="$PLANS_DIRECTORY"
+  --env WRITING_FORMAT="$WRITING_FORMAT" \
+  --env WRITING_VOICE="$WRITING_VOICE" \
+  --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT" \
+  --env PLANS_DIRECTORY="$PLANS_DIRECTORY" \
   -- pnpm --dir "$(pwd)" start
 ```
 
