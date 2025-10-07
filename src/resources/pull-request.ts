@@ -1,7 +1,7 @@
-import { getBranches } from "../commands/git";
-import { getPullRequest } from "../commands/github";
-import { server } from "../server-instance";
-import { first } from "../utilities/array";
+import { getBranches } from "../commands/git.js";
+import { getPullRequest } from "../commands/github.js";
+import { server } from "../server-instance.js";
+import { first } from "../utilities/array.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 

@@ -1,4 +1,4 @@
-import { URI_REGEX } from "./constants";
+import { URI_REGEX } from "./constants.js";
 
 /**
  * Checks if a URI should be ignored (i.e., if it is HTTP or HTTPS).

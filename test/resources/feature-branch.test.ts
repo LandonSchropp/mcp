@@ -1,7 +1,7 @@
-import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../../src/commands/git";
-import { server } from "../../src/server";
-import { createTestClient } from "../helpers";
-import "../helpers";
+import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../../src/commands/git.js";
+import { server } from "../../src/server.js";
+import { createTestClient } from "../helpers.js";
+import "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";

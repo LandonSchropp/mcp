@@ -1,4 +1,4 @@
-import { assertInstalled } from "../../src/commands/assertions";
+import { assertInstalled } from "../../src/commands/assertions.js";
 import {
   assertGitInstalled,
   getDiff,
@@ -10,7 +10,7 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../../src/commands/git";
+} from "../../src/commands/git.js";
 import { SubprocessError } from "nano-spawn";
 import spawn from "nano-spawn";
 import dedent from "ts-dedent";

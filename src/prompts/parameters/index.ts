@@ -1,7 +1,7 @@
-import { extractPlaceholders } from "../../templates/placeholders";
-import { identity } from "../../utilities/function";
-import { PARAMETER_DEFINTIONS } from "./parameter-definitions";
-import { ParameterDefinition } from "./types";
+import { extractPlaceholders } from "../../templates/placeholders.js";
+import { identity } from "../../utilities/function.js";
+import { PARAMETER_DEFINTIONS } from "./parameter-definitions.js";
+import { ParameterDefinition } from "./types.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 /**

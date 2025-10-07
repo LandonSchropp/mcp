@@ -1,4 +1,4 @@
-import { parseFrontmatter, removeFrontmatter } from "../../src/templates/frontmatter";
+import { parseFrontmatter, removeFrontmatter } from "../../src/templates/frontmatter.js";
 import { describe, it, expect } from "vitest";
 import { dedent } from "ts-dedent";
 import { z } from "zod";

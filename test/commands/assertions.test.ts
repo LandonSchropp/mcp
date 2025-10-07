@@ -1,4 +1,4 @@
-import { assertInstalled } from "../../src/commands/assertions";
+import { assertInstalled } from "../../src/commands/assertions.js";
 import { describe, it, expect } from "vitest";
 
 describe("assertInstalled", () => {

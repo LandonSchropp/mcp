@@ -1,4 +1,4 @@
-import { extractResourceURIs } from "../../src/templates/uri";
+import { extractResourceURIs } from "../../src/templates/uri.js";
 import { describe, it, expect } from "vitest";
 
 describe("extractResourceURIs", () => {

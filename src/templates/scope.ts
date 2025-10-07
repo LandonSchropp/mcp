@@ -1,6 +1,6 @@
-import { PROJECT_TYPES } from "../constants";
-import { isProjectType } from "../utilities/project";
-import { parseFrontmatter } from "./frontmatter";
+import { PROJECT_TYPES } from "../constants.js";
+import { isProjectType } from "../utilities/project.js";
+import { parseFrontmatter } from "./frontmatter.js";
 import { readFile } from "fs/promises";
 import z from "zod";
 

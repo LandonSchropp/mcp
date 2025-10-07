@@ -1,6 +1,6 @@
-import { DOCUMENTS_DIRECTORY, PROMPTS_DIRECTORY } from "../constants";
-import { relativePathWithoutExtension } from "../utilities/path";
-import { removeFrontmatter } from "./frontmatter";
+import { DOCUMENTS_DIRECTORY, PROMPTS_DIRECTORY } from "../constants.js";
+import { relativePathWithoutExtension } from "../utilities/path.js";
+import { removeFrontmatter } from "./frontmatter.js";
 import { glob } from "fs/promises";
 import { readFile } from "fs/promises";
 import Handlebars from "handlebars";

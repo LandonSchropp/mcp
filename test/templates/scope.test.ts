@@ -1,5 +1,5 @@
-import { templateScopeMatchesCurrentProject } from "../../src/templates/scope";
-import { isProjectType } from "../../src/utilities/project";
+import { templateScopeMatchesCurrentProject } from "../../src/templates/scope.js";
+import { isProjectType } from "../../src/utilities/project.js";
 import { writeFile, mkdtemp } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";

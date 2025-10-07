@@ -1,4 +1,4 @@
-import { assertInstalled } from "./assertions";
+import { assertInstalled } from "./assertions.js";
 import spawn, { SubprocessError } from "nano-spawn";
 
 export interface GitCommit {

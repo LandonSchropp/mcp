@@ -1,10 +1,10 @@
 // Import all modules after server is created to avoid circular dependency issues
-import "./prompts";
-import "./resources/documentation";
-import "./resources/feature-branch";
-import "./resources/pull-request";
-import "./tools/switch-git-branch";
-import "./tools/create-plan-template";
+import "./prompts.js";
+import "./resources/documentation.js";
+import "./resources/feature-branch.js";
+import "./resources/pull-request.js";
+import "./tools/switch-git-branch.js";
+import "./tools/create-plan-template.js";
 
 // HACK: In order to avoid circular dependency issues due to dynamic imports, we have to use a
 // separate file to create the server instance.
