@@ -3,14 +3,22 @@
   "description": "My personal collection of MCP servers",
   "author": "Landon Schropp <schroppl@gmail.com>",
   "repository": "https://github.com/LandonSchropp/mcp",
-  "private": true,
+  "version": "0.0.1",
   "license": "MIT",
+  "files": [
+    "dist",
+    "templates",
+    "prompts",
+    "docs"
+  ],
   "type": "module",
   "bin": {
-    "mcp": "src/index.ts"
+    "mcp": "dist/index.js"
   },
   "scripts": {
     "preinstall": "pnpm dlx only-allow pnpm",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "pnpm build",
     "check-types": "tsc --noEmit",
     "test": "vitest --run --hideSkippedTests",
     "inspector": "mcp-inspector tsx src/index.ts",
