@@ -5,6 +5,9 @@
   "repository": "https://github.com/LandonSchropp/mcp",
   "version": "0.0.1",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "templates",

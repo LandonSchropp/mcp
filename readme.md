@@ -15,21 +15,26 @@ advantages:
 - MCP servers can be called from a variety of agents, not just Claude Code.
 - With MCP servers, I can run subagents in isolated contexts, preserving the main context window of the caller.
 
-## Running the Server
+## Installation
 
-You can connect the server to Claude Code directly when running the following command from this
-project's root directory.
+Configure Claude Code to run the package:
 
 ```bash
 claude mcp add ls \
-  --env WRITING_FORMAT="$WRITING_FORMAT"\
-  --env WRITING_VOICE="$WRITING_VOICE"
-  --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT"
-  --env PLANS_DIRECTORY="$PLANS_DIRECTORY"
-  -- pnpm --dir "$(pwd)" start
+  --scope user \
+  --env WRITING_FORMAT="$WRITING_FORMAT" \
+  --env WRITING_VOICE="$WRITING_VOICE" \
+  --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT" \
+  --env PLANS_DIRECTORY="$PLANS_DIRECTORY" \
+  -- pnpm dlx @landonschropp/mcp
 ```
 
-Note: The package is not yet published, so you cannot run it with `npx`.
+For local development, build and link the package:
+
+```bash
+pnpm build
+pnpm link --global
+```
 
 ## Environment
 
@@ -93,9 +98,10 @@ Currently, the following expressions are supported:
 
 ## Development
 
-The MCP server comes with a commands:
+The MCP server comes with these commands:
 
+- `pnpm build`: Build the TypeScript source to JavaScript.
 - `pnpm check-types`: Run TypeScript type checking.
 - `pnpm inspector`: Run the MCP inspector for the server.
-- `pnpm start`: Start the server locally.
+- `pnpm start`: Start the server locally (uses tsx, no build required).
 - `pnpm test`: Run the tests for the server.
