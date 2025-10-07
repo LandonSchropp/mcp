@@ -1,6 +1,6 @@
-import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../commands/git";
-import { server } from "../server-instance";
-import { first } from "../utilities/array";
+import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../commands/git.js";
+import { server } from "../server-instance.js";
+import { first } from "../utilities/array.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 

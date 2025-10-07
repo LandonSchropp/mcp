@@ -1,7 +1,7 @@
-import { TEMPLATES_DIRECTORY } from "../constants";
-import { PLANS_DIRECTORY } from "../env";
-import { server } from "../server-instance";
-import { renderTemplate } from "../templates/render";
+import { TEMPLATES_DIRECTORY } from "../constants.js";
+import { PLANS_DIRECTORY } from "../env.js";
+import { server } from "../server-instance.js";
+import { renderTemplate } from "../templates/render.js";
 import { format } from "date-fns";
 import { readFile } from "fs/promises";
 import { mkdir } from "fs/promises";

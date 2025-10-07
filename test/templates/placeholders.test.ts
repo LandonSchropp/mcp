@@ -1,4 +1,4 @@
-import { replacePlaceholders, extractPlaceholders } from "../../src/templates/placeholders";
+import { replacePlaceholders, extractPlaceholders } from "../../src/templates/placeholders.js";
 import { describe, it, expect } from "vitest";
 
 describe("extractPlaceholders", () => {

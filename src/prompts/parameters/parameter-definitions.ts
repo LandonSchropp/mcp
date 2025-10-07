@@ -1,5 +1,5 @@
-import { getCurrentBranch } from "../../commands/git";
-import { ParameterDefinition } from "./types";
+import { getCurrentBranch } from "../../commands/git.js";
+import { ParameterDefinition } from "./types.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
 const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;

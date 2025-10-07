@@ -1,4 +1,4 @@
-import { kebabCase } from "../../src/utilities/string";
+import { kebabCase } from "../../src/utilities/string.js";
 import { describe, it, expect } from "vitest";
 
 describe("kebabCase", () => {

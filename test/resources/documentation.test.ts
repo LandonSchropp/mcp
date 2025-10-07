@@ -1,6 +1,6 @@
-import { server } from "../../src/server";
-import { templateScopeMatchesCurrentProject } from "../../src/templates/scope";
-import { createTestClient } from "../helpers";
+import { server } from "../../src/server.js";
+import { templateScopeMatchesCurrentProject } from "../../src/templates/scope.js";
+import { createTestClient } from "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { writeFile } from "fs/promises";
 import { dedent } from "ts-dedent";

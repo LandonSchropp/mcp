@@ -1,5 +1,5 @@
-import { server } from "../../src/server";
-import { createTestClient } from "../helpers";
+import { server } from "../../src/server.js";
+import { createTestClient } from "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { join } from "path";

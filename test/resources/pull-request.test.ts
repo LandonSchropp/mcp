@@ -1,8 +1,8 @@
-import { getBranches } from "../../src/commands/git";
-import { getPullRequest } from "../../src/commands/github";
-import { server } from "../../src/server";
-import { createTestClient } from "../helpers";
-import "../helpers";
+import { getBranches } from "../../src/commands/git.js";
+import { getPullRequest } from "../../src/commands/github.js";
+import { server } from "../../src/server.js";
+import { createTestClient } from "../helpers.js";
+import "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";

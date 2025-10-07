@@ -1,5 +1,5 @@
-import { PLACEHOLDER_REGEX, PARTIAL_PARAMETER_REGEX, PARTIAL_REGEX } from "./constants";
-import { readPartialContent } from "./render";
+import { PLACEHOLDER_REGEX, PARTIAL_PARAMETER_REGEX, PARTIAL_REGEX } from "./constants.js";
+import { readPartialContent } from "./render.js";
 
 /**
  * Replaces {{placeholders}} in a template string with values from a context object.

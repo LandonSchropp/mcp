@@ -1,4 +1,4 @@
-import { first, unique, filterAsync } from "../../src/utilities/array";
+import { first, unique, filterAsync } from "../../src/utilities/array.js";
 import { describe, it, expect } from "vitest";
 
 describe("first", () => {

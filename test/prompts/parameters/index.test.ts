@@ -1,8 +1,8 @@
-import { getCurrentBranch } from "../../../src/commands/git";
+import { getCurrentBranch } from "../../../src/commands/git.js";
 import {
   resolvePromptParameterValue,
   extractParametersUsedInTemplate,
-} from "../../../src/prompts/parameters";
+} from "../../../src/prompts/parameters.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 

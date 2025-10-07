@@ -1,4 +1,4 @@
-import { isJavaScriptProject, isRubyProject, isProjectType } from "../../src/utilities/project";
+import { isJavaScriptProject, isRubyProject, isProjectType } from "../../src/utilities/project.js";
 import { mkdtemp, writeFile, mkdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";

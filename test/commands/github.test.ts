@@ -1,5 +1,5 @@
-import { assertInstalled } from "../../src/commands/assertions";
-import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github";
+import { assertInstalled } from "../../src/commands/assertions.js";
+import { assertGitHubInstalled, getPullRequest } from "../../src/commands/github.js";
 import spawn, { SubprocessError } from "nano-spawn";
 import dedent from "ts-dedent";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";

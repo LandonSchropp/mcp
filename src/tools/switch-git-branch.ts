@@ -3,8 +3,8 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../commands/git";
-import { server } from "../server-instance";
+} from "../commands/git.js";
+import { server } from "../server-instance.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 

@@ -1,5 +1,5 @@
-import { ProjectType } from "../types";
-import { ancestorPathExists } from "./file";
+import { ProjectType } from "../types.js";
+import { ancestorPathExists } from "./file.js";
 
 /**
  * Determines if the current working directory (or any ancestor) is a JavaScript/TypeScript project

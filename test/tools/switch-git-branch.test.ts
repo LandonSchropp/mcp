@@ -3,9 +3,9 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../../src/commands/git";
-import { server } from "../../src/server";
-import { createTestClient } from "../helpers";
+} from "../../src/commands/git.js";
+import { server } from "../../src/server.js";
+import { createTestClient } from "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
