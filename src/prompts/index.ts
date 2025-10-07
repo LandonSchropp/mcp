@@ -6,7 +6,10 @@ import { templateScopeMatchesCurrentProject } from "../templates/scope.js";
 import { extractResourceURIs } from "../templates/uri.js";
 import { filterAsync } from "../utilities/array.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
-import { extractParametersUsedInTemplate, resolvePromptParameterValue } from "./parameters.js";
+import {
+  extractParametersUsedInTemplate,
+  resolvePromptParameterValue,
+} from "./parameters/index.js";
 import { ParameterDefinition } from "./parameters/types.js";
 import { PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
