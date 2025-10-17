@@ -22,8 +22,14 @@ export async function assertGitInstalled() {
 
 /**
  * Get the diff between two commits or branches, including the list of commits and the diff itself.
- * This is equivalent to the diff produced with `git diff from..to` and `git log from..to`. This
- * means 'from' is excluded (non-inclusive) and 'to' is included (inclusive).
+ * This mimics what GitHub shows in a pull request.
+ *
+ * Uses `git log from..to` (double-dot) to get commits reachable from `to` but not `from`. These are
+ * the commits that would appear in a PR.
+ *
+ * Uses `git diff from...to` (triple-dot) to get the diff from the merge base to `to`. This shows
+ * the cumulative changes since the branches diverged, which is exactly what GitHub shows in a PR
+ * diff view.
  *
  * @example This returns all commits on `feature` that aren't on `main`, plus their cumulative diff.
  *
@@ -31,10 +37,10 @@ export async function assertGitInstalled() {
  * await getDiff("main", "feature");
  * ```
  *
- * @param from The starting commit/branch reference (excluded from results).
- * @param to The ending commit/branch reference (included in results).
- * @returns An object containing the commits between the references and the diff, or null if no
- *   commits exist.
+ * @param from The base branch reference (typically `main` or `master`, or in the case of a pull
+ *   request `origin/main` or `origin/master`).
+ * @param to The target branch reference (typically the feature branch).
+ * @returns An object containing the commits and diff, or null if no commits exist.
  */
 export async function getDiff(from: string, to: string): Promise<GitDiff | null> {
   // Check if both branches exist
@@ -57,7 +63,7 @@ export async function getDiff(from: string, to: string): Promise<GitDiff | null>
   });
 
   // Get the diff between the two references
-  const diff = (await spawn("git", ["diff", `${from}..${to}`])).stdout.trim();
+  const diff = (await spawn("git", ["diff", `${from}...${to}`])).stdout.trim();
 
   return {
     commits,
