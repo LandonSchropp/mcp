@@ -28,7 +28,7 @@ server.registerResource(
     }
 
     const baseBranch = await getBaseBranch(branch);
-    const diff = (await getDiff(baseBranch, branch)) ?? EMPTY_DIFF;
+    const diff = (await getDiff(`origin/${baseBranch}`, branch)) ?? EMPTY_DIFF;
 
     return {
       contents: [
