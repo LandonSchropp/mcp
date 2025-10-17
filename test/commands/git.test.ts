@@ -99,7 +99,7 @@ describe("getDiff", () => {
   it("calls git diff with the correct range", async () => {
     await getDiff("main", "feature");
 
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["diff", "main..feature"]);
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["diff", "main...feature"]);
   });
 
   describe("when there are no commits", () => {
