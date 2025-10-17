@@ -119,7 +119,7 @@ describe("getDiff", () => {
       mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
         if (args?.[0] === "show-ref" && args?.includes("refs/heads/nonexistent")) {
           const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
-          error.exitCode = 1;
+          error.exitCode = 2;
           throw error;
         }
         return { stdout: "", stderr: "" };
@@ -371,22 +371,22 @@ describe("isWorkingDirectoryClean", () => {
 });
 
 describe("doesBranchExist", () => {
-  beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
-  });
+  describe("when the branch is a local branch", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
+    });
 
-  it("calls git show-ref with the correct arguments", async () => {
-    await doesBranchExist("feature-branch");
+    it("checks the local ref", async () => {
+      await doesBranchExist("feature-branch");
 
-    expect(mockSpawn).toHaveBeenCalledWith("git", [
-      "show-ref",
-      "--verify",
-      "--quiet",
-      "refs/heads/feature-branch",
-    ]);
-  });
+      expect(mockSpawn).toHaveBeenCalledWith("git", [
+        "show-ref",
+        "--verify",
+        "--quiet",
+        "refs/heads/feature-branch",
+      ]);
+    });
 
-  describe("when the branch exists", () => {
     it("returns true", async () => {
       const result = await doesBranchExist("main");
 
@@ -394,11 +394,62 @@ describe("doesBranchExist", () => {
     });
   });
 
-  describe("when the branch does not exist", () => {
+  describe("when the branch is a remote branch", () => {
     beforeEach(() => {
-      const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
-      error.exitCode = 1;
+      const localError = new SubprocessError("fatal: ref refs/heads/origin/main does not exist");
+      localError.exitCode = 2;
+
+      mockSpawn
+        .mockRejectedValueOnce(localError)
+        .mockResolvedValueOnce({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("checks both local and remote refs", async () => {
+      await doesBranchExist("origin/main");
+
+      expect(mockSpawn).toHaveBeenCalledWith("git", [
+        "show-ref",
+        "--verify",
+        "--quiet",
+        "refs/heads/origin/main",
+      ]);
+      expect(mockSpawn).toHaveBeenCalledWith("git", [
+        "show-ref",
+        "--verify",
+        "--quiet",
+        "refs/remotes/origin/main",
+      ]);
+    });
+
+    it("returns true", async () => {
+      const result = await doesBranchExist("origin/main");
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("when the branch is neither a local branch nor a remote branch", () => {
+    beforeEach(() => {
+      const error = new SubprocessError("fatal: ref does not exist");
+      error.exitCode = 2;
       mockSpawn.mockRejectedValue(error);
+    });
+
+    it("checks both local and remote refs", async () => {
+      await doesBranchExist("nonexistent");
+
+      expect(mockSpawn).toHaveBeenCalledWith("git", [
+        "show-ref",
+        "--verify",
+        "--quiet",
+        "refs/heads/nonexistent",
+      ]);
+      expect(mockSpawn).toHaveBeenCalledWith("git", [
+        "show-ref",
+        "--verify",
+        "--quiet",
+        "refs/remotes/nonexistent",
+      ]);
     });
 
     it("returns false", async () => {
@@ -417,6 +468,7 @@ describe("doesBranchExist", () => {
 
     it("returns false", async () => {
       const result = await doesBranchExist("any-branch");
+
       expect(result).toBe(false);
     });
   });
