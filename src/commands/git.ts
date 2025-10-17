@@ -123,21 +123,27 @@ export async function isWorkingDirectoryClean(): Promise<boolean> {
 }
 
 /**
- * Check if a git branch exists.
+ * Check if a git branch exists (either local or remote).
  *
- * @param branch The branch name to check.
+ * @param branch The branch name to check (e.g., "main", "origin/main").
  * @returns True if the branch exists, false otherwise.
  */
 export async function doesBranchExist(branch: string): Promise<boolean> {
-  try {
-    await spawn("git", ["show-ref", "--verify", "--quiet", `refs/heads/${branch}`]);
-    return true;
-  } catch (error) {
-    if (error instanceof SubprocessError && error.exitCode !== 0) {
-      return false;
+  const refs = [`refs/heads/${branch}`, `refs/remotes/${branch}`];
+
+  for (const ref of refs) {
+    try {
+      await spawn("git", ["show-ref", "--verify", "--quiet", ref]);
+      return true;
+    } catch (error) {
+      if (error instanceof SubprocessError && error.exitCode !== 0) {
+        continue;
+      }
+      throw error;
     }
-    throw error;
   }
+
+  return false;
 }
 
 /**
