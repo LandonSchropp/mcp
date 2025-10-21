@@ -3,7 +3,7 @@
   "description": "My personal collection of MCP servers",
   "author": "Landon Schropp <schroppl@gmail.com>",
   "repository": "https://github.com/LandonSchropp/mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
