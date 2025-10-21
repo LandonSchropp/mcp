@@ -30,4 +30,4 @@ Create a pull request by analyzing the current branch's changes and generating a
 
 5. Present the proposed PR title and body to the user for review. Display them clearly formatted and ask if they would like to proceed with creating the PR or make any changes.
 
-6. After receiving user approval, execute `gh pr create --web --push --title "<title>" --body "<description>"`
+6. After receiving user approval, execute `gh pr create --web --title "<title>" --body "<description>"`
