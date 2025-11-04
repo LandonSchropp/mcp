@@ -22,7 +22,7 @@ Create a pull request by analyzing the current branch's changes and generating a
 
 4. Create concise descriptions that focus on the essential information. Keep descriptions brief and focused.
    - Check to see if a pull request template exists at @.github/pull_request_template.md.
-     - If it does exist, use it, excluding screenshots and removing hidden checklists.
+     - If it does exist, use it. Leave any checklists and don't check any of the boxes.
      - If it doesn't exist, create a simple description with Summary and Changes sections. Summary should contain a short paragraph explaining what the change is and why it's necessary. Changes should be a bulleted list of key modifications.
    - For simple changes, use a single paragraph summary and omit the rest.
    - Focus on what changed and why, not implementation details.
