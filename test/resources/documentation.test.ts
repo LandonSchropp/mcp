@@ -1,13 +1,9 @@
 import { server } from "../../src/server.js";
-import { templateScopeMatchesCurrentProject } from "../../src/templates/scope.js";
 import { createTestClient } from "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { writeFile } from "fs/promises";
 import { dedent } from "ts-dedent";
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
-
-const mockTemplateScopeMatchesCurrentProject: Mock<typeof templateScopeMatchesCurrentProject> =
-  vi.hoisted(() => vi.fn(async () => true));
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { FORMAT_PATH, VOICE_PATH, IMPROVEMENT_PATH } = await vi.hoisted(async () => {
   const { tmpdir } = await import("os");
@@ -26,13 +22,6 @@ vi.mock("../../src/env.ts", async (importOriginal) => {
     WRITING_FORMAT: FORMAT_PATH,
     WRITING_VOICE: VOICE_PATH,
     WRITING_IMPROVEMENT: IMPROVEMENT_PATH,
-  };
-});
-
-vi.mock("../../src/templates/scope", async (importOriginal) => {
-  return {
-    ...(await importOriginal()),
-    templateScopeMatchesCurrentProject: mockTemplateScopeMatchesCurrentProject,
   };
 });
 
@@ -174,10 +163,9 @@ describe("resources/documentation", () => {
 
   describe("doc://{path}", () => {
     describe("registration", () => {
-      it("includes documents without a scope", async () => {
+      it("includes all documents", async () => {
         const { resources } = await client.listResources();
 
-        // Writing documents don't have scope, so they should always be included
         expect(resources).toContainEqual({
           name: "writing/format",
           title: "Format Title",
@@ -185,40 +173,13 @@ describe("resources/documentation", () => {
           description: "Format description",
           mimeType: "text/markdown",
         });
-      });
 
-      describe("when the current project includes the document's scope", () => {
-        beforeEach(() => {
-          mockTemplateScopeMatchesCurrentProject.mockResolvedValue(true);
-        });
-
-        it("includes the document", async () => {
-          const { resources } = await client.listResources();
-
-          expect(resources).toContainEqual({
-            name: "spec/better-specs",
-            title: "Better Specs",
-            uri: "doc://spec/better-specs",
-            description: "Testing best practices for RSpec, adapted from betterspecs.org",
-            mimeType: "text/markdown",
-          });
-        });
-      });
-
-      describe("when the current project does not include the document's scope", () => {
-        beforeEach(() => {
-          mockTemplateScopeMatchesCurrentProject.mockResolvedValue(false);
-        });
-
-        it("does not include the document", async () => {
-          const { resources } = await client.listResources();
-
-          expect(resources).not.toContainEqual(
-            expect.objectContaining({
-              name: "spec/better-specs",
-              uri: "doc://spec/better-specs",
-            }),
-          );
+        expect(resources).toContainEqual({
+          name: "spec/better-specs",
+          title: "Better Specs",
+          uri: "doc://spec/better-specs",
+          description: "Testing best practices for RSpec, adapted from betterspecs.org",
+          mimeType: "text/markdown",
         });
       });
     });

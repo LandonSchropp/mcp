@@ -1,6 +1,6 @@
 import { parseFrontmatter, removeFrontmatter } from "../../src/templates/frontmatter.js";
-import { describe, it, expect } from "vitest";
 import { dedent } from "ts-dedent";
+import { describe, it, expect } from "vitest";
 import { z } from "zod";
 
 describe("removeFrontmatter", () => {

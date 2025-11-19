@@ -23,7 +23,10 @@ export async function pathExists(path: string) {
  * @param directory - The directory to start searching from (defaults to process.cwd())
  * @returns True if the file is found in the current directory or any ancestor directory
  */
-export async function ancestorPathExists(filename: string, directory = process.cwd()): Promise<boolean> {
+export async function ancestorPathExists(
+  filename: string,
+  directory = process.cwd(),
+): Promise<boolean> {
   if (await pathExists(join(directory, filename))) {
     return true;
   }

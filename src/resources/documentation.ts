@@ -3,8 +3,7 @@ import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter.js";
 import { renderTemplate } from "../templates/render.js";
-import { templateScopeMatchesCurrentProject } from "../templates/scope.js";
-import { filterAsync, first } from "../utilities/array.js";
+import { first } from "../utilities/array.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Resource } from "@modelcontextprotocol/sdk/types.js";
@@ -47,9 +46,6 @@ async function buildResourceSchema(uri: string, path: string): Promise<Resource>
 async function fetchDocumentationResources(): Promise<Resource[]> {
   // Find all markdown files in the documentation directory
   let documents = await Array.fromAsync(glob(join(DOCUMENTS_DIRECTORY, "**/*.md")));
-
-  // Exclude any document whose scope doesn't match
-  documents = await filterAsync(documents, templateScopeMatchesCurrentProject);
 
   // Map the document files to Resource objects
   return await Promise.all([

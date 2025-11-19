@@ -1,10 +1,8 @@
-import { PROMPTS_DIRECTORY, PROJECT_TYPES } from "../constants.js";
+import { PROMPTS_DIRECTORY } from "../constants.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter } from "../templates/frontmatter.js";
 import { renderTemplate } from "../templates/render.js";
-import { templateScopeMatchesCurrentProject } from "../templates/scope.js";
 import { extractResourceURIs } from "../templates/uri.js";
-import { filterAsync } from "../utilities/array.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
 import {
   extractParametersUsedInTemplate,
@@ -20,7 +18,6 @@ import z, { ZodOptional, ZodString } from "zod";
 const PROMPT_SCHEMA = z.object({
   title: z.string(),
   description: z.string(),
-  scope: z.enum(PROJECT_TYPES).optional(),
 });
 
 // Convert a ParameterDefinition to a Zod schema
@@ -31,9 +28,6 @@ function parameterToZodSchema(parameter: ParameterDefinition): ZodString | ZodOp
 
 // Find all prompt files (excluding files that start with underscore)
 let promptFiles = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md")));
-
-// Exclude any prompt whose scope doesn't match
-promptFiles = await filterAsync(promptFiles, templateScopeMatchesCurrentProject);
 
 for (const filePath of promptFiles) {
   const rawContent = await readFile(filePath, "utf8");
