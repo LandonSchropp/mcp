@@ -1,3 +1,4 @@
+import { DEFAULT_BRANCH_NAMES, MAIN_BRANCH } from "../constants.js";
 import { assertInstalled } from "./assertions.js";
 import spawn, { SubprocessError } from "nano-spawn";
 
@@ -71,12 +72,16 @@ export async function getDiff(from: string, to: string): Promise<GitDiff | null>
   };
 }
 
-/** @returns The name of the default branch. */
+/**
+ * Get the name of the default branch by checking for common default branch names.
+ *
+ * Checks for branches in this priority order: main, master.
+ *
+ * @returns The name of the default branch.
+ */
 export async function getDefaultBranch(): Promise<string> {
-  // TODO: This uses my custom default-branch command, which will only work with my dotfiles. If I'd
-  // like for this to be usable by others, I need to fully implement a default branch detection
-  // mechanism here.
-  return (await spawn("git", ["default-branch"])).stdout.trim();
+  const branches = await getBranches();
+  return DEFAULT_BRANCH_NAMES.find((name) => branches.includes(name)) ?? MAIN_BRANCH;
 }
 
 /**

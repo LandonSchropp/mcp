@@ -162,35 +162,63 @@ describe("getDiff", () => {
 });
 
 describe("getDefaultBranch", () => {
-  beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" } as Awaited<
-      ReturnType<typeof spawn>
-    >);
-  });
-
-  it("calls git default-branch command", async () => {
-    await getDefaultBranch();
-
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["default-branch"]);
-  });
-
-  it("returns the default branch name", async () => {
-    const result = await getDefaultBranch();
-
-    expect(result).toBe("main");
-  });
-
-  describe("when branch name has whitespace", () => {
+  describe("when the main branch exists", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "  develop  \n", stderr: "" } as Awaited<
-        ReturnType<typeof spawn>
-      >);
+      mockSpawn.mockResolvedValue({
+        stdout: "feature\nmain\nother-branch\n",
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
     });
 
-    it("trims whitespace from branch name", async () => {
+    it("returns main", async () => {
       const result = await getDefaultBranch();
 
-      expect(result).toBe("develop");
+      expect(result).toBe("main");
+    });
+  });
+
+  describe("when the master branch exists", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({
+        stdout: "feature\nmaster\nother-branch\n",
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("returns master", async () => {
+      const result = await getDefaultBranch();
+
+      expect(result).toBe("master");
+    });
+  });
+
+  describe("when multiple branches exist", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({
+        stdout: "main\nmaster\n",
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("returns the highest priority branch", async () => {
+      const result = await getDefaultBranch();
+
+      expect(result).toBe("main");
+    });
+  });
+
+  describe("when no default branch exists", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({
+        stdout: "feature\nother-branch\n",
+        stderr: "",
+      } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("returns main", async () => {
+      const result = await getDefaultBranch();
+
+      expect(result).toBe("main");
     });
   });
 });
@@ -205,7 +233,7 @@ describe("getBaseBranch", () => {
   it("delegates to getDefaultBranch", async () => {
     const result = await getBaseBranch("feature-branch");
 
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["default-branch"]);
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--format=%(refname:short)"]);
     expect(result).toBe("main");
   });
 
@@ -219,7 +247,7 @@ describe("getBaseBranch", () => {
     it("returns the default branch regardless of input branch", async () => {
       const result = await getBaseBranch("any-branch-name");
 
-      expect(result).toBe("develop");
+      expect(result).toBe("main");
     });
   });
 });
