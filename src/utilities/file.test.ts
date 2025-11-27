@@ -1,4 +1,4 @@
-import { pathExists, ancestorPathExists } from "../../src/utilities/file.js";
+import { pathExists, ancestorPathExists } from "./file.js";
 import { stat } from "fs/promises";
 import { mkdtemp, writeFile, mkdir, rm } from "fs/promises";
 import { tmpdir } from "os";

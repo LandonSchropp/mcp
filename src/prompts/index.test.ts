@@ -1,9 +1,9 @@
-import { server } from "../../src/server.js";
-import { createTestClient } from "../helpers.js";
+import { createTestClient } from "../../test/helpers.js";
+import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock("../../src/commands/git", () => ({
+vi.mock("../commands/git", () => ({
   getCurrentBranch: vi.fn(() => Promise.resolve("current-branch-name")),
   getDefaultBranch: vi.fn(() => Promise.resolve("main")),
 }));

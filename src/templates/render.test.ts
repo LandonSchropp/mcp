@@ -1,4 +1,4 @@
-import { renderTemplate, readPartialContent } from "../../src/templates/render.js";
+import { renderTemplate, readPartialContent } from "./render.js";
 import { describe, it, expect } from "vitest";
 
 describe("renderTemplate", () => {

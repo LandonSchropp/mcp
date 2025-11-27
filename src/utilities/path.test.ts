@@ -1,4 +1,4 @@
-import { relativePathWithoutExtension } from "../../src/utilities/path.js";
+import { relativePathWithoutExtension } from "./path.js";
 import { describe, it, expect } from "vitest";
 
 describe("relativePathWithoutExtension", () => {

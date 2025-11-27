@@ -1,4 +1,4 @@
-import { assertInstalled } from "../../src/commands/assertions.js";
+import { assertInstalled } from "./assertions.js";
 import {
   assertGitInstalled,
   getDiff,
@@ -10,7 +10,7 @@ import {
   doesBranchExist,
   switchBranch,
   createBranch,
-} from "../../src/commands/git.js";
+} from "./git.js";
 import { SubprocessError } from "nano-spawn";
 import spawn from "nano-spawn";
 import dedent from "ts-dedent";
@@ -20,7 +20,7 @@ const mockAssertInstalled: Mock<typeof assertInstalled> = vi.hoisted(() => vi.fn
 
 const mockSpawn: Mock<typeof spawn> = vi.hoisted(() => vi.fn() as Mock<typeof spawn>);
 
-vi.mock("../../src/commands/assertions", () => ({
+vi.mock("./assertions", () => ({
   assertInstalled: mockAssertInstalled,
 }));
 

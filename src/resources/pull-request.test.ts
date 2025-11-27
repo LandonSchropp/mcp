@@ -1,8 +1,8 @@
-import { getBranches } from "../../src/commands/git.js";
-import { getPullRequest } from "../../src/commands/github.js";
-import { server } from "../../src/server.js";
-import { createTestClient } from "../helpers.js";
-import "../helpers.js";
+import { createTestClient } from "../../test/helpers.js";
+import "../../test/helpers.js";
+import { getBranches } from "../commands/git.js";
+import { getPullRequest } from "../commands/github.js";
+import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";
@@ -35,14 +35,14 @@ const mockGetPullRequest: Mock<typeof getPullRequest> = vi.hoisted(() =>
   })),
 );
 
-vi.mock("../../src/commands/git", async (importOriginal) => {
+vi.mock("../commands/git", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     getBranches: mockGetBranches,
   };
 });
 
-vi.mock("../../src/commands/github", async (importOriginal) => {
+vi.mock("../commands/github", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     getPullRequest: mockGetPullRequest,

@@ -1,8 +1,5 @@
-import { getCurrentBranch } from "../../../src/commands/git.js";
-import {
-  resolvePromptParameterValue,
-  extractParametersUsedInTemplate,
-} from "../../../src/prompts/parameters/index.js";
+import { getCurrentBranch } from "../../commands/git.js";
+import { resolvePromptParameterValue, extractParametersUsedInTemplate } from "./index.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
@@ -10,7 +7,7 @@ const mockGetCurrentBranch: Mock<typeof getCurrentBranch> = vi.hoisted(() =>
   vi.fn(async () => "current-branch"),
 );
 
-vi.mock("../../../src/commands/git", () => ({
+vi.mock("../../commands/git", () => ({
   getCurrentBranch: mockGetCurrentBranch,
 }));
 

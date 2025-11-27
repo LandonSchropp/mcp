@@ -1,5 +1,5 @@
-import { server } from "../../src/server.js";
-import { createTestClient } from "../helpers.js";
+import { createTestClient } from "../../test/helpers.js";
+import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { join } from "path";
@@ -12,7 +12,7 @@ let PLANS_DIRECTORY = await vi.hoisted(async () => {
   return join(tmpdir(), `plans-${Date.now()}`);
 });
 
-vi.mock("../../src/env.ts", async (importOriginal) => {
+vi.mock("../env.ts", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     PLANS_DIRECTORY: PLANS_DIRECTORY,
