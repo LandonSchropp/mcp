@@ -186,7 +186,8 @@ export async function switchBranch(branch: string): Promise<void> {
  * Create a new git branch.
  *
  * @param branch The branch name to create.
+ * @param baseBranch Optional base branch to create the new branch from.
  */
-export async function createBranch(branch: string): Promise<void> {
-  await spawn("git", ["switch", "-c", branch]);
+export async function createBranch(branch: string, baseBranch?: string): Promise<void> {
+  await spawn("git", ["switch", "-c", branch, ...(baseBranch ? [baseBranch] : [])]);
 }

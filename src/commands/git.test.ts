@@ -596,9 +596,19 @@ describe("createBranch", () => {
     mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
   });
 
-  it("calls git switch -c with the branch name", async () => {
-    await createBranch("new-feature");
+  describe("when no base branch is provided", () => {
+    it("calls git switch -c with the branch name", async () => {
+      await createBranch("new-feature");
 
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["switch", "-c", "new-feature"]);
+      expect(mockSpawn).toHaveBeenCalledWith("git", ["switch", "-c", "new-feature"]);
+    });
+  });
+
+  describe("when a base branch is provided", () => {
+    it("calls git switch -c with the branch name and base branch", async () => {
+      await createBranch("new-feature", "main");
+
+      expect(mockSpawn).toHaveBeenCalledWith("git", ["switch", "-c", "new-feature", "main"]);
+    });
   });
 });
