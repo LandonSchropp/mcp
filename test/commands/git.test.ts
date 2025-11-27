@@ -3,7 +3,7 @@ import {
   assertGitInstalled,
   getDiff,
   getDefaultBranch,
-  getBaseBranch,
+  inferBaseBranch,
   getCurrentBranch,
   getBranches,
   isWorkingDirectoryClean,
@@ -223,29 +223,106 @@ describe("getDefaultBranch", () => {
   });
 });
 
-describe("getBaseBranch", () => {
-  beforeEach(() => {
-    mockSpawn.mockResolvedValue({ stdout: "main\n", stderr: "" } as Awaited<
-      ReturnType<typeof spawn>
-    >);
-  });
-
-  it("delegates to getDefaultBranch", async () => {
-    const result = await getBaseBranch("feature-branch");
-
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["branch", "--format=%(refname:short)"]);
-    expect(result).toBe("main");
-  });
-
-  describe("when default branch is develop", () => {
+describe("inferBaseBranch", () => {
+  describe("when log finds a parent branch", () => {
     beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "develop\n", stderr: "" } as Awaited<
-        ReturnType<typeof spawn>
-      >);
+      mockSpawn
+        // First call: getBranches
+        .mockResolvedValueOnce({
+          stdout: "main\nfeature\n",
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>)
+        // Second call: git log --format=%D
+        .mockResolvedValueOnce({
+          stdout: dedent`
+            HEAD -> feature
+
+
+            origin/main, main
+          `,
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>);
     });
 
-    it("returns the default branch regardless of input branch", async () => {
-      const result = await getBaseBranch("any-branch-name");
+    it("returns the parent branch", async () => {
+      const result = await inferBaseBranch("feature");
+
+      expect(result).toBe("main");
+    });
+  });
+
+  describe("when the branch was just created and points to the same commit as base", () => {
+    beforeEach(() => {
+      mockSpawn
+        // First call: getBranches
+        .mockResolvedValueOnce({
+          stdout: "main\nfeature\n",
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>)
+        // Second call: git log --format=%D (both branches on same commit)
+        .mockResolvedValueOnce({
+          stdout: dedent`
+            HEAD -> feature, main
+          `,
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("returns the base branch", async () => {
+      const result = await inferBaseBranch("feature");
+
+      expect(result).toBe("main");
+    });
+  });
+
+  describe("when log finds only remote branches", () => {
+    beforeEach(() => {
+      mockSpawn
+        // First call: getBranches
+        .mockResolvedValueOnce({
+          stdout: "main\nfeature\n",
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>)
+        // Second call: git log --format=%D
+        .mockResolvedValueOnce({
+          stdout: dedent`
+            HEAD -> feature
+
+
+            origin/main
+          `,
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("falls back to default branch", async () => {
+      const result = await inferBaseBranch("feature");
+
+      expect(result).toBe("main");
+    });
+  });
+
+  describe("when log does not find any parent branch", () => {
+    beforeEach(() => {
+      mockSpawn
+        // First call: getBranches
+        .mockResolvedValueOnce({
+          stdout: "main\nfeature\n",
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>)
+        // Second call: git log --format=%D (no decorations found)
+        .mockResolvedValueOnce({
+          stdout: dedent`
+            HEAD -> feature
+
+
+          `,
+          stderr: "",
+        } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("falls back to default branch", async () => {
+      const result = await inferBaseBranch("feature");
 
       expect(result).toBe("main");
     });

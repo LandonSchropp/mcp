@@ -1,4 +1,4 @@
-import { doesBranchExist, getBaseBranch, getDiff } from "../commands/git.js";
+import { doesBranchExist, inferBaseBranch, getDiff } from "../commands/git.js";
 import { server } from "../server-instance.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
@@ -27,7 +27,7 @@ server.registerTool(
       throw new McpError(ErrorCode.InvalidParams, `Branch not found: ${branch}`);
     }
 
-    const baseBranch = await getBaseBranch(branch);
+    const baseBranch = await inferBaseBranch(branch);
     const diff = (await getDiff(baseBranch, branch)) ?? EMPTY_DIFF;
 
     return {

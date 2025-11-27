@@ -1,4 +1,4 @@
-import { doesBranchExist, getBaseBranch, getDiff } from "../../src/commands/git.js";
+import { doesBranchExist, inferBaseBranch, getDiff } from "../../src/commands/git.js";
 import { server } from "../../src/server.js";
 import { createTestClient } from "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
@@ -6,7 +6,9 @@ import dedent from "ts-dedent";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 const mockDoesBranchExist: Mock<typeof doesBranchExist> = vi.hoisted(() => vi.fn(async () => true));
-const mockGetBaseBranch: Mock<typeof getBaseBranch> = vi.hoisted(() => vi.fn(async () => "main"));
+const mockInferBaseBranch: Mock<typeof inferBaseBranch> = vi.hoisted(() =>
+  vi.fn(async () => "main"),
+);
 
 const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
   vi.fn(async () => ({
@@ -31,7 +33,7 @@ vi.mock("../../src/commands/git", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     doesBranchExist: mockDoesBranchExist,
-    getBaseBranch: mockGetBaseBranch,
+    inferBaseBranch: mockInferBaseBranch,
     getDiff: mockGetDiff,
   };
 });

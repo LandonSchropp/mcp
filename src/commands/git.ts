@@ -85,13 +85,35 @@ export async function getDefaultBranch(): Promise<string> {
 }
 
 /**
+ * Determines the base branch for a given branch by analyzing commit ancestry.
+ *
+ * This uses `git log` to find the first commit that has other branch references, indicating where
+ * the current branch diverged from its parent.
+ *
  * @param branch The branch to get the base branch for.
  * @returns The name of the base branch for the given branch.
  */
-export async function getBaseBranch(_branch: string): Promise<string> {
-  // TODO: For now, this just delegates to getDefaultBranch. It should be expanded to truly capture
-  // the base branch of the current branch when a PR exists.
-  return getDefaultBranch();
+export async function inferBaseBranch(branch: string): Promise<string> {
+  const defaultBranch = await getDefaultBranch();
+
+  // Only look at commits added since diverging from the default branch.
+  let decorations = (await spawn("git", ["log", "--format=%D", `${defaultBranch}..${branch}`]))
+    .stdout;
+
+  // Parse the decorations to find branch names
+  const branches = decorations
+    .trim()
+    .split(/\n+/g)
+    .map((line) =>
+      line
+        .split(/\s*(?:,|->)\s*/)
+        .filter((ref) => ref && ref !== branch && !/^(HEAD$|tag:|origin\/)/.test(ref)),
+    )
+    .filter((line) => line.length > 0)
+    .flat();
+
+  // Return the first branch found, or fall back to default branch
+  return branches[0] ?? defaultBranch;
 }
 
 /**
