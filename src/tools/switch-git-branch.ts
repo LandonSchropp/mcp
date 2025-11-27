@@ -15,9 +15,13 @@ server.registerTool(
     description: "Creates the branch if it doesn't exist and switches to it",
     inputSchema: {
       branch: z.string().describe("The branch name to switch to"),
+      baseBranch: z
+        .string()
+        .optional()
+        .describe("The base branch to create the new branch from (if it doesn't already exist)"),
     },
   },
-  async ({ branch }) => {
+  async ({ branch, baseBranch }) => {
     if (!(await isWorkingDirectoryClean())) {
       throw new McpError(
         ErrorCode.InvalidRequest,
@@ -28,7 +32,7 @@ server.registerTool(
     if (await doesBranchExist(branch)) {
       await switchBranch(branch);
     } else {
-      await createBranch(branch);
+      await createBranch(branch, baseBranch);
     }
 
     return { content: [] };

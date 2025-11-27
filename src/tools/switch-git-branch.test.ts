@@ -100,27 +100,54 @@ describe("tools/switch_git_branch", () => {
   });
 
   describe("when the branch does not exist", () => {
-    let result: any;
+    describe("when no base branch is provided", () => {
+      let result: any;
 
-    beforeEach(async () => {
-      mockDoesBranchExist.mockResolvedValue(false);
+      beforeEach(async () => {
+        mockDoesBranchExist.mockResolvedValue(false);
 
-      result = await client.callTool({
-        name: "switch_git_branch",
-        arguments: { branch: "new-branch" },
+        result = await client.callTool({
+          name: "switch_git_branch",
+          arguments: { branch: "new-branch" },
+        });
+      });
+
+      it("calls createBranch without a base branch", () => {
+        expect(mockCreateBranch).toHaveBeenCalledWith("new-branch", undefined);
+      });
+
+      it("does not call switchBranch", () => {
+        expect(mockSwitchBranch).not.toHaveBeenCalled();
+      });
+
+      it("returns no content", async () => {
+        expect(result.content).toEqual([]);
       });
     });
 
-    it("calls createBranch", () => {
-      expect(mockCreateBranch).toHaveBeenCalledWith("new-branch");
-    });
+    describe("when a base branch is provided", () => {
+      let result: any;
 
-    it("does not call switchBranch", () => {
-      expect(mockSwitchBranch).not.toHaveBeenCalled();
-    });
+      beforeEach(async () => {
+        mockDoesBranchExist.mockResolvedValue(false);
 
-    it("returns no content", async () => {
-      expect(result.content).toEqual([]);
+        result = await client.callTool({
+          name: "switch_git_branch",
+          arguments: { branch: "new-branch", baseBranch: "main" },
+        });
+      });
+
+      it("calls createBranch with the base branch", () => {
+        expect(mockCreateBranch).toHaveBeenCalledWith("new-branch", "main");
+      });
+
+      it("does not call switchBranch", () => {
+        expect(mockSwitchBranch).not.toHaveBeenCalled();
+      });
+
+      it("returns no content", async () => {
+        expect(result.content).toEqual([]);
+      });
     });
   });
 });
