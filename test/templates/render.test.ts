@@ -82,7 +82,8 @@ describe("renderTemplate", () => {
 
       expect(result).toContain("example implementation plan");
       expect(result).toContain("Could you please describe the example?");
-      expect(result).toContain("@git://feature-branch/feature-example");
+      expect(result).toContain("fetch_feature_branch");
+      expect(result).toContain("feature-example");
     });
   });
 

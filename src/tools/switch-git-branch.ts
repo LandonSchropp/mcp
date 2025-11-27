@@ -31,16 +31,6 @@ server.registerTool(
       await createBranch(branch);
     }
 
-    return {
-      content: [
-        {
-          type: "resource_link",
-          uri: `git://feature-branch/${branch}`,
-          name: branch,
-          mimeType: "text/markdown",
-          description: `The branch that was switched to`,
-        },
-      ],
-    };
+    return { content: [] };
   },
 );

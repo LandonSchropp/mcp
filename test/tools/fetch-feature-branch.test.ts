@@ -1,17 +1,12 @@
-import { doesBranchExist, getBaseBranch, getBranches, getDiff } from "../../src/commands/git.js";
+import { doesBranchExist, getBaseBranch, getDiff } from "../../src/commands/git.js";
 import { server } from "../../src/server.js";
 import { createTestClient } from "../helpers.js";
-import "../helpers.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
-import { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import dedent from "ts-dedent";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
-const BRANCHES = ["main", "feature/auth", "feature/ui", "bugfix/login"];
-
 const mockDoesBranchExist: Mock<typeof doesBranchExist> = vi.hoisted(() => vi.fn(async () => true));
 const mockGetBaseBranch: Mock<typeof getBaseBranch> = vi.hoisted(() => vi.fn(async () => "main"));
-const mockGetBranches: Mock<typeof getBranches> = vi.hoisted(() => vi.fn(async () => BRANCHES));
 
 const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
   vi.fn(async () => ({
@@ -37,47 +32,48 @@ vi.mock("../../src/commands/git", async (importOriginal) => {
     ...(await importOriginal()),
     doesBranchExist: mockDoesBranchExist,
     getBaseBranch: mockGetBaseBranch,
-    getBranches: mockGetBranches,
     getDiff: mockGetDiff,
   };
 });
 
-describe("git://feature-branch/{+branch}", () => {
+describe("tools/fetch_feature_branch", () => {
   let client: Client;
 
   beforeEach(async () => (client = await createTestClient(server)));
 
-  it("registers the resource", async () => {
-    const { resourceTemplates } = await client.listResourceTemplates();
+  it("registers the tool", async () => {
+    const { tools } = await client.listTools();
 
-    expect(resourceTemplates).toContainEqual(
+    expect(tools).toContainEqual(
       expect.objectContaining({
-        name: "feature-branch",
+        name: "fetch_feature_branch",
         description: expect.stringContaining("feature branch"),
       }),
     );
   });
 
   describe("when the branch is valid", () => {
-    let result: ReadResourceResult;
-    let content: Record<string, string>;
+    let result: any;
+    let content: Record<string, any>;
 
     beforeEach(async () => {
-      result = await client.readResource({ uri: "git://feature-branch/feature/auth" });
-      content = JSON.parse((result?.contents?.[0]?.text as string) ?? "{}");
+      result = await client.callTool({
+        name: "fetch_feature_branch",
+        arguments: { branch: "feature/auth" },
+      });
+      content = JSON.parse(result?.content?.[0]?.text ?? "{}");
     });
 
-    it("returns a single result with the correct URI", async () => {
-      expect(result.contents).toHaveLength(1);
-
-      expect(result.contents[0]).toEqual(
+    it("returns a single text result", async () => {
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual(
         expect.objectContaining({
-          uri: "git://feature-branch/feature/auth",
+          type: "text",
         }),
       );
     });
 
-    it("includes the branch ", () => {
+    it("includes the branch", () => {
       expect(content.branch).toEqual("feature/auth");
     });
 
@@ -102,10 +98,19 @@ describe("git://feature-branch/{+branch}", () => {
       mockDoesBranchExist.mockResolvedValue(false);
     });
 
-    it("throws an error", async () => {
-      await expect(
-        client.readResource({ uri: "git://feature-branch/nonexistent" }),
-      ).rejects.toThrow("Branch not found: nonexistent");
+    it("returns an error", async () => {
+      const result = await client.callTool({
+        name: "fetch_feature_branch",
+        arguments: { branch: "nonexistent" },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(result.content).toEqual([
+        expect.objectContaining({
+          type: "text",
+          text: expect.stringContaining("Branch not found: nonexistent"),
+        }),
+      ]);
     });
   });
 
@@ -116,49 +121,16 @@ describe("git://feature-branch/{+branch}", () => {
     });
 
     it("returns empty commits and diff", async () => {
-      const result = await client.readResource({ uri: "git://feature-branch/feature/nodiff" });
-      const content = JSON.parse((result?.contents?.[0]?.text as string) ?? "{}");
+      const result: any = await client.callTool({
+        name: "fetch_feature_branch",
+        arguments: { branch: "feature/nodiff" },
+      });
+      const content = JSON.parse(result?.content?.[0]?.text ?? "{}");
 
       expect(content.commits).toEqual([]);
       expect(content.diff).toEqual("");
       expect(content.branch).toEqual("feature/nodiff");
       expect(content.baseBranch).toEqual("main");
-    });
-  });
-
-  describe("branch parameter completion", () => {
-    describe("when no part of the branch is specified", () => {
-      it("provides all branches as completions", async () => {
-        const completions = await client.complete({
-          ref: {
-            type: "ref/resource",
-            uri: "git://feature-branch/{+branch}",
-          },
-          argument: {
-            name: "branch",
-            value: "",
-          },
-        });
-
-        expect(completions.completion.values).toHaveSameMembers(BRANCHES);
-      });
-    });
-
-    describe("when part of the branch is specified", () => {
-      it("provides matching branches as completions", async () => {
-        const completions = await client.complete({
-          ref: {
-            type: "ref/resource",
-            uri: "git://feature-branch/{+branch}",
-          },
-          argument: {
-            name: "branch",
-            value: "feat",
-          },
-        });
-
-        expect(completions.completion.values).toHaveSameMembers(BRANCHES.slice(1, 3));
-      });
     });
   });
 });

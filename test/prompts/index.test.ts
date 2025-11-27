@@ -292,31 +292,20 @@ describe("prompts", () => {
       });
     });
 
-    describe("when the prompt contains a URI with placeholders", () => {
-      it("renders the placeholders and includes the rendered URI as a resource link", async () => {
+    describe("when the prompt does not contain any URIs", () => {
+      it("only includes the text message without resource links", async () => {
         result = await client.getPrompt({
           name: "plan/feature",
           arguments: { description: "Add user authentication", featureBranch: "auth-feature" },
         });
 
-        expect(result.messages).toHaveLength(2);
+        expect(result.messages).toHaveLength(1);
 
         expect(result.messages[0]).toEqual(
           expect.objectContaining({
             role: "user",
             content: expect.objectContaining({
               type: "text",
-            }),
-          }),
-        );
-
-        expect(result.messages[1]).toEqual(
-          expect.objectContaining({
-            role: "user",
-            content: expect.objectContaining({
-              type: "resource_link",
-              uri: "git://feature-branch/current-branch-name",
-              name: "git://feature-branch/current-branch-name",
             }),
           }),
         );

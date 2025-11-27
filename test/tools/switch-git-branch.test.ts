@@ -94,16 +94,8 @@ describe("tools/switch-git-branch", () => {
       expect(mockCreateBranch).not.toHaveBeenCalled();
     });
 
-    it("returns a resource link to the feature branch", () => {
-      expect(result.content).toEqual([
-        expect.objectContaining({
-          type: "resource_link",
-          uri: "git://feature-branch/existing-branch",
-          name: "existing-branch",
-          mimeType: "text/markdown",
-          description: "The branch that was switched to",
-        }),
-      ]);
+    it("returns no content", () => {
+      expect(result.content).toEqual([]);
     });
   });
 
@@ -127,16 +119,8 @@ describe("tools/switch-git-branch", () => {
       expect(mockSwitchBranch).not.toHaveBeenCalled();
     });
 
-    it("returns a resource link to the feature branch", async () => {
-      expect(result.content).toEqual([
-        expect.objectContaining({
-          type: "resource_link",
-          uri: "git://feature-branch/new-branch",
-          name: "new-branch",
-          mimeType: "text/markdown",
-          description: "The branch that was switched to",
-        }),
-      ]);
+    it("returns no content", async () => {
+      expect(result.content).toEqual([]);
     });
   });
 });

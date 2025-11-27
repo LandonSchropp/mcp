@@ -7,7 +7,7 @@ Your job is to create a {{planType}} implementation plan by breaking it down int
 
 {{> parameters/_description action=planType}}
 
-1. Fetch the current branch's changes with @git://feature-branch/{{currentBranch}}.
+1. Fetch the current branch's changes by calling the `fetch_feature_branch` tool with branch `{{currentBranch}}`.
 
 2. Research the feature and its implementation. Ask any clarifying questions needed to fully understand the scope of the work and what's required to implement it.
 
