@@ -9,9 +9,9 @@ import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 
 server.registerTool(
-  "switch-git-branch",
+  "switch_git_branch",
   {
-    title: "switch-git-branch",
+    title: "switch_git_branch",
     description: "Creates the branch if it doesn't exist and switches to it",
     inputSchema: {
       branch: z.string().describe("The branch name to switch to"),

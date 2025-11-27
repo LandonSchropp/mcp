@@ -35,7 +35,7 @@ beforeEach(() => {
   mockCreateBranch.mockResolvedValue(undefined);
 });
 
-describe("tools/switch-git-branch", () => {
+describe("tools/switch_git_branch", () => {
   let client: Client;
 
   beforeEach(async () => (client = await createTestClient(server)));
@@ -45,7 +45,7 @@ describe("tools/switch-git-branch", () => {
 
     expect(tools).toContainEqual(
       expect.objectContaining({
-        name: "switch-git-branch",
+        name: "switch_git_branch",
         description: "Creates the branch if it doesn't exist and switches to it",
       }),
     );
@@ -58,7 +58,7 @@ describe("tools/switch-git-branch", () => {
       mockIsWorkingDirectoryClean.mockResolvedValue(false);
 
       result = await client.callTool({
-        name: "switch-git-branch",
+        name: "switch_git_branch",
         arguments: { branch: "dirty-branch" },
       });
     });
@@ -81,7 +81,7 @@ describe("tools/switch-git-branch", () => {
       mockDoesBranchExist.mockResolvedValue(true);
 
       result = await client.callTool({
-        name: "switch-git-branch",
+        name: "switch_git_branch",
         arguments: { branch: "existing-branch" },
       });
     });
@@ -106,7 +106,7 @@ describe("tools/switch-git-branch", () => {
       mockDoesBranchExist.mockResolvedValue(false);
 
       result = await client.callTool({
-        name: "switch-git-branch",
+        name: "switch_git_branch",
         arguments: { branch: "new-branch" },
       });
     });

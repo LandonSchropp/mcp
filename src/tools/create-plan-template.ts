@@ -14,9 +14,9 @@ const TEMPLATES = await Array.fromAsync(glob(join(TEMPLATES_DIRECTORY, "plan/*.m
 const TEMPLATE_NAMES = TEMPLATES.map((path) => basename(path, ".md")) as [string, ...string[]];
 
 server.registerTool(
-  "create-plan-template",
+  "create_plan_template",
   {
-    title: "create-plan-template",
+    title: "create_plan_template",
     description: "Creates an plan template",
     inputSchema: {
       title: z.string(),
