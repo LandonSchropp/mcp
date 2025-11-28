@@ -1,4 +1,4 @@
-import { getCurrentBranch } from "../../commands/git.js";
+import { getCurrentBranch, getDefaultBranch } from "../../commands/git.js";
 import { ParameterDefinition } from "./types.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
@@ -29,5 +29,11 @@ export const PARAMETER_DEFINTIONS: ParameterDefinition[] = [
     description: "The name of the current Git branch",
     type: "auto",
     resolve: getCurrentBranch,
+  },
+  {
+    name: "defaultBranch",
+    description: "The default branch for the repository",
+    type: "auto",
+    resolve: getDefaultBranch,
   },
 ];

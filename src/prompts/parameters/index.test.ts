@@ -1,4 +1,4 @@
-import { getCurrentBranch } from "../../commands/git.js";
+import { getCurrentBranch, getDefaultBranch } from "../../commands/git.js";
 import { resolvePromptParameterValue, extractParametersUsedInTemplate } from "./index.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
@@ -7,8 +7,13 @@ const mockGetCurrentBranch: Mock<typeof getCurrentBranch> = vi.hoisted(() =>
   vi.fn(async () => "current-branch"),
 );
 
+const mockGetDefaultBranch: Mock<typeof getDefaultBranch> = vi.hoisted(() =>
+  vi.fn(async () => "main"),
+);
+
 vi.mock("../../commands/git", () => ({
   getCurrentBranch: mockGetCurrentBranch,
+  getDefaultBranch: mockGetDefaultBranch,
 }));
 
 let server: McpServer;
@@ -130,6 +135,56 @@ describe("resolvePromptParameterValue", () => {
 
       expect(mockGetCurrentBranch).toHaveBeenCalled();
       expect(result).toBe("feature-branch");
+    });
+  });
+
+  describe("when the parameter is 'defaultBranch'", () => {
+    beforeEach(() => {
+      mockGetDefaultBranch.mockResolvedValue("main");
+    });
+
+    it("calls getDefaultBranch function", async () => {
+      const result = await resolvePromptParameterValue(
+        server,
+        "test/prompt",
+        "defaultBranch",
+        {},
+        undefined,
+      );
+
+      expect(mockGetDefaultBranch).toHaveBeenCalled();
+      expect(result).toBe("main");
+    });
+
+    describe("when getDefaultBranch returns master", () => {
+      beforeEach(() => {
+        mockGetDefaultBranch.mockResolvedValue("master");
+      });
+
+      it("returns master", async () => {
+        const result = await resolvePromptParameterValue(
+          server,
+          "test/prompt",
+          "defaultBranch",
+          {},
+          undefined,
+        );
+
+        expect(result).toBe("master");
+      });
+    });
+
+    it("ignores any provided value and always gets the default branch", async () => {
+      const result = await resolvePromptParameterValue(
+        server,
+        "test/prompt",
+        "defaultBranch",
+        {},
+        "provided-value",
+      );
+
+      expect(mockGetDefaultBranch).toHaveBeenCalled();
+      expect(result).toBe("main");
     });
   });
 
