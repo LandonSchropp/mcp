@@ -1,8 +1,12 @@
 # {{title}} Refactor
 
+Feature branch: `{{featureBranch}}`
+Base branch: `{{baseBranch}}`
+{{#if linearIssueId}}Linear Issue ID: `{{linearIssueId}}`{{/if}}
+
 ## Overview
 
-<!-- Write a brief description of what code is being refactored and the overall approach to improve its structure and maintainability. -->
+<!-- Write a brief description of what code is being refactored. Be succinct. -->
 
 ## Context
 
@@ -10,11 +14,22 @@
 
 ## Scope
 
-<!-- Define the scope of the refactor and document the specific problems it aims to address. -->
+<!--
+Define what code is being refactored. Be succinct.
+
+Examples of what could be included:
+
+- What's being changed
+- What's explicitly NOT changing (only if it clarifies scope)
+-->
 
 ## Plan
 
-<!-- Break down the refactoring into logical phases. For simple refactoring, a single phase may suffice. For complex refactoring, multiple phases help manage risk and ensure functionality is preserved. Phases can be subdivided into steps if necessary. -->
+<!--
+Break down the refactoring into logical phases. Phases are partitions of work that do not require user input or review while running.
+
+For simple refactoring, a single phase will suffice. For each phase, break down the refactoring into specific steps with enough detail for independent implementation.
+-->
 
 ### Phase 1: [Title]
 
@@ -46,10 +61,6 @@ For each phase above (in order) do the following:
 2. Make incremental refactoring changes while keeping tests green.
 3. Add new tests if the refactoring introduces new functionality or improves testability.
 4. Validate that the refactored code maintains the same external behavior.
-5. If refactoring becomes blocked or tests start failing, document the issue and seek guidance.
-
-Once the refactoring is complete, explain:
-
-- How the code changed from the factor
-- Any architectural decisions made during refactoring
-- Areas that might benefit from future refactoring
+5. If refactoring becomes blocked or tests start failing, STOP and seek guidance from the user.
+6. Once the phase is complete, PAUSE and wait for user feedback.
+7. Once the user has finished giving feedback, append "(✅ Complete)" to the phase's header.

@@ -1,38 +1,68 @@
-# Fix {{title}}
+# Fix {{title}} Bug
+
+Feature branch: `{{featureBranch}}`
+Base branch: `{{baseBranch}}`
+{{#if linearIssueId}}Linear Issue ID: `{{linearIssueId}}`{{/if}}
+{{#if sentryIssueUrl}}Sentry Issue: {{sentryIssueUrl}}{{/if}}
 
 ## Overview
 
-<!-- Write a brief description of the bug, its symptoms, and the systematic approach to fix it. -->
+<!-- Write a brief description of the bug. Be succinct. -->
 
 ## Context
 
-<!-- Summarize recent changes that may have introduced the bug. -->
+<!-- Summarize changes on this branch that may have introduced the bug. -->
 
-## Description
+## Reproduction Steps
 
-<!-- Provide a detailed description of the bug including:
+<!--
+Describe how to reproduce the bug. If reproduction steps are not yet known, describe what is known about when/how the bug occurs. Be succinct.
 
-- What is happening (actual behavior)
-- What should be happening (expected behavior)
+Examples of what could be included:
+
 - Steps to reproduce the issue
 - Environment/conditions where it occurs
+- What is happening (actual behavior)
+- What should be happening (expected behavior)
 -->
 
 ## Plan
 
-<!-- Describe the approach for investigating and fixing this bug based on your project's specific architecture and debugging practices. -->
+### Phase 1: Reproduce and Write Failing Test
+
+Reproduce the bug and write a test that demonstrates the failing behavior.
+
+Steps:
+
+- Confirm reproduction of the bug
+- Write test(s) that fail due to the bug
+- Verify the test failure matches the expected bug behavior
+
+<!-- Add any additional details or modify steps as needed for this specific bug -->
+
+### Phase 2: Fix Bug and Verify Test Passes
+
+Implement the minimal fix and verify the test now passes.
+
+Steps:
+
+- Investigate root cause
+- Implement the fix
+- Verify the test passes
+- Confirm the bug is resolved
+
+<!-- Add any additional details or modify steps as needed for this specific bug -->
 
 ## Process
 
 <!-- Copy this Process section exactly as written, without modification: -->
 
-For bug fixes, follow this approach:
+For each phase above (in order) do the following:
 
-1. Reproduce the bug and write a test (or multiple tests) that demonstrates the failing behavior.
-2. Investigate the root cause by examining code paths, logs, and recent changes.
-3. Implement the minimal fix needed to address the root cause.
-4. Run the test to ensure it now passes.
-5. If the fix doesn't resolve the issue after 5 attempts, re-evaluate the root cause analysis.
+1. Follow the steps outlined in the phase.
+2. If you cannot complete a step after 5 attempts, STOP and seek guidance from the user.
+3. Once the phase is complete, PAUSE and wait for user feedback.
+4. Once the user has finished giving feedback, append "(✅ Complete)" to the phase's header.
 
 Once the bug is fixed, document:
 
