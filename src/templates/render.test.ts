@@ -70,18 +70,19 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the template contains a prompt partial", () => {
+  describe("when the template contains a plan partial", () => {
     it("renders the partial", () => {
       const template = "{{> plan/_instructions}}";
 
       const result = renderTemplate(template, {
         planType: "example",
         currentBranch: "feature-example",
-        description: "Example",
+        defaultBranch: "main",
       });
 
       expect(result).toContain("example implementation plan");
-      expect(result).toContain("Could you please describe the example?");
+      expect(result).toContain("Please describe the example or provide a Linear issue ID or URL");
+      expect(result).toContain("switch_git_branch");
       expect(result).toContain("fetch_feature_branch");
       expect(result).toContain("feature-example");
     });
@@ -135,7 +136,8 @@ describe("readPartialContent", () => {
 
       expect(content).toContain("Your job is to create");
       expect(content).toContain("{{planType}}");
-      expect(content).toContain("{{> parameters/_description");
+      expect(content).toContain("{{#if (eq currentBranch defaultBranch)}}");
+      expect(content).toContain("switch_git_branch");
     });
   });
 
