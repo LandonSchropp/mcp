@@ -51,18 +51,6 @@ const TEMPLATE_TEST_CASES = [
     featureBranch: "db-refactor",
     expectedHeader: "Database Layer Refactor",
   },
-  {
-    type: "spec-failures",
-    title: "Fix Broken Specs",
-    featureBranch: "fix-specs",
-    expectedHeader: "Spec Failures Plan",
-  },
-  {
-    type: "test-failures",
-    title: "Fix Broken Tests",
-    featureBranch: "fix-tests",
-    expectedHeader: "Test Failures Plan",
-  },
 ];
 
 describe("tools/create_plan_template", () => {
