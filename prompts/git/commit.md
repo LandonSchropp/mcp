@@ -5,7 +5,7 @@ description: Create a git commit with an appropriate message based on staged cha
 
 Create a git commit by analyzing the staged changes and generating a succinct commit message.
 
-1. Run `git diff --staged` to see what changes are staged for commit. If there are no staged changes, stop and print a warning.
+1. Run `git diff --staged` to see what changes are staged for commit. If there are no staged changes, stage all of the files.
 
 2. Analyze the changes and create a clear, succinct commit message title that explains what the commit accomplishes. Keep it brief - only the essentials.
 
