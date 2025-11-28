@@ -31,35 +31,11 @@ vi.mock("../commands/git.js", async (importOriginal) => {
   };
 });
 
-const TEMPLATE_TEST_CASES = [
-  {
-    type: "bug-fix",
-    title: "Login Issue",
-    featureBranch: "fix-login",
-    expectedHeader: "Fix Login Issue",
-  },
-  {
-    type: "feature",
-    title: "User Authentication",
-    featureBranch: "auth-feature",
-    linearIssueId: "ABC-123",
-    expectedHeader: "User Authentication Implementation Plan",
-  },
-  {
-    type: "refactor",
-    title: "Database Layer",
-    featureBranch: "db-refactor",
-    expectedHeader: "Database Layer Refactor",
-  },
-];
-
-describe("tools/create_plan_template", () => {
+describe("create_plan_template tool", () => {
   let client: Client;
 
   beforeEach(async () => {
-    // Create temp directory for plans
     await mkdir(PLANS_DIRECTORY, { recursive: true });
-
     client = await createTestClient(server);
   });
 
@@ -76,57 +52,255 @@ describe("tools/create_plan_template", () => {
     );
   });
 
-  TEMPLATE_TEST_CASES.forEach(({ type, title, featureBranch, linearIssueId, expectedHeader }) => {
-    describe(`when the type is '${type}'`, () => {
+  describe("when creating a feature plan", () => {
+    describe("without a Linear issue ID", () => {
       let result: any;
 
       beforeEach(async () => {
         result = await client.callTool({
           name: "create_plan_template",
           arguments: {
-            title,
-            type,
-            featureBranch,
-            ...(linearIssueId && { linearIssueId }),
+            title: "User Authentication",
+            type: "feature",
+            featureBranch: "auth-feature",
           },
         });
       });
 
-      it("generates the plan file", async () => {
-        const branchDir = join(PLANS_DIRECTORY, featureBranch);
+      it("generates the plan file with correct naming", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "auth-feature");
         const files = await readdir(branchDir);
 
         expect(files).toHaveLength(1);
-        expect(files[0]).toMatch(
-          new RegExp(`^\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}_${type}\\.md$`),
-        );
+        expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_feature\.md$/);
       });
 
-      it("generate's the plan's content", async () => {
-        const branchDir = join(PLANS_DIRECTORY, featureBranch);
+      it("includes the feature header", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "auth-feature");
         const files = await readdir(branchDir);
-        const planFile = join(branchDir, files[0]);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
 
-        const content = await readFile(planFile, "utf-8");
-        expect(content).toContain(`# ${expectedHeader}`);
+        expect(content).toContain("# User Authentication Implementation Plan");
       });
 
-      it("returns a resource link to the plan file", async () => {
+      it("includes the feature branch", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "auth-feature");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Feature branch: `auth-feature`");
+      });
+
+      it("returns a resource link", async () => {
         expect(result.content).toEqual([
           expect.objectContaining({
             type: "resource_link",
             mimeType: "text/markdown",
-            description: `Generated ${type} plan template file`,
-            name: expect.stringMatching(
-              new RegExp(`^\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}_${type}\\.md$`),
-            ),
+            description: "Generated feature plan template file",
+            name: expect.stringMatching(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_feature\.md$/),
             uri: expect.stringMatching(
-              new RegExp(
-                `^file:\\/\\/\\/.*\\/${featureBranch}\\/\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}_${type}\\.md$`,
-              ),
+              /^file:\/\/\/.*\/auth-feature\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_feature\.md$/,
             ),
           }),
         ]);
+      });
+    });
+
+    describe("with a Linear issue ID", () => {
+      beforeEach(async () => {
+        await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "User Authentication",
+            type: "feature",
+            featureBranch: "auth-feature-linear",
+            linearIssueId: "ABC-123",
+          },
+        });
+      });
+
+      it("includes the Linear issue ID in the content", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "auth-feature-linear");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Linear Issue ID: `ABC-123`");
+      });
+    });
+  });
+
+  describe("when creating a refactor plan", () => {
+    describe("without a Linear issue ID", () => {
+      let result: any;
+
+      beforeEach(async () => {
+        result = await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "Database Layer",
+            type: "refactor",
+            featureBranch: "db-refactor",
+          },
+        });
+      });
+
+      it("generates the plan file with correct naming", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "db-refactor");
+        const files = await readdir(branchDir);
+
+        expect(files).toHaveLength(1);
+        expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_refactor\.md$/);
+      });
+
+      it("includes the refactor header", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "db-refactor");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("# Database Layer Refactor");
+      });
+
+      it("includes the feature branch", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "db-refactor");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Feature branch: `db-refactor`");
+      });
+
+      it("returns a resource link", async () => {
+        expect(result.content).toEqual([
+          expect.objectContaining({
+            type: "resource_link",
+            mimeType: "text/markdown",
+            description: "Generated refactor plan template file",
+            name: expect.stringMatching(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_refactor\.md$/),
+            uri: expect.stringMatching(
+              /^file:\/\/\/.*\/db-refactor\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_refactor\.md$/,
+            ),
+          }),
+        ]);
+      });
+    });
+
+    describe("with a Linear issue ID", () => {
+      beforeEach(async () => {
+        await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "Database Layer",
+            type: "refactor",
+            featureBranch: "db-refactor-linear",
+            linearIssueId: "DEF-456",
+          },
+        });
+      });
+
+      it("includes the Linear issue ID in the content", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "db-refactor-linear");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Linear Issue ID: `DEF-456`");
+      });
+    });
+  });
+
+  describe("when creating a bug-fix plan", () => {
+    describe("without optional parameters", () => {
+      let result: any;
+
+      beforeEach(async () => {
+        result = await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "Login Issue",
+            type: "bug-fix",
+            featureBranch: "fix-login",
+          },
+        });
+      });
+
+      it("generates the plan file with correct naming", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "fix-login");
+        const files = await readdir(branchDir);
+
+        expect(files).toHaveLength(1);
+        expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_bug-fix\.md$/);
+      });
+
+      it("includes the bug-fix header", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "fix-login");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("# Fix Login Issue Bug");
+      });
+
+      it("includes the feature branch", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "fix-login");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Feature branch: `fix-login`");
+      });
+
+      it("returns a resource link", async () => {
+        expect(result.content).toEqual([
+          expect.objectContaining({
+            type: "resource_link",
+            mimeType: "text/markdown",
+            description: "Generated bug-fix plan template file",
+            name: expect.stringMatching(/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_bug-fix\.md$/),
+            uri: expect.stringMatching(
+              /^file:\/\/\/.*\/fix-login\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_bug-fix\.md$/,
+            ),
+          }),
+        ]);
+      });
+    });
+
+    describe("with a Sentry issue URL", () => {
+      beforeEach(async () => {
+        await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "Memory Leak",
+            type: "bug-fix",
+            featureBranch: "fix-memory-leak",
+            sentryIssueUrl: "https://sentry.io/issues/12345",
+          },
+        });
+      });
+
+      it("includes the Sentry URL in the content", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "fix-memory-leak");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Sentry Issue: https://sentry.io/issues/12345");
+      });
+    });
+
+    describe("with a Linear issue ID", () => {
+      beforeEach(async () => {
+        await client.callTool({
+          name: "create_plan_template",
+          arguments: {
+            title: "Performance Bug",
+            type: "bug-fix",
+            featureBranch: "fix-performance",
+            linearIssueId: "GHI-789",
+          },
+        });
+      });
+
+      it("includes the Linear issue ID in the content", async () => {
+        const branchDir = join(PLANS_DIRECTORY, "fix-performance");
+        const files = await readdir(branchDir);
+        const content = await readFile(join(branchDir, files[0]), "utf-8");
+
+        expect(content).toContain("Linear Issue ID: `GHI-789`");
       });
     });
   });
