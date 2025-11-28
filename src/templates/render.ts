@@ -23,6 +23,9 @@ for await (let path of glob(join(PROMPTS_DIRECTORY, "**/*.md"))) {
   registerPartial(name, path);
 }
 
+// Register an equality helper.
+Handlebars.registerHelper("eq", Object.is);
+
 // Register all documentation as partials.
 for await (let path of glob(join(DOCUMENTS_DIRECTORY, "**/*.md"))) {
   let name = `doc/${relativePathWithoutExtension(DOCUMENTS_DIRECTORY, path)}`;

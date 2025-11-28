@@ -97,6 +97,35 @@ describe("renderTemplate", () => {
       expect(result).toContain("Single Expectations");
     });
   });
+
+  describe("eq helper", () => {
+    describe("when values are equal", () => {
+      it("returns true", () => {
+        const template = "{{#if (eq a b)}}equal{{else}}not equal{{/if}}";
+        const result = renderTemplate(template, { a: "test", b: "test" });
+
+        expect(result).toBe("equal");
+      });
+    });
+
+    describe("when values are not equal", () => {
+      it("returns false", () => {
+        const template = "{{#if (eq a b)}}equal{{else}}not equal{{/if}}";
+        const result = renderTemplate(template, { a: "test", b: "different" });
+
+        expect(result).toBe("not equal");
+      });
+    });
+
+    describe("when comparing with undefined", () => {
+      it("returns false", () => {
+        const template = "{{#if (eq a b)}}equal{{else}}not equal{{/if}}";
+        const result = renderTemplate(template, { a: "test" });
+
+        expect(result).toBe("not equal");
+      });
+    });
+  });
 });
 
 describe("readPartialContent", () => {
