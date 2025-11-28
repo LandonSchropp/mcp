@@ -25,9 +25,13 @@ server.registerTool(
       featureBranch: z.string().describe("The branch the plan will be implemented on"),
       baseBranch: z.string().optional().describe("The base branch for the feature branch"),
       linearIssueId: z.string().optional().describe("The Linear issue associated with the plan"),
+      sentryIssueUrl: z
+        .string()
+        .optional()
+        .describe("The Sentry issue URL associated with the plan (bug-fix only)"),
     },
   },
-  async ({ title, type, featureBranch, baseBranch, linearIssueId }) => {
+  async ({ title, type, featureBranch, baseBranch, linearIssueId, sentryIssueUrl }) => {
     // Determine the paths
     let timestamp = format(new Date(), "yyyy-MM-dd_HH-mm-ss");
     let templatePath = join(TEMPLATES_DIRECTORY, "plan", `${type}.md`);
@@ -41,6 +45,7 @@ server.registerTool(
       featureBranch,
       baseBranch: baseBranch ?? (await inferBaseBranch(featureBranch)),
       linearIssueId,
+      sentryIssueUrl,
     });
 
     // Write the plan file
