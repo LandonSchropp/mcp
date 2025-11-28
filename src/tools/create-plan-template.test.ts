@@ -1,9 +1,10 @@
 import { createTestClient } from "../../test/helpers.js";
+import { inferBaseBranch } from "../commands/git.js";
 import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { join } from "path";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 
 let PLANS_DIRECTORY = await vi.hoisted(async () => {
   const { tmpdir } = await import("os");
@@ -12,10 +13,21 @@ let PLANS_DIRECTORY = await vi.hoisted(async () => {
   return join(tmpdir(), `plans-${Date.now()}`);
 });
 
+const mockInferBaseBranch: Mock<typeof inferBaseBranch> = vi.hoisted(() =>
+  vi.fn(async () => "main"),
+);
+
 vi.mock("../env.ts", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     PLANS_DIRECTORY: PLANS_DIRECTORY,
+  };
+});
+
+vi.mock("../commands/git.js", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    inferBaseBranch: mockInferBaseBranch,
   };
 });
 
@@ -30,6 +42,7 @@ const TEMPLATE_TEST_CASES = [
     type: "feature",
     title: "User Authentication",
     featureBranch: "auth-feature",
+    linearIssueId: "ABC-123",
     expectedHeader: "User Authentication Implementation Plan",
   },
   {
@@ -75,7 +88,7 @@ describe("tools/create_plan_template", () => {
     );
   });
 
-  TEMPLATE_TEST_CASES.forEach(({ type, title, featureBranch, expectedHeader }) => {
+  TEMPLATE_TEST_CASES.forEach(({ type, title, featureBranch, linearIssueId, expectedHeader }) => {
     describe(`when the type is '${type}'`, () => {
       let result: any;
 
@@ -86,6 +99,7 @@ describe("tools/create_plan_template", () => {
             title,
             type,
             featureBranch,
+            ...(linearIssueId && { linearIssueId }),
           },
         });
       });

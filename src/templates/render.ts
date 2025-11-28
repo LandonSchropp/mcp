@@ -40,7 +40,10 @@ for await (let path of glob(join(DOCUMENTS_DIRECTORY, "**/*.md"))) {
  * @param context An object containing values for the placeholders
  * @returns The rendered template with placeholders replaced
  */
-export function renderTemplate(template: string, context: Record<string, string> = {}): string {
+export function renderTemplate(
+  template: string,
+  context: Record<string, string | undefined> = {},
+): string {
   // TODO: I may want to consider caching templates if performance becomes an issue.
   let compiled = Handlebars.compile(template, { strict: true, noEscape: true });
   return compiled(context);
