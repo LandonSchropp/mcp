@@ -103,7 +103,7 @@ describe("prompts", () => {
       );
     });
 
-    it("includes TARGET placeholder in the message", async () => {
+    it("includes TARGET variable in the message", async () => {
       result = await client.getPrompt({ name: "writing/format", arguments: {} });
 
       expect(result.messages[0]).toEqual(
@@ -255,7 +255,7 @@ describe("prompts", () => {
   });
 
   describe("resource URI extraction and linking", () => {
-    describe("when the prompt contains a full URI without placeholders", () => {
+    describe("when the prompt contains a full URI without variables", () => {
       it("extracts the URI and includes it as a resource link", async () => {
         result = await client.getPrompt({
           name: "writing/format",

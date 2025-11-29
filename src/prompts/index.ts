@@ -2,7 +2,7 @@ import { getCurrentBranch, getDefaultBranch } from "../commands/git.js";
 import { PROMPTS_DIRECTORY } from "../constants.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter } from "../templates/frontmatter.js";
-import { extractPlaceholders } from "../templates/placeholders.js";
+import { extractVariables } from "../templates/variables.js";
 import { renderTemplate } from "../templates/render.js";
 import { extractResourceURIs } from "../templates/uri.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
@@ -33,7 +33,7 @@ const PARAMETER_DEFINITIONS = {
   },
 } as const;
 
-// TODO: Remove this once we replace Handlebars. The placeholder regex picks up Handlebars keywords.
+// TODO: Remove this once we replace Handlebars. The variable regex picks up Handlebars keywords.
 const HANDLEBARS_KEYWORDS = new Set(["if", "else", "each", "unless", "with", "lookup", "log"]);
 
 function isAutoResolvedParameter(name: string): boolean {
@@ -61,12 +61,12 @@ for (const filePath of promptFiles) {
   const { frontmatter, content } = parseFrontmatter(rawContent, PROMPT_SCHEMA);
   const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
 
-  // Extract placeholders, filtering out Handlebars keywords
-  const placeholders = extractPlaceholders(content).difference(HANDLEBARS_KEYWORDS);
+  // Extract variables, filtering out Handlebars keywords
+  const variables = extractVariables(content).difference(HANDLEBARS_KEYWORDS);
 
-  // Build args schema dynamically from user-provided placeholders
+  // Build args schema dynamically from user-provided variables
   const argsSchema: Record<string, z.ZodString> = Object.fromEntries(
-    [...placeholders]
+    [...variables]
       .filter((name) => !isAutoResolvedParameter(name))
       .map((name) => [name, parameterToZodSchema(name, promptName)]),
   );
@@ -84,7 +84,7 @@ for (const filePath of promptFiles) {
       const context: Record<string, string> = { ...values };
 
       // Add auto-resolved parameters when they are present in the template
-      for (const name of placeholders) {
+      for (const name of variables) {
         const definition = PARAMETER_DEFINITIONS[name as keyof typeof PARAMETER_DEFINITIONS];
 
         if (definition && "resolve" in definition) {

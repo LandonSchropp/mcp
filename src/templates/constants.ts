@@ -1,8 +1,8 @@
 /**
- * A regex to match placeholders in Handlebars templates. Excludes Handlebars syntax like #if, /if,
+ * A regex to match variables in Handlebars templates. Excludes Handlebars syntax like #if, /if,
  * else, etc.
  */
-export const PLACEHOLDER_REGEX = /\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}/g;
+export const VARIABLE_REGEX = /\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}/g;
 
 /** A regex to match URIs in Handlebars templates. */
 export const URI_REGEX = /[^\s@]+:\/\/[^\s]*[\w-]/g;
