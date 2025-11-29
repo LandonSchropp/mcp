@@ -20,6 +20,12 @@ importers:
       nano-spawn:
         specifier: ^1.0.3
         version: 1.0.3
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
       yaml:
         specifier: ^2.8.1
         version: 2.8.1
@@ -45,12 +51,6 @@ importers:
       ts-dedent:
         specifier: ^2.2.0
         version: 2.2.0
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
-      typescript:
-        specifier: ^5.9.2
-        version: 5.9.2
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.5.2)(tsx@4.20.6)(yaml@2.8.1)

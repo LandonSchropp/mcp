@@ -17,7 +17,13 @@ advantages:
 
 ## Installation
 
-Configure Claude Code to run the package:
+First, globally link the package.
+
+```bash
+pnpm link --global
+```
+
+Then configure Claude Code to run the server.
 
 ```bash
 claude mcp add ls \
@@ -26,14 +32,7 @@ claude mcp add ls \
   --env WRITING_VOICE="$WRITING_VOICE" \
   --env WRITING_IMPROVEMENT="$WRITING_IMPROVEMENT" \
   --env PLANS_DIRECTORY="$PLANS_DIRECTORY" \
-  -- pnpm dlx @landonschropp/mcp
-```
-
-For local development, build and link the package:
-
-```bash
-pnpm build
-pnpm link --global
+  -- landon-schropp-mcp
 ```
 
 ## Environment

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Capture the MCP root directory.
+MCP_ROOT="$(dirname "${BASH_SOURCE[0]}")/.."
+export MCP_ROOT
+
+# Set the NODE_PATH to include the MCP server's node_modules.
+export NODE_PATH="$MCP_ROOT/node_modules:${NODE_PATH:-}"
+
+# Start the MCP server.
+"$MCP_ROOT/node_modules/.bin/tsx" "$MCP_ROOT/src/index.ts"
