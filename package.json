@@ -20,7 +20,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.2",
     "date-fns": "^4.1.0",
-    "handlebars": "^4.7.8",
+    "liquidjs": "^10.24.0",
     "nano-spawn": "^1.0.3",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2",
