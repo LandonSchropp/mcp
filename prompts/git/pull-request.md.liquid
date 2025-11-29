@@ -7,9 +7,9 @@ description: Create a pull request, automatically filling out the title and desc
 
 Create a pull request by analyzing the current branch's changes and generating an appropriate title and description based on the git diff.
 
-1. Analyze the changes to the current feature branch by calling the `fetch_feature_branch` tool with branch `{{currentBranch}}`. If there are no changes, then stop.
+1. Analyze the changes to the current feature branch by calling the `fetch_feature_branch` tool with branch `{{ currentBranch }}`. If there are no changes, then stop.
 
-2. If the current branch `{{currentBranch}}` begins with a linear issue ID (two or more letters, followed by a dash and then a number), fetch the Linear issue using the Linear MCP. You can use `git branch --show-current | grep -oE "^[A-Za-z]+-[0-9]+"` to extract the issue from the current branch.
+2. If the current branch `{{ currentBranch }}` begins with a linear issue ID (two or more letters, followed by a dash and then a number), fetch the Linear issue using the Linear MCP. You can use `git branch --show-current | grep -oE "^[A-Za-z]+-[0-9]+"` to extract the issue from the current branch.
 
 3. Create a clear, descriptive title that explains what the PR accomplishes. Often, this will be a slightly reworked version of the Linear issue title (if applicable). If the task is a linear issue, prepend the PR title with square brackets followed containing the issue ID.
 
