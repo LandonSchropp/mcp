@@ -1,18 +1,15 @@
+import { getCurrentBranch, getDefaultBranch } from "../commands/git.js";
 import { PROMPTS_DIRECTORY } from "../constants.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter } from "../templates/frontmatter.js";
+import { extractPlaceholders } from "../templates/placeholders.js";
 import { renderTemplate } from "../templates/render.js";
 import { extractResourceURIs } from "../templates/uri.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
-import {
-  extractParametersUsedInTemplate,
-  resolvePromptParameterValue,
-} from "./parameters/index.js";
-import { ParameterDefinition } from "./parameters/types.js";
-import { PromptMessage } from "@modelcontextprotocol/sdk/types.js";
+import { ErrorCode, McpError, PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
-import z, { ZodOptional, ZodString } from "zod";
+import z from "zod";
 
 // Schema for validating prompt frontmatter
 const PROMPT_SCHEMA = z.object({
@@ -20,10 +17,40 @@ const PROMPT_SCHEMA = z.object({
   description: z.string(),
 });
 
-// Convert a ParameterDefinition to a Zod schema
-function parameterToZodSchema(parameter: ParameterDefinition): ZodString | ZodOptional<ZodString> {
-  let schema = z.string().describe(parameter.description);
-  return parameter.type === "optional" ? schema.optional() : schema;
+const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
+
+const PARAMETER_DEFINITIONS = {
+  currentBranch: {
+    description: "The current git branch",
+    resolve: getCurrentBranch,
+  },
+  defaultBranch: {
+    description: "The default git branch",
+    resolve: getDefaultBranch,
+  },
+  linearIssueId: {
+    description: "Linear issue ID (e.g. AB-123)",
+  },
+} as const;
+
+// TODO: Remove this once we replace Handlebars. The placeholder regex picks up Handlebars keywords.
+const HANDLEBARS_KEYWORDS = new Set(["if", "else", "each", "unless", "with", "lookup", "log"]);
+
+function isAutoResolvedParameter(name: string): boolean {
+  return (
+    name in PARAMETER_DEFINITIONS &&
+    "resolve" in PARAMETER_DEFINITIONS[name as keyof typeof PARAMETER_DEFINITIONS]
+  );
+}
+
+function parameterToZodSchema(name: string, promptName: string): z.ZodString {
+  const definition = PARAMETER_DEFINITIONS[name as keyof typeof PARAMETER_DEFINITIONS];
+
+  if (!definition) {
+    throw new Error(`Unknown parameter "${name}" in prompt "${promptName}"`);
+  }
+
+  return z.string().describe(definition.description);
 }
 
 // Find all prompt files (excluding files that start with underscore)
@@ -34,18 +61,17 @@ for (const filePath of promptFiles) {
   const { frontmatter, content } = parseFrontmatter(rawContent, PROMPT_SCHEMA);
   const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
 
-  // Determine the parameters present in the template
-  let parameters = extractParametersUsedInTemplate(content);
-  let parameterNames = parameters.map(({ name }) => name);
+  // Extract placeholders, filtering out Handlebars keywords
+  const placeholders = extractPlaceholders(content).difference(HANDLEBARS_KEYWORDS);
 
-  // Generate the arguments dynamically based on the template content's
-  let argsSchema = Object.fromEntries(
-    parameters
-      .filter((parameter) => parameter.type === "required" || parameter.type === "optional")
-      .map((parameter) => [parameter.name, parameterToZodSchema(parameter)]),
+  // Build args schema dynamically from user-provided placeholders
+  const argsSchema: Record<string, z.ZodString> = Object.fromEntries(
+    [...placeholders]
+      .filter((name) => !isAutoResolvedParameter(name))
+      .map((name) => [name, parameterToZodSchema(name, promptName)]),
   );
 
-  // Register the prompt with just the basic info for now
+  // Register the prompt
   server.registerPrompt(
     promptName,
     {
@@ -54,17 +80,27 @@ for (const filePath of promptFiles) {
       argsSchema,
     },
     async (values) => {
-      // Build the context from the provided values
-      let context: Record<string, string> = {};
+      // Start building the context with user-provided values
+      const context: Record<string, string> = { ...values };
 
-      for (let name of parameterNames) {
-        context[name] = await resolvePromptParameterValue(
-          server,
-          promptName,
-          name,
-          context,
-          values[name],
-        );
+      // Add auto-resolved parameters when they are present in the template
+      for (const name of placeholders) {
+        const definition = PARAMETER_DEFINITIONS[name as keyof typeof PARAMETER_DEFINITIONS];
+
+        if (definition && "resolve" in definition) {
+          context[name] = await definition.resolve();
+        }
+      }
+
+      // Transform linearIssueId (if provided)
+      if (values.linearIssueId) {
+        const match = values.linearIssueId.match(LINEAR_ISSUE_ID_REGEX);
+
+        if (!match) {
+          throw new McpError(ErrorCode.InvalidParams, "No valid Linear issue ID found");
+        }
+
+        context.linearIssueId = match[0];
       }
 
       // Render the template

@@ -79,12 +79,6 @@ describe("prompts", () => {
     expect(text).not.toContain("title:");
   });
 
-  // TODO: All current prompts have {{target}} parameter. We'll add tests for this case when we have
-  // prompts without parameters.
-  describe.skip("when the prompt does not include any expressions", () => {
-    it("reutrns the content of the prompt", () => {});
-  });
-
   describe("when the prompt's template includes a target partial", () => {
     it("has no target parameter", async () => {
       const { prompts } = await client.listPrompts();
@@ -147,7 +141,7 @@ describe("prompts", () => {
     });
   });
 
-  describe("when the prompt uses the currentBranch parameter", () => {
+  describe("currentBranch parameter", () => {
     it("resolves the currentBranch parameter automatically", async () => {
       result = await client.getPrompt({
         name: "git/pull-request",
@@ -167,7 +161,7 @@ describe("prompts", () => {
       expect(result.messages[0].content.text).not.toContain("{{currentBranch}}");
     });
 
-    it("does not expose currentBranch in the prompt's argument", async () => {
+    it("does not expose currentBranch in the prompt's arguments", async () => {
       const { prompts } = await client.listPrompts();
       const pullRequestPrompt = prompts.find(({ name }) => name === "git/pull-request");
 
@@ -178,7 +172,7 @@ describe("prompts", () => {
     });
   });
 
-  describe("when the prompt uses the linearIssueId parameter", () => {
+  describe("linearIssueId parameter", () => {
     it("registers the linear/example prompt with linearIssueId parameter", async () => {
       const { prompts } = await client.listPrompts();
       const linearPrompt = prompts.find(({ name }) => name === "linear/example");
@@ -197,7 +191,7 @@ describe("prompts", () => {
     });
 
     describe("when linearIssueId parameter is provided with valid issue ID", () => {
-      it("extracts and includes the issue ID in the message", async () => {
+      it("includes the issue ID in the message", async () => {
         result = await client.getPrompt({
           name: "linear/example",
           arguments: { linearIssueId: "ABC-123" },
@@ -237,23 +231,23 @@ describe("prompts", () => {
       });
     });
 
-    describe("when linearIssueId parameter is not provided", () => {
-      it("throws an error for missing required parameter", async () => {
-        await expect(
-          client.getPrompt({
-            name: "linear/example",
-            arguments: {},
-          }),
-        ).rejects.toThrow();
-      });
-    });
-
     describe("when linearIssueId parameter contains invalid text", () => {
       it("throws an error for invalid issue ID", async () => {
         await expect(
           client.getPrompt({
             name: "linear/example",
             arguments: { linearIssueId: "invalid text without issue ID" },
+          }),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("when linearIssueId parameter is not provided", () => {
+      it("throws an error for missing required parameter", async () => {
+        await expect(
+          client.getPrompt({
+            name: "linear/example",
+            arguments: {},
           }),
         ).rejects.toThrow();
       });

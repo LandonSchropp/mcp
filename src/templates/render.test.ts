@@ -81,7 +81,9 @@ describe("renderTemplate", () => {
       });
 
       expect(result).toContain("example implementation plan");
-      expect(result).toContain("Please describe the example or provide a Linear issue ID or URL");
+      expect(result).toContain(
+        "Please describe the example or provide a Linear issue ID or Linear issue URL",
+      );
       expect(result).toContain("switch_git_branch");
       expect(result).toContain("fetch_feature_branch");
       expect(result).toContain("feature-example");
