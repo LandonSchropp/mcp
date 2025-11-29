@@ -1,9 +1,13 @@
-# Fix {{title}} Bug
+# Fix {{ title }} Bug
 
-Feature branch: `{{featureBranch}}`
-Base branch: `{{baseBranch}}`
-{{#if linearIssueId}}Linear Issue ID: `{{linearIssueId}}`{{/if}}
-{{#if sentryIssueUrl}}Sentry Issue: {{sentryIssueUrl}}{{/if}}
+Feature branch: `{{ featureBranch }}`
+Base branch: `{{ baseBranch }}`
+{% if linearIssueId -%}
+Linear Issue ID: `{{ linearIssueId }}`
+{% endif -%}
+{% if sentryIssueUrl -%}
+Sentry Issue: {{ sentryIssueUrl }}
+{% endif -%}
 
 ## Overview
 
