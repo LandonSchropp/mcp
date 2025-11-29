@@ -1,63 +1,63 @@
-import { replacePlaceholders, extractPlaceholders } from "./placeholders.js";
+import { replaceVariables, extractVariables } from "./variables.js";
 import { describe, it, expect } from "vitest";
 
-describe("extractPlaceholders", () => {
-  describe("when the template has no placeholders", () => {
+describe("extractVariables", () => {
+  describe("when the template has no variables", () => {
     it("returns an empty set", () => {
       const template = "This is a plain text template";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set());
     });
   });
 
-  describe("when the template has a single placeholder", () => {
-    it("returns the placeholder name", () => {
+  describe("when the template has a single variable", () => {
+    it("returns the variable name", () => {
       const template = "Hello, {{name}}!";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set(["name"]));
     });
   });
 
-  describe("when the template has multiple unique placeholders", () => {
-    it("returns all unique placeholder names", () => {
+  describe("when the template has multiple unique variables", () => {
+    it("returns all unique variable names", () => {
       const template = "{{greeting}}, {{name}}! {{message}}";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set(["greeting", "name", "message"]));
     });
   });
 
-  describe("when the template has repeated placeholders", () => {
-    it("returns each placeholder name only once", () => {
+  describe("when the template has repeated variables", () => {
+    it("returns each variable name only once", () => {
       const template = "{{name}} meets {{name}} at {{location}}";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set(["name", "location"]));
     });
   });
 
-  describe("when placeholders have whitespace", () => {
-    it("trims whitespace from placeholder names", () => {
+  describe("when variables have whitespace", () => {
+    it("trims whitespace from variable names", () => {
       const template = "Hello, {{ name }}! Welcome, {{  user  }}.";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set(["name", "user"]));
     });
   });
 
   describe("when the template has multiple lines", () => {
-    it("extracts the placeholders", () => {
+    it("extracts the variables", () => {
       const template = `
         Line 1: {{first}}
         Line 2: {{second}}
         Line 3: {{first}} and {{third}}
       `;
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
       expect(result).toEqual(new Set(["first", "second", "third"]));
     });
   });
 
   describe("when the template includes a partial", () => {
-    it("extracts placeholders from both the template and the partial", () => {
+    it("extracts variables from both the template and the partial", () => {
       const template = "{{title}} {{> plan/_instructions}}";
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
 
       expect(result).toContain("title");
       expect(result).toContain("planType");
@@ -66,9 +66,9 @@ describe("extractPlaceholders", () => {
   });
 
   describe("when the template includes a partial with some parameters explicitly passed", () => {
-    it("extracts placeholders from both the template and the partial", () => {
+    it("extracts variables from both the template and the partial", () => {
       const template = '{{title}} {{> plan/_instructions planType="test"}}';
-      const result = extractPlaceholders(template);
+      const result = extractVariables(template);
 
       expect(result).toContain("title");
       expect(result).toContain("currentBranch");
@@ -77,9 +77,9 @@ describe("extractPlaceholders", () => {
     });
 
     describe("when the parameter value contains whitespace", () => {
-      it("excludes the parameter from required placeholders", () => {
+      it("excludes the parameter from required variables", () => {
         const template = '{{title}} {{> plan/_instructions planType="bug fix"}}';
-        const result = extractPlaceholders(template);
+        const result = extractVariables(template);
 
         expect(result).toContain("title");
         expect(result).toContain("currentBranch");
@@ -89,27 +89,27 @@ describe("extractPlaceholders", () => {
   });
 });
 
-describe("replacePlaceholders", () => {
-  describe("when the template has no placeholders", () => {
+describe("replaceVariables", () => {
+  describe("when the template has no variables", () => {
     it("returns the template unchanged", () => {
       const template = "This is a plain text template";
-      const result = replacePlaceholders(template, {});
+      const result = replaceVariables(template, {});
       expect(result).toBe("This is a plain text template");
     });
   });
 
-  describe("when the template has a single placeholder", () => {
-    it("replaces the placeholder", () => {
+  describe("when the template has a single variable", () => {
+    it("replaces the variable", () => {
       const template = "Hello, {{name}}!";
-      const result = replacePlaceholders(template, { name: "World" });
+      const result = replaceVariables(template, { name: "World" });
       expect(result).toBe("Hello, World!");
     });
   });
 
-  describe("when the template has multiple placeholders", () => {
-    it("replaces the placeholders", () => {
+  describe("when the template has multiple variables", () => {
+    it("replaces the variables", () => {
       const template = "{{greeting}}, {{name}}!";
-      const result = replacePlaceholders(template, {
+      const result = replaceVariables(template, {
         greeting: "Hello",
         name: "Alice",
       });
@@ -117,18 +117,18 @@ describe("replacePlaceholders", () => {
     });
   });
 
-  describe("when placeholders have whitespace", () => {
-    it("replaces the placeholders", () => {
+  describe("when variables have whitespace", () => {
+    it("replaces the variables", () => {
       const template = "Hello, {{ name }}!";
-      const result = replacePlaceholders(template, { name: "World" });
+      const result = replaceVariables(template, { name: "World" });
       expect(result).toBe("Hello, World!");
     });
   });
 
-  describe("when the context is missing placeholders in the template", () => {
+  describe("when the context is missing variables in the template", () => {
     it("raises an error", () => {
       const template = "Hello, {{name}}! Welcome to {{place}}.";
-      expect(() => replacePlaceholders(template, { name: "Alice" })).toThrow();
+      expect(() => replaceVariables(template, { name: "Alice" })).toThrow();
     });
   });
 });

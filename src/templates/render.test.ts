@@ -2,7 +2,7 @@ import { renderTemplate, readPartialContent } from "./render.js";
 import { describe, it, expect } from "vitest";
 
 describe("renderTemplate", () => {
-  describe("when the template has no placeholders", () => {
+  describe("when the template has no variables", () => {
     it("returns the template unchanged", () => {
       const template = "This is a plain text template";
       const result = renderTemplate(template, {});
@@ -10,16 +10,16 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the template has a single placeholder", () => {
-    it("replaces the placeholder with the context value", () => {
+  describe("when the template has a single variable", () => {
+    it("replaces the variable with the context value", () => {
       const template = "Hello, {{name}}!";
       const result = renderTemplate(template, { name: "World" });
       expect(result).toBe("Hello, World!");
     });
   });
 
-  describe("when the template has multiple placeholders", () => {
-    it("replaces all placeholders with their context values", () => {
+  describe("when the template has multiple variables", () => {
+    it("replaces all variables with their context values", () => {
       const template = "{{greeting}}, {{name}}! {{message}}";
       const result = renderTemplate(template, {
         greeting: "Hello",
@@ -30,22 +30,22 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the template has placeholders with whitespace", () => {
-    it("handles whitespace inside placeholder braces", () => {
+  describe("when the template has variables with whitespace", () => {
+    it("handles whitespace inside variable braces", () => {
       const template = "Hello, {{ name }}!";
       const result = renderTemplate(template, { name: "World" });
       expect(result).toBe("Hello, World!");
     });
 
-    it("handles multiple spaces inside placeholder braces", () => {
+    it("handles multiple spaces inside variable braces", () => {
       const template = "Hello, {{  name  }}!";
       const result = renderTemplate(template, { name: "World" });
       expect(result).toBe("Hello, World!");
     });
   });
 
-  describe("when the template has repeated placeholders", () => {
-    it("replaces all occurrences of the same placeholder", () => {
+  describe("when the template has repeated variables", () => {
+    it("replaces all occurrences of the same variable", () => {
       const template = "{{name}} meets {{name}} at {{location}}";
       const result = renderTemplate(template, {
         name: "Bob",
@@ -55,7 +55,7 @@ describe("renderTemplate", () => {
     });
   });
 
-  describe("when the context is missing a placeholder value", () => {
+  describe("when the context is missing a variable value", () => {
     it("raises an error", () => {
       const template = "Hello, {{name}}! Welcome to {{missing}}.";
       expect(() => renderTemplate(template, { name: "Alice" })).toThrow();
@@ -63,7 +63,7 @@ describe("renderTemplate", () => {
   });
 
   describe("when the context value is an empty string", () => {
-    it("replaces the placeholder with empty string", () => {
+    it("replaces the variable with empty string", () => {
       const template = "Name: {{name}}";
       const result = renderTemplate(template, { name: "" });
       expect(result).toBe("Name: ");
