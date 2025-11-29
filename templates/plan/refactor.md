@@ -62,5 +62,5 @@ For each phase above (in order) do the following:
 3. Add new tests if the refactoring introduces new functionality or improves testability.
 4. Validate that the refactored code maintains the same external behavior.
 5. If refactoring becomes blocked or tests start failing, STOP and seek guidance from the user.
-6. Once the phase is complete, PAUSE and wait for user feedback.
+6. Once the phase is complete, STOP and wait for user feedback.
 7. Once the user has finished giving feedback, append "(✅ Complete)" to the phase's header.

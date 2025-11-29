@@ -61,7 +61,7 @@ For each phase above (in order) do the following:
 
 1. Follow the steps outlined in the phase.
 2. If you cannot complete a step after 5 attempts, STOP and seek guidance from the user.
-3. Once the phase is complete, PAUSE and wait for user feedback.
+3. Once the phase is complete, STOP and wait for user feedback.
 4. Once the user has finished giving feedback, append "(✅ Complete)" to the phase's header.
 
 Once the bug is fixed, document:

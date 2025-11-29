@@ -64,5 +64,5 @@ For each phase above (in order) do the following using TDD (red, green, refactor
 2. Implement each task with appropriate error handling and validation to make tests pass (green).
 3. Refactor the code for clarity and maintainability while keeping tests green.
 4. If implementation becomes blocked, STOP and seek guidance from the user.
-5. Once the phase is complete, PAUSE and wait for user feedback.
+5. Once the phase is complete, STOP and wait for user feedback.
 6. Once the user has finished giving feedback, append "(✅ Complete)" to the phase's header.
