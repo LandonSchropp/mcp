@@ -1,10 +1,10 @@
 import { getCurrentBranch, getDefaultBranch } from "../commands/git.js";
 import { PROMPTS_DIRECTORY } from "../constants.js";
 import { server } from "../server-instance.js";
-import { parseFrontmatter } from "../templates/frontmatter.js";
-import { extractVariables } from "../templates/variables.js";
-import { renderTemplate } from "../templates/render.js";
+import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter.js";
+import { renderFile } from "../templates/render.js";
 import { extractResourceURIs } from "../templates/uri.js";
+import { extractVariables } from "../templates/variables.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
 import { ErrorCode, McpError, PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
@@ -54,15 +54,15 @@ function parameterToZodSchema(name: string, promptName: string): z.ZodString {
 }
 
 // Find all prompt files (excluding files that start with underscore)
-let promptFiles = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md")));
+let promptFiles = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md.liquid")));
 
 for (const filePath of promptFiles) {
   const rawContent = await readFile(filePath, "utf8");
-  const { frontmatter, content } = parseFrontmatter(rawContent, PROMPT_SCHEMA);
+  const { frontmatter } = parseFrontmatter(rawContent, PROMPT_SCHEMA);
   const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
 
   // Extract variables, filtering out Handlebars keywords
-  const variables = extractVariables(content).difference(HANDLEBARS_KEYWORDS);
+  const variables = (await extractVariables(filePath)).difference(HANDLEBARS_KEYWORDS);
 
   // Build args schema dynamically from user-provided variables
   const argsSchema: Record<string, z.ZodString> = Object.fromEntries(
@@ -104,7 +104,7 @@ for (const filePath of promptFiles) {
       }
 
       // Render the template
-      let text = renderTemplate(content, context);
+      let text = removeFrontmatter(await renderFile(filePath, context));
 
       // Extract the resource URIs from the rendered content and convert them to resource links
       let resourceLinks: PromptMessage[] = Array.from(extractResourceURIs(text)).map((uri) => ({

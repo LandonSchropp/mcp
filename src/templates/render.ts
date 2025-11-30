@@ -11,5 +11,10 @@ export async function renderFile(
   filePath: string,
   context: Record<string, string | undefined> = {},
 ): Promise<string> {
-  return liquid.renderFile(filePath, context);
+  // Filter out undefined values to avoid Liquid strict mode errors
+  let filteredContext = Object.fromEntries(
+    Object.entries(context).filter(([, value]) => value !== undefined),
+  );
+
+  return liquid.renderFile(filePath, filteredContext);
 }

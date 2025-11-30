@@ -6,4 +6,5 @@ export const liquid = new Liquid({
   extname: ".md.liquid",
   strictFilters: true,
   strictVariables: true,
+  lenientIf: true,
 });
