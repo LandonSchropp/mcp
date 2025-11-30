@@ -1,9 +1,7 @@
-import { doesBranchExist, inferBaseBranch, getDiff } from "../commands/git.js";
+import { doesBranchExist, inferBaseBranch, getCommits, getDiff } from "../commands/git.js";
 import { server } from "../server-instance.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
-
-const EMPTY_DIFF = { commits: [], diff: "" };
 
 // NOTE: This is implemented as a tool instead of a resource for a few key reasons:
 //
@@ -28,7 +26,8 @@ server.registerTool(
     }
 
     const baseBranch = await inferBaseBranch(branch);
-    const diff = (await getDiff(baseBranch, branch)) ?? EMPTY_DIFF;
+    const commits = (await getCommits(baseBranch, branch)) ?? [];
+    const diff = (await getDiff(baseBranch, branch)) ?? "";
 
     return {
       content: [
@@ -38,7 +37,8 @@ server.registerTool(
             {
               branch,
               baseBranch,
-              ...diff,
+              commits,
+              diff,
             },
             null,
             2,

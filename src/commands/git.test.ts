@@ -1,6 +1,7 @@
 import { assertInstalled } from "./assertions.js";
 import {
   assertGitInstalled,
+  getCommits,
   getDiff,
   getDefaultBranch,
   inferBaseBranch,
@@ -54,7 +55,7 @@ describe("assertGitInstalled", () => {
   });
 });
 
-describe("getDiff", () => {
+describe("getCommits", () => {
   beforeEach(() => {
     mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
       if (args?.[0] === "show-ref") {
@@ -69,6 +70,73 @@ describe("getDiff", () => {
           `,
           stderr: "",
         };
+      }
+
+      return { stdout: "", stderr: "" };
+    }) as Mock<typeof spawn>);
+  });
+
+  it("calls git log with the correct range", async () => {
+    await getCommits("main", "feature");
+
+    expect(mockSpawn).toHaveBeenCalledWith("git", ["log", "main..feature", "--format=%h %s"]);
+  });
+
+  describe("when there are no commits", () => {
+    beforeEach(() => {
+      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
+    });
+
+    it("returns null", async () => {
+      const result = await getCommits("main", "feature");
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("when a branch does not exist", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
+        if (args?.[0] === "show-ref" && args?.includes("refs/heads/nonexistent")) {
+          const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
+          error.exitCode = 2;
+          throw error;
+        }
+        return { stdout: "", stderr: "" };
+      }) as Mock<typeof spawn>);
+    });
+
+    it("returns null", async () => {
+      const result = await getCommits("main", "nonexistent");
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("when there are commits", () => {
+    it("returns parsed commits with sha and title", async () => {
+      const result = await getCommits("main", "feature");
+
+      expect(result).toHaveLength(2);
+      expect(result).toEqual([
+        {
+          sha: "abc123",
+          title: "Fix bug in authentication",
+        },
+        {
+          sha: "def456",
+          title: "Add new feature",
+        },
+      ]);
+    });
+  });
+});
+
+describe("getDiff", () => {
+  beforeEach(() => {
+    mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
+      if (args?.[0] === "show-ref") {
+        return { stdout: "", stderr: "" };
       }
 
       if (args?.[0] === "diff") {
@@ -90,28 +158,10 @@ describe("getDiff", () => {
     }) as Mock<typeof spawn>);
   });
 
-  it("calls git log with the correct range", async () => {
-    await getDiff("main", "feature");
-
-    expect(mockSpawn).toHaveBeenCalledWith("git", ["log", "main..feature", "--format=%h %s"]);
-  });
-
   it("calls git diff with the correct range", async () => {
     await getDiff("main", "feature");
 
     expect(mockSpawn).toHaveBeenCalledWith("git", ["diff", "main...feature"]);
-  });
-
-  describe("when there are no commits", () => {
-    beforeEach(() => {
-      mockSpawn.mockResolvedValue({ stdout: "", stderr: "" } as Awaited<ReturnType<typeof spawn>>);
-    });
-
-    it("returns null", async () => {
-      const result = await getDiff("main", "feature");
-
-      expect(result).toBeNull();
-    });
   });
 
   describe("when a branch does not exist", () => {
@@ -119,6 +169,11 @@ describe("getDiff", () => {
       mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
         if (args?.[0] === "show-ref" && args?.includes("refs/heads/nonexistent")) {
           const error = new SubprocessError("fatal: ref refs/heads/nonexistent does not exist");
+          error.exitCode = 2;
+          throw error;
+        }
+        if (args?.[0] === "show-ref" && args?.includes("refs/remotes/nonexistent")) {
+          const error = new SubprocessError("fatal: ref refs/remotes/nonexistent does not exist");
           error.exitCode = 2;
           throw error;
         }
@@ -133,30 +188,30 @@ describe("getDiff", () => {
     });
   });
 
-  describe("when there are commits", () => {
-    it("returns parsed commits with sha and title", async () => {
-      const result = await getDiff("main", "feature");
-
-      expect(result!.commits).toHaveLength(2);
-
-      expect(result!.commits).toEqual([
-        {
-          sha: "abc123",
-          title: "Fix bug in authentication",
-        },
-        {
-          sha: "def456",
-          title: "Add new feature",
-        },
-      ]);
-    });
-
+  describe("when there are changes", () => {
     it("returns the diff output", async () => {
       const result = await getDiff("main", "feature");
 
-      expect(result!.diff).toContain("diff --git a/file.txt b/file.txt");
-      expect(result!.diff).toContain("-old line");
-      expect(result!.diff).toContain("+new line");
+      expect(result).toContain("diff --git a/file.txt b/file.txt");
+      expect(result).toContain("-old line");
+      expect(result).toContain("+new line");
+    });
+  });
+
+  describe("when there are no changes", () => {
+    beforeEach(() => {
+      mockSpawn.mockImplementation((async (_command: string, args?: string[]) => {
+        if (args?.[0] === "show-ref") {
+          return { stdout: "", stderr: "" };
+        }
+        return { stdout: "", stderr: "" };
+      }) as Mock<typeof spawn>);
+    });
+
+    it("returns an empty string", async () => {
+      const result = await getDiff("main", "feature");
+
+      expect(result).toBe("");
     });
   });
 });

@@ -1,5 +1,5 @@
 import { createTestClient } from "../../test/helpers.js";
-import { doesBranchExist, inferBaseBranch, getDiff } from "../commands/git.js";
+import { doesBranchExist, inferBaseBranch, getCommits, getDiff } from "../commands/git.js";
 import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import dedent from "ts-dedent";
@@ -10,13 +10,17 @@ const mockInferBaseBranch: Mock<typeof inferBaseBranch> = vi.hoisted(() =>
   vi.fn(async () => "main"),
 );
 
+const mockGetCommits: Mock<typeof getCommits> = vi.hoisted(() =>
+  vi.fn(async () => [
+    { sha: "abc123", title: "Add authentication" },
+    { sha: "def456", title: "Fix login bug" },
+  ]),
+);
+
 const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
-  vi.fn(async () => ({
-    commits: [
-      { sha: "abc123", title: "Add authentication" },
-      { sha: "def456", title: "Fix login bug" },
-    ],
-    diff: dedent`diff --git a/auth.js b/auth.js
+  vi.fn(
+    async () =>
+      dedent`diff --git a/auth.js b/auth.js
       new file mode 100644
       index 0000000..e69de29
       --- /dev/null
@@ -26,7 +30,7 @@ const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
       +// login
       +// logout
     `,
-  })),
+  ),
 );
 
 vi.mock("../commands/git", async (importOriginal) => {
@@ -34,6 +38,7 @@ vi.mock("../commands/git", async (importOriginal) => {
     ...(await importOriginal()),
     doesBranchExist: mockDoesBranchExist,
     inferBaseBranch: mockInferBaseBranch,
+    getCommits: mockGetCommits,
     getDiff: mockGetDiff,
   };
 });
@@ -119,6 +124,7 @@ describe("tools/fetch_feature_branch", () => {
   describe("when the branch has no diff", () => {
     beforeEach(() => {
       mockDoesBranchExist.mockResolvedValue(true);
+      mockGetCommits.mockResolvedValue(null);
       mockGetDiff.mockResolvedValue(null);
     });
 

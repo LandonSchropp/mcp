@@ -1,12 +1,14 @@
 import { assertInstalled } from "./assertions.js";
-import { GitCommit, GitDiff } from "./git.js";
+import { GitCommit } from "./git.js";
 import spawn, { SubprocessError } from "nano-spawn";
 
-interface PullRequest extends GitDiff {
+interface PullRequest {
   title: string;
   description: string;
   branch: string;
   baseBranch: string;
+  commits: GitCommit[];
+  diff: string;
 }
 
 /**
