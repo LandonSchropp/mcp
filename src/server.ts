@@ -1,6 +1,6 @@
 // Import all modules after server is created to avoid circular dependency issues
 import "./prompts/index.js";
-import "./resources/documentation.js";
+import "./resources/documentation/index.js";
 import "./resources/pull-request.js";
 import "./tools/create-plan-template/index.js";
 import "./tools/fetch-feature-branch.js";

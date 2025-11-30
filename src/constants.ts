@@ -1,8 +1,3 @@
-import { join } from "path";
-
-/** The directory where documentation files are stored */
-export const DOCUMENTS_DIRECTORY = join(import.meta.dirname, "../doc");
-
 /** The name of the main branch */
 export const MAIN_BRANCH = "main";
 

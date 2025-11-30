@@ -1,5 +1,5 @@
-import { createTestClient } from "../../test/helpers.js";
-import { server } from "../server.js";
+import { createTestClient } from "../../../test/helpers.js";
+import { server } from "../../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { writeFile } from "fs/promises";
 import { dedent } from "ts-dedent";
@@ -16,7 +16,7 @@ const { FORMAT_PATH, VOICE_PATH, IMPROVEMENT_PATH } = await vi.hoisted(async () 
   };
 });
 
-vi.mock("../env.ts", async (importOriginal) => {
+vi.mock("../../env.ts", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     WRITING_FORMAT: FORMAT_PATH,
