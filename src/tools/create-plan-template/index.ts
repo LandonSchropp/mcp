@@ -1,14 +1,15 @@
-import { inferBaseBranch } from "../commands/git.js";
-import { TEMPLATES_DIRECTORY } from "../constants.js";
-import { PLANS_DIRECTORY } from "../env.js";
-import { server } from "../server-instance.js";
-import { renderFile } from "../templates/render.js";
+import { inferBaseBranch } from "../../commands/git.js";
+import { PLANS_DIRECTORY } from "../../env.js";
+import { server } from "../../server-instance.js";
+import { renderFile } from "../../templates/render.js";
 import { format } from "date-fns";
 import { glob, mkdir, writeFile } from "fs/promises";
 import { basename, dirname, join, resolve } from "path";
 import z from "zod";
 
-const TEMPLATES = await Array.fromAsync(glob(join(TEMPLATES_DIRECTORY, "plan/*.md.liquid")));
+const TEMPLATES_DIRECTORY = import.meta.dirname;
+
+const TEMPLATES = await Array.fromAsync(glob(join(TEMPLATES_DIRECTORY, "*.md.liquid")));
 const TEMPLATE_NAMES = TEMPLATES.map((path) => basename(path, ".md.liquid")) as [
   string,
   ...string[],
@@ -34,7 +35,7 @@ server.registerTool(
   async ({ title, type, featureBranch, baseBranch, linearIssueId, sentryIssueUrl }) => {
     // Determine the paths
     let timestamp = format(new Date(), "yyyy-MM-dd_HH-mm-ss");
-    let templatePath = join(TEMPLATES_DIRECTORY, "plan", `${type}.md.liquid`);
+    let templatePath = join(TEMPLATES_DIRECTORY, `${type}.md.liquid`);
     let planPath = resolve(join(PLANS_DIRECTORY, featureBranch, `${timestamp}_${type}.md`));
     let planDirectory = dirname(planPath);
 

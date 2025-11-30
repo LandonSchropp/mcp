@@ -2,7 +2,7 @@
 import "./prompts/index.js";
 import "./resources/documentation.js";
 import "./resources/pull-request.js";
-import "./tools/create-plan-template.js";
+import "./tools/create-plan-template/index.js";
 import "./tools/fetch-feature-branch.js";
 import "./tools/switch-git-branch.js";
 

@@ -1,6 +1,6 @@
-import { createTestClient } from "../../test/helpers.js";
-import { inferBaseBranch } from "../commands/git.js";
-import { server } from "../server.js";
+import { createTestClient } from "../../../test/helpers.js";
+import { inferBaseBranch } from "../../commands/git.js";
+import { server } from "../../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { mkdir, rm, readFile, readdir } from "fs/promises";
 import { join } from "path";
@@ -17,14 +17,14 @@ const mockInferBaseBranch: Mock<typeof inferBaseBranch> = vi.hoisted(() =>
   vi.fn(async () => "main"),
 );
 
-vi.mock("../env.ts", async (importOriginal) => {
+vi.mock("../../env.ts", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     PLANS_DIRECTORY: PLANS_DIRECTORY,
   };
 });
 
-vi.mock("../commands/git.js", async (importOriginal) => {
+vi.mock("../../commands/git.js", async (importOriginal) => {
   return {
     ...(await importOriginal()),
     inferBaseBranch: mockInferBaseBranch,
