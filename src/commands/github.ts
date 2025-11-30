@@ -3,6 +3,8 @@ import { GitCommit } from "./git.js";
 import spawn, { SubprocessError } from "nano-spawn";
 
 interface PullRequest {
+  number: number;
+  url: string;
   title: string;
   description: string;
   branch: string;
@@ -37,8 +39,15 @@ export async function assertGitHubInstalled() {
 export async function getPullRequest(branch: string): Promise<PullRequest | null> {
   try {
     const pullRequestData = JSON.parse(
-      (await spawn("gh", ["pr", "view", branch, "--json", "title,body,commits,baseRefName"]))
-        .stdout,
+      (
+        await spawn("gh", [
+          "pr",
+          "view",
+          branch,
+          "--json",
+          "number,url,title,body,commits,baseRefName",
+        ])
+      ).stdout,
     );
 
     const commits: GitCommit[] = pullRequestData.commits.map((commit: any) => ({
@@ -49,6 +58,8 @@ export async function getPullRequest(branch: string): Promise<PullRequest | null
     const diff = (await spawn("gh", ["pr", "diff", branch])).stdout.trim();
 
     return {
+      number: pullRequestData.number,
+      url: pullRequestData.url,
       commits,
       diff,
       title: pullRequestData.title,

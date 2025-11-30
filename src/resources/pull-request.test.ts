@@ -14,6 +14,8 @@ const mockGetBranches: Mock<typeof getBranches> = vi.hoisted(() => vi.fn(async (
 
 const mockGetPullRequest: Mock<typeof getPullRequest> = vi.hoisted(() =>
   vi.fn(async () => ({
+    number: 42,
+    url: "https://github.com/owner/repo/pull/42",
     title: "Add authentication feature",
     description: "This PR adds authentication to the application",
     branch: "feature/auth",

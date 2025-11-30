@@ -1,5 +1,6 @@
 import { createTestClient } from "../../test/helpers.js";
 import { doesBranchExist, inferBaseBranch, getCommits, getDiff } from "../commands/git.js";
+import { getPullRequest } from "../commands/github.js";
 import { server } from "../server.js";
 import { Client } from "@modelcontextprotocol/sdk/client";
 import dedent from "ts-dedent";
@@ -33,6 +34,8 @@ const mockGetDiff: Mock<typeof getDiff> = vi.hoisted(() =>
   ),
 );
 
+const mockGetPullRequest: Mock<typeof getPullRequest> = vi.hoisted(() => vi.fn(async () => null));
+
 vi.mock("../commands/git", async (importOriginal) => {
   return {
     ...(await importOriginal()),
@@ -40,6 +43,13 @@ vi.mock("../commands/git", async (importOriginal) => {
     inferBaseBranch: mockInferBaseBranch,
     getCommits: mockGetCommits,
     getDiff: mockGetDiff,
+  };
+});
+
+vi.mock("../commands/github", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    getPullRequest: mockGetPullRequest,
   };
 });
 
@@ -139,6 +149,52 @@ describe("tools/fetch_feature_branch", () => {
       expect(content.diff).toEqual("");
       expect(content.branch).toEqual("feature/nodiff");
       expect(content.baseBranch).toEqual("main");
+    });
+  });
+
+  describe("when there is no pull request", () => {
+    beforeEach(() => {
+      mockGetPullRequest.mockResolvedValue(null);
+    });
+
+    it("returns null for pullRequest", async () => {
+      const result: any = await client.callTool({
+        name: "fetch_feature_branch",
+        arguments: { branch: "feature/auth" },
+      });
+      const content = JSON.parse(result?.content?.[0]?.text ?? "{}");
+
+      expect(content.pullRequest).toBeNull();
+    });
+  });
+
+  describe("when there is a pull request", () => {
+    beforeEach(() => {
+      mockGetPullRequest.mockResolvedValue({
+        number: 123,
+        url: "https://github.com/owner/repo/pull/123",
+        title: "Add authentication feature",
+        description: "This PR adds user authentication.",
+        branch: "feature/auth",
+        baseBranch: "main",
+        commits: [],
+        diff: "",
+      });
+    });
+
+    it("includes the pull request info", async () => {
+      const result: any = await client.callTool({
+        name: "fetch_feature_branch",
+        arguments: { branch: "feature/auth" },
+      });
+      const content = JSON.parse(result?.content?.[0]?.text ?? "{}");
+
+      expect(content.pullRequest).toEqual({
+        number: 123,
+        url: "https://github.com/owner/repo/pull/123",
+        title: "Add authentication feature",
+        description: "This PR adds user authentication.",
+      });
     });
   });
 });

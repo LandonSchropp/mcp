@@ -1,4 +1,5 @@
 import { doesBranchExist, inferBaseBranch, getCommits, getDiff } from "../commands/git.js";
+import { getPullRequest } from "../commands/github.js";
 import { server } from "../server-instance.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
@@ -29,6 +30,11 @@ server.registerTool(
     const commits = (await getCommits(baseBranch, branch)) ?? [];
     const diff = (await getDiff(baseBranch, branch)) ?? "";
 
+    const pr = await getPullRequest(branch);
+    const pullRequest = pr
+      ? { number: pr.number, url: pr.url, title: pr.title, description: pr.description }
+      : null;
+
     return {
       content: [
         {
@@ -39,6 +45,7 @@ server.registerTool(
               baseBranch,
               commits,
               diff,
+              pullRequest,
             },
             null,
             2,

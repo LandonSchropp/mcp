@@ -51,6 +51,8 @@ describe("getPullRequest", () => {
       if (args?.[0] === "pr" && args?.[1] === "view") {
         return {
           stdout: JSON.stringify({
+            number: 42,
+            url: "https://github.com/owner/repo/pull/42",
             title: "Fix authentication bug",
             body: "This PR fixes the authentication issue",
             baseRefName: "main",
@@ -77,7 +79,7 @@ describe("getPullRequest", () => {
       "view",
       "feature-branch",
       "--json",
-      "title,body,commits,baseRefName",
+      "number,url,title,body,commits,baseRefName",
     ]);
   });
 
@@ -86,6 +88,8 @@ describe("getPullRequest", () => {
       if (args?.[0] === "pr" && args?.[1] === "view") {
         return {
           stdout: JSON.stringify({
+            number: 99,
+            url: "https://github.com/owner/repo/pull/99",
             title: "Add new feature",
             body: "This PR adds a new feature to the application",
             baseRefName: "develop",
@@ -126,6 +130,8 @@ describe("getPullRequest", () => {
     const result = await getPullRequest("feature-branch");
 
     expect(result).toEqual({
+      number: 99,
+      url: "https://github.com/owner/repo/pull/99",
       title: "Add new feature",
       description: "This PR adds a new feature to the application",
       branch: "feature-branch",
