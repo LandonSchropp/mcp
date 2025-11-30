@@ -198,26 +198,53 @@ describe("resources/documentation", () => {
       expect(result.contents[0].text).not.toContain("---");
       expect(result.contents[0].text).not.toContain("title: Better Tests");
     });
+  });
 
-    describe("when the document contains a Handlebars partial", () => {
-      it("renders the partials as templates", async () => {
-        const result = await client.readResource({ uri: "doc://test/guidelines" });
+  describe("doc://test", () => {
+    it("returns all test documentation files", async () => {
+      const result = await client.readResource({ uri: "doc://test" });
 
-        expect(result.contents).toHaveLength(1);
-        expect(result.contents[0].uri).toBe("doc://test/guidelines");
+      expect(result.contents).toHaveLength(2);
 
-        // Contains content from the better-tests partial
-        expect(result.contents[0].text).toContain("Keep Descriptions Short");
-        expect(result.contents[0].text).toContain("Use Contexts");
+      const uris = result.contents.map((content) => content.uri);
 
-        // Contains content from the preferences partial
-        expect(result.contents[0].text).toContain("Articles and Linking Verbs");
-        expect(result.contents[0].text).toContain("Test Data Guidelines");
+      expect(uris).toContain("doc://test/better-tests");
+      expect(uris).toContain("doc://test/preferences");
+    });
 
-        // Does not contain the partial syntax
-        expect(result.contents[0].text).not.toContain("{{> doc/test/better-tests}}");
-        expect(result.contents[0].text).not.toContain("{{> doc/test/preferences}}");
-      });
+    it("strips frontmatter from all documents", async () => {
+      const result = await client.readResource({ uri: "doc://test" });
+
+      for (const content of result.contents) {
+        expect(content.text).not.toContain("---");
+      }
+    });
+  });
+
+  describe("doc://spec", () => {
+    it("returns all spec documentation files", async () => {
+      const result = await client.readResource({ uri: "doc://spec" });
+
+      expect(result.contents).toHaveLength(2);
+
+      const uris = result.contents.map((content) => content.uri);
+
+      expect(uris).toContain("doc://spec/better-specs");
+      expect(uris).toContain("doc://spec/preferences");
+    });
+  });
+
+  describe("doc://writing", () => {
+    it("returns all writing documentation files", async () => {
+      const result = await client.readResource({ uri: "doc://writing" });
+
+      expect(result.contents).toHaveLength(3);
+
+      const uris = result.contents.map((content) => content.uri);
+
+      expect(uris).toContain("doc://writing/format");
+      expect(uris).toContain("doc://writing/voice");
+      expect(uris).toContain("doc://writing/improvement");
     });
   });
 });

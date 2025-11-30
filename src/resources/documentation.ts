@@ -2,11 +2,10 @@ import { DOCUMENTS_DIRECTORY } from "../constants.js";
 import { WRITING_FORMAT, WRITING_VOICE, WRITING_IMPROVEMENT } from "../env.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter.js";
-import { renderTemplate } from "../templates/render.js";
 import { first } from "../utilities/array.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Resource } from "@modelcontextprotocol/sdk/types.js";
+import { Resource, TextResourceContents } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
 import z from "zod";
@@ -44,7 +43,7 @@ async function buildResourceSchema(uri: string, path: string): Promise<Resource>
 
 /** @returns An array of Resource objects representing the documentation files */
 async function fetchDocumentationResources(): Promise<Resource[]> {
-  // Find all markdown files in the documentation directory
+  // Find all markdown files in the documentation directory (excluding .liquid files)
   let documents = await Array.fromAsync(glob(join(DOCUMENTS_DIRECTORY, "**/*.md")));
 
   // Map the document files to Resource objects
@@ -66,10 +65,19 @@ async function fetchDocumentationResources(): Promise<Resource[]> {
  */
 async function readDocumentation(uriPath: string): Promise<string> {
   let filePath = WRITING_DOCUMENTS[uriPath] ?? join(DOCUMENTS_DIRECTORY, `${uriPath}.md`);
-
   return removeFrontmatter(await readFile(filePath, "utf8"));
 }
 
+async function readDocumentationResource(resource: Resource): Promise<TextResourceContents> {
+  let path = resource.uri.replace("doc://", "");
+
+  return {
+    uri: resource.uri,
+    text: await readDocumentation(path),
+  };
+}
+
+// Include all of the documentation files as resources in the MCP server.
 server.registerResource(
   "documentation",
   new ResourceTemplate(`doc://{+path}`, {
@@ -80,15 +88,47 @@ server.registerResource(
     description: "A collection of documentation files",
   },
   async (uri, { path }) => {
-    let text = renderTemplate(await readDocumentation(first(path)));
-
     return {
       contents: [
         {
           uri: uri.href,
-          text,
+          text: await readDocumentation(first(path)),
         },
       ],
     };
   },
 );
+
+const INDEX_RESOURCE_DEFINITIONS = [
+  {
+    name: "test",
+    title: "Test Guidelines",
+    description: "Guidelines for writing tests, combining Better Tests with my preferences",
+    uri: "doc://test",
+  },
+  {
+    name: "spec",
+    title: "Spec Guidelines",
+    description: "Guidelines for writing specs, combining Better Specs with my preferences",
+    uri: "doc://spec",
+  },
+  {
+    name: "writing",
+    title: "Writing Guidelines",
+    description: "Guidelines for writing, including format, voice, and improvement tips",
+    uri: "doc://writing",
+  },
+] as const;
+
+// Register "index" resources for specific documentation files
+for (let { name, title, description, uri } of INDEX_RESOURCE_DEFINITIONS) {
+  server.registerResource(name, uri, { title, description }, async () => {
+    return {
+      contents: await Promise.all(
+        (await fetchDocumentationResources())
+          .filter((resource) => resource.uri.startsWith(uri))
+          .map(readDocumentationResource),
+      ),
+    };
+  });
+}
