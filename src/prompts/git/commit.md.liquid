@@ -6,33 +6,6 @@ description: Create a git commit with an appropriate message based on staged cha
 Create a git commit by analyzing the staged changes and generating a succinct commit message.
 
 1. Run `git status` to see what changes are staged for commit. If there are no staged changes, stage all of the files.
-
-2. Analyze the changes and create a clear, succinct commit message title that explains what the commit accomplishes. Keep it brief - only the essentials.
-
-   Good examples:
-   - Add user authentication
-   - Fix memory leak in parser
-   - Update dependencies
-   - Remove deprecated API endpoints
-   - Refactor database queries
-
-   Avoid:
-   - Overly detailed titles
-   - Implementation details that belong in the body
-   - Redundant phrases like "This commit..." or "Changes to..."
-
-3. Only add a commit body if the title alone can't capture what the commit does. Most commits should only have a title. DON'T ADD A BODY UNLESS ABSOLUTELY NECESSARY. When a body is needed:
-   - Keep it brief - 1-2 sentences maximum
-   - Focus on the "why" if it's not obvious
-   - Use the imperative mood
-
-4. Present the proposed commit message to the user for review. Display it clearly formatted and ask if they would like to proceed with creating the commit or make any changes.
-
-5. After receiving user approval, execute the commit using a heredoc to ensure proper formatting:
-
-   ```bash
-   git commit -m "$(cat <<'EOF'
-   <commit message here>
-   EOF
-   )"
-   ```
+2. Analyze the changes and draft a commit message following doc://git/commit.
+3. Present the proposed commit message to the user for review. Display it clearly formatted and ask if they would like to proceed with creating the commit or make any changes.
+4. After receiving user approval, create the commit.

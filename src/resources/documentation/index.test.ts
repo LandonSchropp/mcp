@@ -247,4 +247,33 @@ describe("resources/documentation", () => {
       expect(uris).toContain("doc://writing/improvement");
     });
   });
+
+  describe("doc://git/commit", () => {
+    it("registers the resource", async () => {
+      const { resources } = await client.listResources();
+
+      expect(resources).toContainEqual({
+        name: "git/commit",
+        title: "Commit Guidelines",
+        uri: "doc://git/commit",
+        description: "Guidelines for writing clear, concise git commit messages",
+        mimeType: "text/markdown",
+      });
+    });
+
+    it("responds with the documentation content", async () => {
+      const result = await client.readResource({ uri: "doc://git/commit" });
+
+      expect(result.contents).toHaveLength(1);
+      expect(result.contents[0].uri).toBe("doc://git/commit");
+      expect(result.contents[0].text).toContain("Commit Message Title");
+    });
+
+    it("strips the frontmatter from the documentation content", async () => {
+      const result = await client.readResource({ uri: "doc://git/commit" });
+
+      expect(result.contents[0].text).not.toContain("---");
+      expect(result.contents[0].text).not.toContain("title: Commit Guidelines");
+    });
+  });
 });
