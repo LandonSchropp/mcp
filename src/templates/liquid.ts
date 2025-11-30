@@ -4,4 +4,6 @@ export const liquid = new Liquid({
   root: "/",
   relativeReference: true,
   extname: ".md.liquid",
+  strictFilters: true,
+  strictVariables: true,
 });
