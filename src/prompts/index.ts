@@ -1,5 +1,4 @@
 import { getCurrentBranch, getDefaultBranch } from "../commands/git.js";
-import { PROMPTS_DIRECTORY } from "../constants.js";
 import { server } from "../server-instance.js";
 import { parseFrontmatter, removeFrontmatter } from "../templates/frontmatter.js";
 import { renderFile } from "../templates/render.js";
@@ -49,12 +48,12 @@ function parameterToZodSchema(name: string, promptName: string): z.ZodString {
 }
 
 // Find all prompt files (excluding files that start with underscore)
-let promptFiles = await Array.fromAsync(glob(join(PROMPTS_DIRECTORY, "**/[!_]*.md.liquid")));
+let promptFiles = await Array.fromAsync(glob(join(import.meta.dirname, "**/[!_]*.md.liquid")));
 
 for (const filePath of promptFiles) {
   const rawContent = await readFile(filePath, "utf8");
   const { frontmatter } = parseFrontmatter(rawContent, PROMPT_SCHEMA);
-  const promptName = relativePathWithoutExtension(PROMPTS_DIRECTORY, filePath);
+  const promptName = relativePathWithoutExtension(import.meta.dirname, filePath);
 
   // Extract variables, filtering out Handlebars keywords
   const variables = (await extractVariables(filePath)).difference(HANDLEBARS_KEYWORDS);
