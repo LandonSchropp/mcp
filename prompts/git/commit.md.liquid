@@ -5,7 +5,7 @@ description: Create a git commit with an appropriate message based on staged cha
 
 Create a git commit by analyzing the staged changes and generating a succinct commit message.
 
-1. Run `git diff --staged` to see what changes are staged for commit. If there are no staged changes, stage all of the files.
+1. Run `git status` to see what changes are staged for commit. If there are no staged changes, stage all of the files.
 
 2. Analyze the changes and create a clear, succinct commit message title that explains what the commit accomplishes. Keep it brief - only the essentials.
 
@@ -21,7 +21,7 @@ Create a git commit by analyzing the staged changes and generating a succinct co
    - Implementation details that belong in the body
    - Redundant phrases like "This commit..." or "Changes to..."
 
-3. Only add a commit body if the change is not clear from the title alone. Most commits should only have a title. When a body is needed:
+3. Only add a commit body if the title alone can't capture what the commit does. Most commits should only have a title. DON'T ADD A BODY UNLESS ABSOLUTELY NECESSARY. When a body is needed:
    - Keep it brief - 1-2 sentences maximum
    - Focus on the "why" if it's not obvious
    - Use the imperative mood
