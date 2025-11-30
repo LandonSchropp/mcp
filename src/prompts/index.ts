@@ -6,7 +6,7 @@ import { renderFile } from "../templates/render.js";
 import { extractResourceURIs } from "../templates/uri.js";
 import { extractVariables } from "../templates/variables.js";
 import { relativePathWithoutExtension } from "../utilities/path.js";
-import { ErrorCode, McpError, PromptMessage } from "@modelcontextprotocol/sdk/types.js";
+import { PromptMessage } from "@modelcontextprotocol/sdk/types.js";
 import { glob, readFile } from "fs/promises";
 import { join } from "path";
 import z from "zod";
@@ -17,8 +17,6 @@ const PROMPT_SCHEMA = z.object({
   description: z.string(),
 });
 
-const LINEAR_ISSUE_ID_REGEX = /[A-Z]{2,}-\d+/;
-
 const PARAMETER_DEFINITIONS = {
   currentBranch: {
     description: "The current git branch",
@@ -27,9 +25,6 @@ const PARAMETER_DEFINITIONS = {
   defaultBranch: {
     description: "The default git branch",
     resolve: getDefaultBranch,
-  },
-  linearIssueId: {
-    description: "Linear issue ID (e.g. AB-123)",
   },
 } as const;
 
@@ -90,17 +85,6 @@ for (const filePath of promptFiles) {
         if (definition && "resolve" in definition) {
           context[name] = await definition.resolve();
         }
-      }
-
-      // Transform linearIssueId (if provided)
-      if (values.linearIssueId) {
-        const match = values.linearIssueId.match(LINEAR_ISSUE_ID_REGEX);
-
-        if (!match) {
-          throw new McpError(ErrorCode.InvalidParams, "No valid Linear issue ID found");
-        }
-
-        context.linearIssueId = match[0];
       }
 
       // Render the template
