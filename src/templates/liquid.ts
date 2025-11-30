@@ -1,46 +1,35 @@
-import { PROMPTS_DIRECTORY } from "../constants";
-import { DOCUMENTS_DIRECTORY } from "../constants.js";
-import { relativePathWithoutExtension } from "../utilities/path";
 import { removeFrontmatter } from "./frontmatter";
-import { glob, readFile } from "fs/promises";
-import { Liquid } from "liquidjs";
-import { join } from "path";
+import { Liquid, defaultOptions as liquidDefaultOptions } from "liquidjs";
 
-// The partials and their content. This allows LiquidJS to resolve includes during static analysis.
-const PARTIALS: Record<string, string> = {};
-
-// Register all documentation as partials.
-for await (let path of glob(join(DOCUMENTS_DIRECTORY, "**/*.md"))) {
-  let name = `doc/${relativePathWithoutExtension(DOCUMENTS_DIRECTORY, path)}`;
-  let content = removeFrontmatter(await readFile(path, "utf8"));
-  PARTIALS[name] = content;
+/**
+ * Reads a file using Liquid's default file reader and removes any frontmatter from its content.
+ *
+ * @param filePath The path to the file to read
+ * @returns The file content without frontmatter
+ */
+async function readFileWithoutFrontmatter(filePath: string) {
+  return removeFrontmatter(await liquidDefaultOptions.fs.readFile(filePath));
 }
 
-// Register all prompts as partials.
-for await (let path of glob(join(PROMPTS_DIRECTORY, "**/*.md.liquid"))) {
-  let name = relativePathWithoutExtension(PROMPTS_DIRECTORY, path);
-  let content = removeFrontmatter(await readFile(path, "utf8"));
-  PARTIALS[name] = content;
+/**
+ * Synchronously reads a file using Liquid's default synchronous file reader and removes any
+ * frontmatter from its content.
+ *
+ * @param filePath The path to the file to read
+ * @returns The file content without frontmatter
+ */
+function readFileWithoutFrontmatterSync(filePath: string) {
+  return removeFrontmatter(liquidDefaultOptions.fs.readFileSync(filePath));
 }
 
-// Create a Liquid engine with a custom file system for partial resolution during static analysis.
+// Create a Liquid engine with a custom file system that strips frontmatter on read.
 export const liquid = new Liquid({
-  relativeReference: false,
+  root: "/",
+  relativeReference: true,
+  extname: ".md.liquid",
   fs: {
-    readFileSync: (file: string) => {
-      if (!(file in PARTIALS)) {
-        throw new Error(`Partial ${file} was not found.`);
-      }
-      return PARTIALS[file];
-    },
-    existsSync: (file: string) => file in PARTIALS,
-    exists: async (file: string) => file in PARTIALS,
-    readFile: async (file: string) => {
-      if (!(file in PARTIALS)) {
-        throw new Error(`Partial ${file} was not found.`);
-      }
-      return PARTIALS[file];
-    },
-    resolve: (_root: string, file: string) => file,
+    ...liquidDefaultOptions.fs,
+    readFileSync: readFileWithoutFrontmatterSync,
+    readFile: readFileWithoutFrontmatter,
   },
 });
