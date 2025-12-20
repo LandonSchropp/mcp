@@ -1,11 +1,21 @@
 ---
 title: Create Commit
-description: Create a git commit with an appropriate message based on staged changes
+description: Create a git commit with an appropriate message
 ---
 
 Create a git commit by analyzing the staged changes and generating a succinct commit message.
 
 1. Run `git status` to see what changes are staged for commit. If there are no staged changes, stage all of the files.
 2. Analyze the changes and draft a commit message following doc://git/commit.
-3. Present the proposed commit message to the user for review. Display it clearly formatted and ask if they would like to proceed with creating the commit or make any changes.
+3. Present the proposed commit message to the user for review. Display it clearly formatted and ask
+   if they would like to proceed with creating the commit or make any changes. Display the commit in
+   the following format, without any extra detail or description of what the commit does.
+
+   ```
+   Proposed commit message:
+
+   <title>
+
+   <body>
+   ```
 4. After receiving user approval, create the commit.
